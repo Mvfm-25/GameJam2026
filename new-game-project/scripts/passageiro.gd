@@ -14,8 +14,9 @@ var quantidade_fome = 0.0
 var necessidades = []
 
 func aposta_necessidade() :
-	print("Escolhendo o que incomoda tal passageiro")
-	necessidades.append(["FOME", "SUJO", "DESCONFORTO", "FURIA"].pick_random())
+	var sorteado = ["FAMINTO", "IMUNDO", "DESACONCHEGADO", "IRADO"].pick_random()
+	necessidades.append(sorteado)
+	print("Passageiro " + nome + " está : " + sorteado)
 	timer.start()
 
 func aposta_nome():
@@ -27,12 +28,18 @@ func enfurece():
 	nivel_raiva = nivel_raiva * quantidade_fome
 
 func atualiza_fome():
-	print("Passageiro %s está ficando com mais fome!" % nome)
-	quantidade_fome += 0.5
+	quantidade_fome += 0.01
 	
 func _ready() -> void:
 	aposta_nome()
+	aposta_necessidade()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	
+	#if necessidades.has("FOME") :
+		#atualiza_fome()
+	if(quantidade_fome >= 0.2) :
+		print("Passageiro " + nome + " está com muita fome!")
+		
 	pass
