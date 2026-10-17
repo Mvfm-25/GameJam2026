@@ -26,9 +26,12 @@ func aposta_nome():
 func enfurece():
 	# Multiplica raiva pela quantidade de fome desde que foi adicionada.
 	nivel_raiva = nivel_raiva * quantidade_fome
+	
+func atualiza_raiva() : 
+	nivel_raiva += 0.02
 
 func atualiza_fome():
-	quantidade_fome += 0.01
+	quantidade_fome = (quantidade_fome + 0.02) * nivel_raiva
 	
 func _ready() -> void:
 	aposta_nome()
@@ -42,4 +45,6 @@ func _process(delta: float) -> void:
 	if(quantidade_fome >= 0.2) :
 		print("Passageiro " + nome + " está com muita fome!")
 		
+	if(nivel_raiva >= 0.5) :
+		print("Passageiro " + nome + " está muito irado!")
 	pass
