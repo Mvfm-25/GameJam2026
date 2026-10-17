@@ -2,6 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://dg51x3bd807oc" path="res://cenas/trem.tscn" id="1_trem"]
 [ext_resource type="PackedScene" uid="uid://crr8571fx8t3n" path="res://cenas/Maquinista.tscn" id="2_maq"]
+[ext_resource type="PackedScene" uid="uid://cxa1g1rqaebyx" path="res://cenas/passageiro.tscn" id="3_42xuo"]
 
 [node name="Principal" type="Node2D" unique_id=1716720350]
 
@@ -19,3 +20,9 @@ porta_esquerda_aberta = true
 
 [node name="Maquinista" parent="." unique_id=1473250640 instance=ExtResource("2_maq")]
 position = Vector2(120, 150)
+
+[node name="Passageiro" parent="." unique_id=548652086 instance=ExtResource("3_42xuo")]
+position = Vector2(566, 64)
+
+[node name="Passageiro2" parent="." unique_id=249056064 instance=ExtResource("3_42xuo")]
+position = Vector2(567, 239)
