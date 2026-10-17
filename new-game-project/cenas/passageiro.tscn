@@ -4,7 +4,7 @@
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_2r7n2"]
 
-[node name="StaticBody2D" type="StaticBody2D" unique_id=1947273246]
+[node name="Passageiro" type="StaticBody2D" unique_id=1947273246]
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=744024212]
 scale = Vector2(0.25, 0.25)
@@ -13,3 +13,5 @@ texture = ExtResource("1_4l5c5")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=614946328]
 scale = Vector2(1.595, 1.595)
 shape = SubResource("RectangleShape2D_2r7n2")
+
+[node name="Timer" type="Timer" parent="." unique_id=1701205882]
