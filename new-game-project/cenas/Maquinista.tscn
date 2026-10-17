@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://cippwo3lca06n" path="res://scripts/maquinista.gd" id="1_maq"]
 [ext_resource type="Texture2D" uid="uid://lj352c1ixg5p" path="res://assets/characters/Maquinista_basev1.png" id="2_yfemx"]
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_4l5c5"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_0404l"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_04fej"]
 atlas = ExtResource("2_yfemx")
@@ -52,7 +52,7 @@ script = ExtResource("1_maq")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1556360099]
 scale = Vector2(2.135, 2.135)
-shape = SubResource("CapsuleShape2D_4l5c5")
+shape = SubResource("CircleShape2D_0404l")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=757508176]
 position_smoothing_enabled = true
