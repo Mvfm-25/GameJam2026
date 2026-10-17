@@ -22,50 +22,52 @@ porta_esquerda_aberta = true
 [node name="Maquinista" parent="." unique_id=1473250640 instance=ExtResource("2_maq")]
 position = Vector2(120, 150)
 
-[node name="Passageiro" parent="." unique_id=1947273246 instance=ExtResource("3_42xuo")]
+[node name="Passageiros" type="Node2D" parent="." unique_id=1268757404]
+
+[node name="Passageiro" parent="Passageiros" unique_id=1947273246 instance=ExtResource("3_42xuo")]
 position = Vector2(611, 23)
 script = ExtResource("4_0404l")
 
-[node name="Passageiro7" parent="." unique_id=1209110748 instance=ExtResource("3_42xuo")]
+[node name="Passageiro7" parent="Passageiros" unique_id=1209110748 instance=ExtResource("3_42xuo")]
 position = Vector2(611, 72)
 script = ExtResource("4_0404l")
 
-[node name="Passageiro5" parent="." unique_id=1649335550 instance=ExtResource("3_42xuo")]
+[node name="Passageiro5" parent="Passageiros" unique_id=1649335550 instance=ExtResource("3_42xuo")]
 position = Vector2(893, 22)
 script = ExtResource("4_0404l")
 
-[node name="Passageiro3" parent="." unique_id=455356552 instance=ExtResource("3_42xuo")]
+[node name="Passageiro3" parent="Passageiros" unique_id=455356552 instance=ExtResource("3_42xuo")]
 position = Vector2(609, 210)
 script = ExtResource("4_0404l")
 
-[node name="Passageiro10" parent="." unique_id=1891015230 instance=ExtResource("3_42xuo")]
+[node name="Passageiro10" parent="Passageiros" unique_id=1891015230 instance=ExtResource("3_42xuo")]
 position = Vector2(609, 259)
 script = ExtResource("4_0404l")
 
-[node name="Passageiro6" parent="." unique_id=1293564904 instance=ExtResource("3_42xuo")]
+[node name="Passageiro6" parent="Passageiros" unique_id=1293564904 instance=ExtResource("3_42xuo")]
 position = Vector2(891, 209)
 script = ExtResource("4_0404l")
 
-[node name="Passageiro11" parent="." unique_id=266971181 instance=ExtResource("3_42xuo")]
+[node name="Passageiro11" parent="Passageiros" unique_id=266971181 instance=ExtResource("3_42xuo")]
 position = Vector2(892, 259)
 script = ExtResource("4_0404l")
 
-[node name="Passageiro4" parent="." unique_id=457670639 instance=ExtResource("3_42xuo")]
+[node name="Passageiro4" parent="Passageiros" unique_id=457670639 instance=ExtResource("3_42xuo")]
 position = Vector2(750, 210)
 script = ExtResource("4_0404l")
 
-[node name="Passageiro12" parent="." unique_id=480119354 instance=ExtResource("3_42xuo")]
+[node name="Passageiro12" parent="Passageiros" unique_id=480119354 instance=ExtResource("3_42xuo")]
 position = Vector2(750, 259)
 script = ExtResource("4_0404l")
 
-[node name="Passageiro9" parent="." unique_id=573432624 instance=ExtResource("3_42xuo")]
+[node name="Passageiro9" parent="Passageiros" unique_id=573432624 instance=ExtResource("3_42xuo")]
 position = Vector2(894, 72)
 script = ExtResource("4_0404l")
 
-[node name="Passageiro2" parent="." unique_id=2109555587 instance=ExtResource("3_42xuo")]
+[node name="Passageiro2" parent="Passageiros" unique_id=2109555587 instance=ExtResource("3_42xuo")]
 position = Vector2(752, 23)
 script = ExtResource("4_0404l")
 
-[node name="Passageiro8" parent="." unique_id=1548718433 instance=ExtResource("3_42xuo")]
+[node name="Passageiro8" parent="Passageiros" unique_id=1548718433 instance=ExtResource("3_42xuo")]
 position = Vector2(752, 72)
 script = ExtResource("4_0404l")
