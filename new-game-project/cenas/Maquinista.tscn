@@ -29,6 +29,18 @@ region = Rect2(0, 192, 192, 192)
 atlas = ExtResource("2_tex")
 region = Rect2(192, 192, 192, 192)
 
+[sub_resource type="AtlasTexture" id="Atlas_frente_tabua"]
+atlas = ExtResource("2_tex")
+region = Rect2(192, 384, 192, 192)
+
+[sub_resource type="AtlasTexture" id="Atlas_direita_tabua"]
+atlas = ExtResource("2_tex")
+region = Rect2(384, 384, 192, 192)
+
+[sub_resource type="AtlasTexture" id="Atlas_esquerda_tabua"]
+atlas = ExtResource("2_tex")
+region = Rect2(576, 384, 192, 192)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_2r7n2"]
 animations = [{
 "frames": [{
@@ -77,6 +89,30 @@ animations = [{
 }],
 "loop": true,
 "name": &"esquerda_piscando",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("Atlas_frente_tabua")
+}],
+"loop": true,
+"name": &"frente_tabua",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("Atlas_direita_tabua")
+}],
+"loop": true,
+"name": &"direita_tabua",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("Atlas_esquerda_tabua")
+}],
+"loop": true,
+"name": &"esquerda_tabua",
 "speed": 5.0
 }]
 

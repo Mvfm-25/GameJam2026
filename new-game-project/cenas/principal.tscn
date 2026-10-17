@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://cwgwam7do7f5e" path="res://scripts/passageiro.gd" id="4_0404l"]
 [ext_resource type="PackedScene" uid="uid://cjq7h812stu2o" path="res://cenas/deco.tscn" id="5_ff0xt"]
 [ext_resource type="PackedScene" uid="uid://c7mapa0trem01" path="res://cenas/mapa.tscn" id="6_mapa"]
+[ext_resource type="PackedScene" uid="uid://2ke7qr5pifkm" path="res://cenas/item.tscn" id="8_djk5k"]
 
 [node name="Principal" type="Node2D" unique_id=1716720350]
 script = ExtResource("1_0cijk")
@@ -103,3 +104,7 @@ position = Vector2(1253, 61)
 position = Vector2(1340.0001, 61)
 
 [node name="Mapa" parent="." unique_id=1290344715 instance=ExtResource("6_mapa")]
+
+[node name="Item" parent="." unique_id=1412582290 instance=ExtResource("8_djk5k")]
+position = Vector2(240, 238)
+scale = Vector2(0.55, 0.55)

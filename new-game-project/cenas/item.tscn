@@ -1,12 +1,41 @@
 [gd_scene format=3 uid="uid://2ke7qr5pifkm"]
 
 [ext_resource type="Script" uid="uid://cn2oklgqcjmd6" path="res://scripts/item.gd" id="1_3byuw"]
+[ext_resource type="Texture2D" uid="uid://73n1gbfclf3f" path="res://assets/Prato.png" id="2_io3oc"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bv3fq"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_g7ga7"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_106ap"]
+atlas = ExtResource("2_io3oc")
+region = Rect2(0, 0, 128, 128)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_g7ga7"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_106ap")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 5.0
+}]
 
 [node name="Item" type="StaticBody2D" unique_id=1412582290]
+scale = Vector2(0.205, 0.205)
 script = ExtResource("1_3byuw")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2341906]
-
-[node name="Sprite2D" type="Sprite2D" parent="." unique_id=97572399]
+scale = Vector2(3.015, 3.015)
+shape = SubResource("RectangleShape2D_bv3fq")
 
 [node name="Area2D" type="Area2D" parent="." unique_id=917325832]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=315206871]
+scale = Vector2(4.49, 4.49)
+shape = SubResource("CircleShape2D_g7ga7")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1997497626]
+position = Vector2(-2, 0)
+sprite_frames = SubResource("SpriteFrames_g7ga7")
