@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cv40oc2wt8da1"
-path="res://.godot/imported/tileset_v1.png-b2a57ce51ee48640b014009ad770e77d.ctex"
+uid="uid://73n1gbfclf3f"
+path="res://.godot/imported/Prato.png-f3d7d92462ceeb25edb4ee3e8dee2b67.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tileset_v1.png"
-dest_files=["res://.godot/imported/tileset_v1.png-b2a57ce51ee48640b014009ad770e77d.ctex"]
+source_file="res://assets/objetos/Prato.png"
+dest_files=["res://.godot/imported/Prato.png-f3d7d92462ceeb25edb4ee3e8dee2b67.ctex"]
 
 [params]
 

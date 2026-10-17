@@ -1,7 +1,7 @@
 [gd_scene format=4 uid="uid://biwta2ryc83b4"]
 
 [ext_resource type="Script" uid="uid://op0b03mqnxwl" path="res://scripts/trem.gd" id="1_trem"]
-[ext_resource type="TileSet" path="res://assets/tileset_vagao.tres" id="2_tiles"]
+[ext_resource type="TileSet" uid="uid://dn641qf6hykxd" path="res://assets/tileset/tileset_vagao.tres" id="2_tiles"]
 
 [node name="Vagão" type="Node2D" unique_id=782191989]
 script = ExtResource("1_trem")
