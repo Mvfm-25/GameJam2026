@@ -1,4 +1,5 @@
 extends CharacterBody2D
+class_name Maquinista
 
 @export var velocidade := 200.0
 

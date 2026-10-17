@@ -33,18 +33,26 @@ func atualiza_raiva() :
 func atualiza_fome():
 	quantidade_fome = (quantidade_fome + 0.02) * nivel_raiva
 	
+func _on_body_entered(body : Node2D) -> void:
+	if body is Maquinista :
+		print("Maquinista entrou na área do passageiro " + nome + "!")
+	
 func _ready() -> void:
+	$Area2D.body_entered.connect(_on_body_entered)
 	aposta_nome()
 	aposta_necessidade()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	
-	#if necessidades.has("FOME") :
-		#atualiza_fome()
-	if(quantidade_fome >= 0.2) :
-		print("Passageiro " + nome + " está com muita fome!")
+	if necessidades.has("FOME") :
+		atualiza_fome()
 		
-	if(nivel_raiva >= 0.5) :
-		print("Passageiro " + nome + " está muito irado!")
+	atualiza_raiva()
+	
+	#if(quantidade_fome >= 0.2) :
+	#	print("Passageiro " + nome + " está com muita fome!")
+		
+	#if(nivel_raiva >= 0.5) :
+	#	print("Passageiro " + nome + " está muito irado!")
 	pass

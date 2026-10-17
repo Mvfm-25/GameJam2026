@@ -1,17 +1,70 @@
 [gd_scene format=3 uid="uid://cxa1g1rqaebyx"]
 
-[ext_resource type="Texture2D" uid="uid://4q335xxs2p" path="res://icon.svg" id="1_4l5c5"]
+[ext_resource type="Texture2D" uid="uid://wcktw488hsg1" path="res://assets/characters/Passageiro_basev1.png" id="1_4l5c5"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_2r7n2"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_6hrs5"]
+atlas = ExtResource("1_4l5c5")
+region = Rect2(0, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wn8p0"]
+atlas = ExtResource("1_4l5c5")
+region = Rect2(96, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ba636"]
+atlas = ExtResource("1_4l5c5")
+region = Rect2(192, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_03u5l"]
+atlas = ExtResource("1_4l5c5")
+region = Rect2(96, 0, 96, 96)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_2r7n2"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6hrs5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wn8p0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ba636")
+}],
+"loop": 1,
+"name": &"Girando",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_03u5l")
+}],
+"loop": 1,
+"name": &"Parado",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_f07jx"]
+size = Vector2(20, 11.302213)
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_d0npf"]
 
 [node name="Passageiro" type="StaticBody2D" unique_id=1947273246]
 
-[node name="Sprite2D" type="Sprite2D" parent="." unique_id=744024212]
-scale = Vector2(0.25, 0.25)
-texture = ExtResource("1_4l5c5")
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=565816267]
+sprite_frames = SubResource("SpriteFrames_2r7n2")
+animation = &"Parado"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=614946328]
-scale = Vector2(1.595, 1.595)
-shape = SubResource("RectangleShape2D_2r7n2")
+[node name="Area2D" type="Area2D" parent="." unique_id=881933917]
+scale = Vector2(0.99999994, 0.99999994)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=994699282]
+position = Vector2(-62.999992, 6.9999976)
+scale = Vector2(4.069999, 4.069999)
+shape = SubResource("RectangleShape2D_f07jx")
 
 [node name="Timer" type="Timer" parent="." unique_id=1701205882]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=248296565]
+position = Vector2(1, 6)
+scale = Vector2(2.615, 2.615)
+shape = SubResource("CapsuleShape2D_d0npf")

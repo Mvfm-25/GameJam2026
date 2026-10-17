@@ -1,21 +1,64 @@
 [gd_scene format=3 uid="uid://crr8571fx8t3n"]
 
-[ext_resource type="Script" path="res://scripts/maquinista.gd" id="1_maq"]
-[ext_resource type="Texture2D" path="res://icon.svg" id="2_icon"]
+[ext_resource type="Script" uid="uid://cippwo3lca06n" path="res://scripts/maquinista.gd" id="1_maq"]
+[ext_resource type="Texture2D" uid="uid://lj352c1ixg5p" path="res://assets/characters/Maquinista_basev1.png" id="2_yfemx"]
 
-[sub_resource type="CircleShape2D" id="Shape_maquinista"]
-radius = 14.0
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_4l5c5"]
 
-[node name="Maquinista" type="CharacterBody2D"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_04fej"]
+atlas = ExtResource("2_yfemx")
+region = Rect2(0, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1l7nd"]
+atlas = ExtResource("2_yfemx")
+region = Rect2(96, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bidgo"]
+atlas = ExtResource("2_yfemx")
+region = Rect2(192, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yfemx"]
+atlas = ExtResource("2_yfemx")
+region = Rect2(0, 0, 96, 96)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_2r7n2"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_04fej")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1l7nd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bidgo")
+}],
+"loop": 1,
+"name": &"Girando",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yfemx")
+}],
+"loop": 1,
+"name": &"Parado",
+"speed": 5.0
+}]
+
+[node name="Maquinista" type="CharacterBody2D" unique_id=1770775664]
 motion_mode = 1
 script = ExtResource("1_maq")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
-scale = Vector2(0.25, 0.25)
-texture = ExtResource("2_icon")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1556360099]
+scale = Vector2(2.135, 2.135)
+shape = SubResource("CapsuleShape2D_4l5c5")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("Shape_maquinista")
-
-[node name="Camera2D" type="Camera2D" parent="."]
+[node name="Camera2D" type="Camera2D" parent="." unique_id=757508176]
 position_smoothing_enabled = true
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=2051209907]
+position = Vector2(-1, -2)
+scale = Vector2(0.71, 0.71)
+sprite_frames = SubResource("SpriteFrames_2r7n2")
+animation = &"Parado"
