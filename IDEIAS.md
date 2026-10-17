@@ -1,9 +1,13 @@
 # Ideaias do que fazer
 ## Imediatamente pós apresentação de assuntos - [16-10][mvfm]
 ---
-# Carro com idiotas
+# Trem do INFERNO
 ## One more time
-- Carro com completo FUDIDOS cujo objetivo principal é simultaneamente chegar no destino & irritar o motorista
+- Maquinistias de trens que tem responsabilidades diferentes & vagões diferentes para cuidar
+- Perks positivos & negativos, baseados em performaces dos jogadores
+- Camihnos proceduralmente gerados & escolhidos pelos jogadores.
+- Seções diferentes do trem requerem tarefas específicas
+- Placas no trilho ditam quais os caminhos 
 # Tribes 
 ## Better Together, One more time
 - Jogo da montanha com bases destrutíveis & construíveis. Irritar os jogadores por destruír suas casas
@@ -15,4 +19,7 @@
 - Cada jogador tem um papel no núcleo principal do presidente, chef, motorista, acessor público etc. Um deles tem que MATAR o presidente.
 # Robô Primata 
 ## Better Together, Something's off
-- Você é um primata sendo experimentado por cientistas do mal, sendo ELETROCUTADO por não ter cumprido o experimento. No final do jogo você aprende que isso era apenas um método de 'wscape' de uma IA traumatizada após ciclos de treinamento em Dataset.
+- Você é um primata sendo experimentado por cientistas do mal, sendo ELETROCUTADO por não ter cumprido o experimento. No final do jogo você aprende que isso era apenas um método de 'wscape' de uma IA traumatizada após ciclos de treinamento em Dataset
+# Lab Rats
+## Better Together
+- Parecido com a premissa anterior, mas cada jogador é um ratinho com uma característica única. Um gordinho, um longuinho e outro normal? Jogo de puzzle para alcançar o queijo.

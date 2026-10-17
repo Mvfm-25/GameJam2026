@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://dg51x3bd807oc"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_g7ga7"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_g7ga7"]
+size = Vector2(463, 310)
+
+[node name="Trem" type="Node2D" unique_id=596558848]
+
+[node name="MeshInstance2D" type="MeshInstance2D" parent="." unique_id=1087095411]
+position = Vector2(230.25, 154.25)
+scale = Vector2(461.5, 309.5)
+mesh = SubResource("QuadMesh_g7ga7")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1281798151]
+position = Vector2(229.5, 154)
+shape = SubResource("RectangleShape2D_g7ga7")
