@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://lj352c1ixg5p"
-path="res://.godot/imported/Maquinista_basev1.png-decbc925081ab13d3e324a099bc6952b.ctex"
+uid="uid://ruxkrunqhbr3"
+path="res://.godot/imported/Apito.png-bf7f4c19ae0dd4882525a1520d2498f3.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/characters/Maquinista_basev1.png"
-dest_files=["res://.godot/imported/Maquinista_basev1.png-decbc925081ab13d3e324a099bc6952b.ctex"]
+source_file="res://assets/decorations/Apito.png"
+dest_files=["res://.godot/imported/Apito.png-bf7f4c19ae0dd4882525a1520d2498f3.ctex"]
 
 [params]
 
