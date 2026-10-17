@@ -19,14 +19,14 @@ signal selecionada(estacao: Estacao)
 		raio = valor
 		queue_redraw()
 # Quanto tempo (segundos) o trem leva para chegar nesta estação após escolhida.
-@export var tempo_viagem = 10.0
+@export var tempo_viagem = 500.0
 
 var selecionado = false
 # Mouse em cima do círculo.
 var hover = false
 
 # Recompensa jogador quantidade pequena de pontos ao chegar na estação.
-var pontos_por_chegada = 500.0
+var pontos_por_chegada = 10.0
 
 func _ready() -> void:
 	if not Engine.is_editor_hint():
