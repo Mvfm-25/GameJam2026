@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b2yby7docc2b6"
-path="res://.godot/imported/Maquinista_spritesv1.png-22667994e5fb2d7a7ece95a733ab5e3d.ctex"
+uid="uid://e3sjsjjm6ifb"
+path="res://.godot/imported/Maquinista_basev3.png-77ba038e3909c47ded6f7f4eca5f58ef.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/characters/Maquinista_spritesv1.png"
-dest_files=["res://.godot/imported/Maquinista_spritesv1.png-22667994e5fb2d7a7ece95a733ab5e3d.ctex"]
+source_file="res://assets/characters/Maquinista_basev3.png"
+dest_files=["res://.godot/imported/Maquinista_basev3.png-77ba038e3909c47ded6f7f4eca5f58ef.ctex"]
 
 [params]
 

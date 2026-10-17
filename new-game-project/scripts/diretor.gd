@@ -150,3 +150,8 @@ func _process(delta: float) -> void:
 		tempo_estacao -= delta
 		if tempo_estacao <= 0.0 :
 			chega_destino()
+
+# Esc fecha o jogo
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel"):
+		get_tree().quit()
