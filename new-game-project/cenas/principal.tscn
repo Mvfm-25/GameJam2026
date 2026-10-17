@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://2g7ghjyq5ck7"]
+
+[ext_resource type="PackedScene" uid="uid://dg51x3bd807oc" path="res://cenas/trem.tscn" id="1_trem"]
+[ext_resource type="PackedScene" uid="uid://crr8571fx8t3n" path="res://cenas/Maquinista.tscn" id="2_maq"]
+
+[node name="Principal" type="Node2D" unique_id=1716720350]
+
+[node name="Vagao1" parent="." unique_id=988786515 instance=ExtResource("1_trem")]
+porta_direita_aberta = true
+
+[node name="Vagao2" parent="." unique_id=1731480753 instance=ExtResource("1_trem")]
+position = Vector2(480, 0)
+porta_esquerda_aberta = true
+porta_direita_aberta = true
+
+[node name="Vagao3" parent="." unique_id=1844564439 instance=ExtResource("1_trem")]
+position = Vector2(960, 0)
+porta_esquerda_aberta = true
+
+[node name="Maquinista" parent="." unique_id=1473250640 instance=ExtResource("2_maq")]
+position = Vector2(120, 150)
