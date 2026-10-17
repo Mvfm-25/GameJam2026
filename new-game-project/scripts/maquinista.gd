@@ -59,7 +59,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		else :
 			pega_item(_item_mais_proximo())
 
-# Direção atual do sprite: "frente", "direita" ou "esquerda"
+# Direção atual do sprite: "frente", "de_costas", "direita" ou "esquerda"
 var _direcao_sprite := "frente"
 var _piscando := false
 
@@ -79,9 +79,11 @@ func _physics_process(_delta: float) -> void:
 func _atualiza_direcao(direcao: Vector2) -> void:
 	var nova := _direcao_sprite
 	if direcao.x > 0.1:
-		nova = "esquerda"
-	elif direcao.x < -0.1:
 		nova = "direita"
+	elif direcao.x < -0.1:
+		nova = "esquerda"
+	elif direcao.y < -0.1:
+		nova = "de_costas"
 	else:
 		nova = "frente"
 	if nova != _direcao_sprite:
@@ -89,8 +91,11 @@ func _atualiza_direcao(direcao: Vector2) -> void:
 		_atualiza_sprite()
 
 func _atualiza_sprite() -> void:
+	# De costas não há quadros piscando nem com a tábua.
+	if _direcao_sprite == "de_costas" :
+		_sprite.play("de_costas")
 	# Não há quadros piscando com a tábua, então carregando ignora a piscada.
-	if carregando :
+	elif carregando :
 		_sprite.play(_direcao_sprite + "_tabua")
 	else :
 		_sprite.play(_direcao_sprite + ("_piscando" if _piscando else ""))

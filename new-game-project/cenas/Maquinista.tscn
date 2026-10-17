@@ -5,114 +5,126 @@
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_0404l"]
 
-[sub_resource type="AtlasTexture" id="Atlas_frente"]
-atlas = ExtResource("2_tex")
-region = Rect2(0, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="Atlas_direita"]
+[sub_resource type="AtlasTexture" id="Atlas_de_costas"]
 atlas = ExtResource("2_tex")
 region = Rect2(192, 0, 192, 192)
 
-[sub_resource type="AtlasTexture" id="Atlas_esquerda"]
-atlas = ExtResource("2_tex")
-region = Rect2(384, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="Atlas_frente_piscando"]
+[sub_resource type="AtlasTexture" id="Atlas_direita"]
 atlas = ExtResource("2_tex")
 region = Rect2(576, 0, 192, 192)
 
 [sub_resource type="AtlasTexture" id="Atlas_direita_piscando"]
 atlas = ExtResource("2_tex")
-region = Rect2(0, 192, 192, 192)
-
-[sub_resource type="AtlasTexture" id="Atlas_esquerda_piscando"]
-atlas = ExtResource("2_tex")
 region = Rect2(192, 192, 192, 192)
-
-[sub_resource type="AtlasTexture" id="Atlas_frente_tabua"]
-atlas = ExtResource("2_tex")
-region = Rect2(192, 384, 192, 192)
 
 [sub_resource type="AtlasTexture" id="Atlas_direita_tabua"]
 atlas = ExtResource("2_tex")
 region = Rect2(384, 384, 192, 192)
 
+[sub_resource type="AtlasTexture" id="Atlas_esquerda"]
+atlas = ExtResource("2_tex")
+region = Rect2(384, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="Atlas_esquerda_piscando"]
+atlas = ExtResource("2_tex")
+region = Rect2(0, 192, 192, 192)
+
 [sub_resource type="AtlasTexture" id="Atlas_esquerda_tabua"]
 atlas = ExtResource("2_tex")
-region = Rect2(576, 384, 192, 192)
+region = Rect2(192, 384, 192, 192)
+
+[sub_resource type="AtlasTexture" id="Atlas_frente"]
+atlas = ExtResource("2_tex")
+region = Rect2(0, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="Atlas_frente_piscando"]
+atlas = ExtResource("2_tex")
+region = Rect2(768, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="Atlas_frente_tabua"]
+atlas = ExtResource("2_tex")
+region = Rect2(0, 384, 192, 192)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_2r7n2"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("Atlas_frente")
+"texture": SubResource("Atlas_de_costas")
 }],
-"loop": true,
-"name": &"frente",
+"loop": 1,
+"name": &"de_costas",
 "speed": 5.0
 }, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("Atlas_direita")
 }],
-"loop": true,
+"loop": 1,
 "name": &"direita",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("Atlas_esquerda")
-}],
-"loop": true,
-"name": &"esquerda",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("Atlas_frente_piscando")
-}],
-"loop": true,
-"name": &"frente_piscando",
 "speed": 5.0
 }, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("Atlas_direita_piscando")
 }],
-"loop": true,
+"loop": 1,
 "name": &"direita_piscando",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("Atlas_esquerda_piscando")
-}],
-"loop": true,
-"name": &"esquerda_piscando",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("Atlas_frente_tabua")
-}],
-"loop": true,
-"name": &"frente_tabua",
 "speed": 5.0
 }, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("Atlas_direita_tabua")
 }],
-"loop": true,
+"loop": 1,
 "name": &"direita_tabua",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("Atlas_esquerda")
+}],
+"loop": 1,
+"name": &"esquerda",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("Atlas_esquerda_piscando")
+}],
+"loop": 1,
+"name": &"esquerda_piscando",
 "speed": 5.0
 }, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("Atlas_esquerda_tabua")
 }],
-"loop": true,
+"loop": 1,
 "name": &"esquerda_tabua",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("Atlas_frente")
+}],
+"loop": 1,
+"name": &"frente",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("Atlas_frente_piscando")
+}],
+"loop": 1,
+"name": &"frente_piscando",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("Atlas_frente_tabua")
+}],
+"loop": 1,
+"name": &"frente_tabua",
 "speed": 5.0
 }]
 
@@ -131,13 +143,13 @@ position_smoothing_enabled = true
 position = Vector2(-1, -2)
 scale = Vector2(0.355, 0.355)
 sprite_frames = SubResource("SpriteFrames_2r7n2")
-animation = &"frente"
+animation = &"de_costas"
 
-[node name="TimerPiscada" type="Timer" parent="."]
+[node name="TimerPiscada" type="Timer" parent="." unique_id=1260073892]
 wait_time = 6.5
 autostart = true
 
-[node name="TimerOlhoFechado" type="Timer" parent="."]
+[node name="TimerOlhoFechado" type="Timer" parent="." unique_id=285980773]
 wait_time = 0.15
 one_shot = true
 
