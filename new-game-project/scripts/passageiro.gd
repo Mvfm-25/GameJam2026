@@ -40,7 +40,12 @@ func atualiza_fome():
 func _on_body_entered(body : Node2D) -> void:
 	if body is Maquinista :
 		print("Maquinista entrou na área do passageiro " + nome + "!")
-	
+	if body is Item :
+		if(necessidades.has("FOME")) :
+			print("Comida entregue!")
+			necessidades.remove_at(necessidades.find("FOME"))
+			print("Passageiro " + nome + " deixou de estar com fome!")
+
 func _ready() -> void:
 	add_child(timer)
 	$Area2D.body_entered.connect(_on_body_entered)
