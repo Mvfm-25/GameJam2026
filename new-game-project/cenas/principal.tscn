@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://2g7ghjyq5ck7"]
 
 [ext_resource type="Script" uid="uid://dnu8e1ycd36uh" path="res://scripts/diretor.gd" id="1_0cijk"]
-[ext_resource type="PackedScene" uid="uid://dg51x3bd807oc" path="res://cenas/trem.tscn" id="1_trem"]
+[ext_resource type="PackedScene" uid="uid://biwta2ryc83b4" path="res://cenas/vagao.tscn" id="1_trem"]
 [ext_resource type="PackedScene" uid="uid://crr8571fx8t3n" path="res://cenas/Maquinista.tscn" id="2_maq"]
 [ext_resource type="PackedScene" uid="uid://cxa1g1rqaebyx" path="res://cenas/passageiro.tscn" id="3_42xuo"]
 [ext_resource type="Script" uid="uid://cwgwam7do7f5e" path="res://scripts/passageiro.gd" id="4_0404l"]
