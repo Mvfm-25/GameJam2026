@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://biwta2ryc83b4"]
+
+[node name="Vagão" type="Node2D" unique_id=782191989]
+
+[node name="Solo" type="TileMapLayer" parent="." unique_id=798501515]
+
+[node name="Paredes" type="TileMapLayer" parent="." unique_id=1708072051]
+
+[node name="Deco" type="Node2D" parent="." unique_id=1421121109]
