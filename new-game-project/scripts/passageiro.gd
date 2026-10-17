@@ -6,6 +6,8 @@ extends Node2D
 
 # Variável de felicidade do passageiro.
 var contente = false
+# Quantos pontos o jogador é recompensado por atender o passageiro
+var pontos_atendimento = 2.0
 var timer = Timer.new()
 
 # Nível de raiva entre 0.0 & 1.0.
@@ -40,6 +42,7 @@ func _on_body_entered(body : Node2D) -> void:
 		print("Maquinista entrou na área do passageiro " + nome + "!")
 	
 func _ready() -> void:
+	add_child(timer)
 	$Area2D.body_entered.connect(_on_body_entered)
 	aposta_nome()
 	aposta_necessidade()

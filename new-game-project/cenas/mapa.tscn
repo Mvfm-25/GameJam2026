@@ -1,0 +1,105 @@
+[gd_scene format=3 uid="uid://c7mapa0trem01"]
+
+[ext_resource type="Script" path="res://scripts/mapa.gd" id="1_mapa"]
+[ext_resource type="PackedScene" uid="uid://bp5ilr4tex0ib" path="res://cenas/estacao.tscn" id="2_est"]
+
+[node name="Mapa" type="CanvasLayer"]
+layer = 10
+script = ExtResource("1_mapa")
+
+[node name="Conteudo" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Fundo" type="ColorRect" parent="Conteudo"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0.6)
+
+[node name="Painel" type="ColorRect" parent="Conteudo"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -220.0
+offset_right = 400.0
+offset_bottom = 220.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.12, 0.14, 0.2, 1)
+
+[node name="Titulo" type="Label" parent="Conteudo/Painel"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 16.0
+offset_bottom = 48.0
+grow_horizontal = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 24
+text = "MAPA"
+horizontal_alignment = 1
+
+[node name="Instrucoes" type="Label" parent="Conteudo/Painel"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -40.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+text = "Clique numa estação para escolher o destino  ·  M para fechar"
+horizontal_alignment = 1
+
+[node name="Trilhos" type="Line2D" parent="Conteudo/Painel"]
+width = 6.0
+default_color = Color(0.45, 0.45, 0.5, 1)
+
+[node name="Estacoes" type="Node2D" parent="Conteudo/Painel"]
+
+[node name="Central" parent="Conteudo/Painel/Estacoes" instance=ExtResource("2_est")]
+position = Vector2(100, 240)
+nome = "Central"
+cor = Color(0.9, 0.25, 0.25, 1)
+tempo_viagem = 8.0
+
+[node name="VilaFerrugem" parent="Conteudo/Painel/Estacoes" instance=ExtResource("2_est")]
+position = Vector2(250, 140)
+nome = "Vila Ferrugem"
+cor = Color(0.95, 0.55, 0.15, 1)
+tempo_viagem = 10.0
+
+[node name="PortoSombrio" parent="Conteudo/Painel/Estacoes" instance=ExtResource("2_est")]
+position = Vector2(400, 270)
+nome = "Porto Sombrio"
+cor = Color(0.25, 0.75, 0.4, 1)
+tempo_viagem = 12.0
+
+[node name="AltoDaFumaca" parent="Conteudo/Painel/Estacoes" instance=ExtResource("2_est")]
+position = Vector2(550, 150)
+nome = "Alto da Fumaça"
+cor = Color(0.6, 0.35, 0.85, 1)
+tempo_viagem = 14.0
+
+[node name="TerminalNorte" parent="Conteudo/Painel/Estacoes" instance=ExtResource("2_est")]
+position = Vector2(700, 250)
+nome = "Terminal Norte"
+cor = Color(0.95, 0.85, 0.2, 1)
+tempo_viagem = 16.0

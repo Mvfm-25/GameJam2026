@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://crr8571fx8t3n"]
 
 [ext_resource type="Script" uid="uid://cippwo3lca06n" path="res://scripts/maquinista.gd" id="1_maq"]
-[ext_resource type="Texture2D" uid="uid://lj352c1ixg5p" path="res://assets/characters/Maquinista_basev1.png" id="2_yfemx"]
+[ext_resource type="Texture2D" uid="uid://b2yby7docc2b6" path="res://assets/characters/Maquinista_spritesv1.png" id="2_yfemx"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_0404l"]
 
@@ -19,7 +19,7 @@ region = Rect2(192, 0, 96, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_yfemx"]
 atlas = ExtResource("2_yfemx")
-region = Rect2(0, 0, 96, 96)
+region = Rect2(0, 0, 133, 133)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_2r7n2"]
 animations = [{
@@ -51,7 +51,7 @@ motion_mode = 1
 script = ExtResource("1_maq")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1556360099]
-scale = Vector2(2.135, 2.135)
+scale = Vector2(2.055, 2.055)
 shape = SubResource("CircleShape2D_0404l")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=757508176]
@@ -59,6 +59,6 @@ position_smoothing_enabled = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=2051209907]
 position = Vector2(-1, -2)
-scale = Vector2(0.71, 0.71)
+scale = Vector2(0.45, 0.45)
 sprite_frames = SubResource("SpriteFrames_2r7n2")
 animation = &"Parado"
