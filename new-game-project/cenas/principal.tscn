@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://2g7ghjyq5ck7"]
 
+[ext_resource type="Script" uid="uid://dnu8e1ycd36uh" path="res://scripts/diretor.gd" id="1_0cijk"]
 [ext_resource type="PackedScene" uid="uid://dg51x3bd807oc" path="res://cenas/trem.tscn" id="1_trem"]
 [ext_resource type="PackedScene" uid="uid://crr8571fx8t3n" path="res://cenas/Maquinista.tscn" id="2_maq"]
 [ext_resource type="PackedScene" uid="uid://cxa1g1rqaebyx" path="res://cenas/passageiro.tscn" id="3_42xuo"]
@@ -7,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://cjq7h812stu2o" path="res://cenas/deco.tscn" id="5_ff0xt"]
 
 [node name="Principal" type="Node2D" unique_id=1716720350]
+script = ExtResource("1_0cijk")
 
 [node name="Vagao1" parent="." unique_id=988786515 instance=ExtResource("1_trem")]
 porta_direita_aberta = true

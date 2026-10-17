@@ -4,6 +4,8 @@ extends Node2D
 @export var status = "VIVO"
 @export var hp = 10
 
+# Variável de felicidade do passageiro.
+var contente = false
 var timer = Timer.new()
 
 # Nível de raiva entre 0.0 & 1.0.
