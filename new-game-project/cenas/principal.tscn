@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://crr8571fx8t3n" path="res://cenas/Maquinista.tscn" id="2_maq"]
 [ext_resource type="PackedScene" uid="uid://cxa1g1rqaebyx" path="res://cenas/passageiro.tscn" id="3_42xuo"]
 [ext_resource type="Script" uid="uid://cwgwam7do7f5e" path="res://scripts/passageiro.gd" id="4_0404l"]
+[ext_resource type="PackedScene" uid="uid://cjq7h812stu2o" path="res://cenas/deco.tscn" id="5_ff0xt"]
 
 [node name="Principal" type="Node2D" unique_id=1716720350]
 
@@ -71,3 +72,29 @@ script = ExtResource("4_0404l")
 [node name="Passageiro8" parent="Passageiros" unique_id=1548718433 instance=ExtResource("3_42xuo")]
 position = Vector2(752, 72)
 script = ExtResource("4_0404l")
+
+[node name="Decos" type="Node2D" parent="." unique_id=1142493343]
+
+[node name="Deco" parent="Decos" unique_id=1767330768 instance=ExtResource("5_ff0xt")]
+position = Vector2(1044, 237.99998)
+
+[node name="Deco2" parent="Decos" unique_id=1247764334 instance=ExtResource("5_ff0xt")]
+position = Vector2(1135.0001, 237.00002)
+
+[node name="Deco3" parent="Decos" unique_id=772861847 instance=ExtResource("5_ff0xt")]
+position = Vector2(1252, 237)
+
+[node name="Deco4" parent="Decos" unique_id=1503685042 instance=ExtResource("5_ff0xt")]
+position = Vector2(1337.0001, 238)
+
+[node name="Deco5" parent="Decos" unique_id=1691847347 instance=ExtResource("5_ff0xt")]
+position = Vector2(1044, 59.999985)
+
+[node name="Deco6" parent="Decos" unique_id=838197673 instance=ExtResource("5_ff0xt")]
+position = Vector2(1127.0001, 61)
+
+[node name="Deco7" parent="Decos" unique_id=530682975 instance=ExtResource("5_ff0xt")]
+position = Vector2(1253, 61)
+
+[node name="Deco8" parent="Decos" unique_id=916942998 instance=ExtResource("5_ff0xt")]
+position = Vector2(1340.0001, 61)

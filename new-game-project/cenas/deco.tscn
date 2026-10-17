@@ -1,5 +1,31 @@
 [gd_scene format=3 uid="uid://cjq7h812stu2o"]
 
-[node name="Deco" type="Node2D" unique_id=241540357]
+[ext_resource type="Texture2D" uid="uid://2ngxggnc41of" path="res://assets/decorations/Cadeira.png" id="1_h7jit"]
 
-[node name="Sprite2D" type="Sprite2D" parent="." unique_id=522420936]
+[sub_resource type="AtlasTexture" id="AtlasTexture_h7jit"]
+atlas = ExtResource("1_h7jit")
+region = Rect2(0, 0, 256, 256)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_g7ga7"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_h7jit")
+}],
+"loop": 1,
+"name": &"Vazia",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bv3fq"]
+
+[node name="Deco" type="StaticBody2D" unique_id=1767330768]
+scale = Vector2(0.455, 0.455)
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=772854171]
+sprite_frames = SubResource("SpriteFrames_g7ga7")
+animation = &"Vazia"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=396298864]
+scale = Vector2(7.02, 7.02)
+shape = SubResource("RectangleShape2D_bv3fq")

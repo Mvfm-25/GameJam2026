@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dg51x3bd807oc"]
 
-[ext_resource type="Script" path="res://scripts/trem.gd" id="1_trem"]
+[ext_resource type="Script" uid="uid://op0b03mqnxwl" path="res://scripts/trem.gd" id="1_trem"]
 
 [sub_resource type="RectangleShape2D" id="Shape_horizontal"]
 size = Vector2(480, 16)
@@ -11,47 +11,48 @@ size = Vector2(16, 86)
 [sub_resource type="RectangleShape2D" id="Shape_porta"]
 size = Vector2(16, 96)
 
-[node name="Trem" type="Node2D"]
+[node name="Trem" type="Node2D" unique_id=2087367620]
 script = ExtResource("1_trem")
+classe = null
 
-[node name="Piso" type="ColorRect" parent="."]
+[node name="Piso" type="ColorRect" parent="." unique_id=950265658]
 offset_right = 480.0
 offset_bottom = 300.0
 mouse_filter = 2
 color = Color(0.32, 0.18, 0.14, 1)
 
-[node name="Paredes" type="StaticBody2D" parent="."]
+[node name="Paredes" type="StaticBody2D" parent="." unique_id=352414478]
 
-[node name="Visual" type="Node2D" parent="Paredes"]
+[node name="Visual" type="Node2D" parent="Paredes" unique_id=655444921]
 
-[node name="Topo" type="ColorRect" parent="Paredes/Visual"]
+[node name="Topo" type="ColorRect" parent="Paredes/Visual" unique_id=658448413]
 offset_right = 480.0
 offset_bottom = 16.0
 mouse_filter = 2
 color = Color(0.15, 0.15, 0.17, 1)
 
-[node name="Base" type="ColorRect" parent="Paredes/Visual"]
+[node name="Base" type="ColorRect" parent="Paredes/Visual" unique_id=424411562]
 offset_top = 284.0
 offset_right = 480.0
 offset_bottom = 300.0
 mouse_filter = 2
 color = Color(0.15, 0.15, 0.17, 1)
 
-[node name="EsquerdaCima" type="ColorRect" parent="Paredes/Visual"]
+[node name="EsquerdaCima" type="ColorRect" parent="Paredes/Visual" unique_id=189678446]
 offset_top = 16.0
 offset_right = 16.0
 offset_bottom = 102.0
 mouse_filter = 2
 color = Color(0.15, 0.15, 0.17, 1)
 
-[node name="EsquerdaBaixo" type="ColorRect" parent="Paredes/Visual"]
+[node name="EsquerdaBaixo" type="ColorRect" parent="Paredes/Visual" unique_id=83782412]
 offset_top = 198.0
 offset_right = 16.0
 offset_bottom = 284.0
 mouse_filter = 2
 color = Color(0.15, 0.15, 0.17, 1)
 
-[node name="DireitaCima" type="ColorRect" parent="Paredes/Visual"]
+[node name="DireitaCima" type="ColorRect" parent="Paredes/Visual" unique_id=1440773284]
 offset_left = 464.0
 offset_top = 16.0
 offset_right = 480.0
@@ -59,7 +60,7 @@ offset_bottom = 102.0
 mouse_filter = 2
 color = Color(0.15, 0.15, 0.17, 1)
 
-[node name="DireitaBaixo" type="ColorRect" parent="Paredes/Visual"]
+[node name="DireitaBaixo" type="ColorRect" parent="Paredes/Visual" unique_id=676207146]
 offset_left = 464.0
 offset_top = 198.0
 offset_right = 480.0
@@ -67,34 +68,34 @@ offset_bottom = 284.0
 mouse_filter = 2
 color = Color(0.15, 0.15, 0.17, 1)
 
-[node name="Topo" type="CollisionShape2D" parent="Paredes"]
+[node name="Topo" type="CollisionShape2D" parent="Paredes" unique_id=712960606]
 position = Vector2(240, 8)
 shape = SubResource("Shape_horizontal")
 
-[node name="Base" type="CollisionShape2D" parent="Paredes"]
+[node name="Base" type="CollisionShape2D" parent="Paredes" unique_id=733310761]
 position = Vector2(240, 292)
 shape = SubResource("Shape_horizontal")
 
-[node name="EsquerdaCima" type="CollisionShape2D" parent="Paredes"]
+[node name="EsquerdaCima" type="CollisionShape2D" parent="Paredes" unique_id=459947240]
 position = Vector2(8, 59)
 shape = SubResource("Shape_lateral")
 
-[node name="EsquerdaBaixo" type="CollisionShape2D" parent="Paredes"]
+[node name="EsquerdaBaixo" type="CollisionShape2D" parent="Paredes" unique_id=1420017361]
 position = Vector2(8, 241)
 shape = SubResource("Shape_lateral")
 
-[node name="DireitaCima" type="CollisionShape2D" parent="Paredes"]
+[node name="DireitaCima" type="CollisionShape2D" parent="Paredes" unique_id=528280860]
 position = Vector2(472, 59)
 shape = SubResource("Shape_lateral")
 
-[node name="DireitaBaixo" type="CollisionShape2D" parent="Paredes"]
+[node name="DireitaBaixo" type="CollisionShape2D" parent="Paredes" unique_id=107529777]
 position = Vector2(472, 241)
 shape = SubResource("Shape_lateral")
 
-[node name="PortaEsquerda" type="StaticBody2D" parent="."]
+[node name="PortaEsquerda" type="StaticBody2D" parent="." unique_id=1028711942]
 position = Vector2(8, 150)
 
-[node name="Visual" type="ColorRect" parent="PortaEsquerda"]
+[node name="Visual" type="ColorRect" parent="PortaEsquerda" unique_id=1824496848]
 offset_left = -8.0
 offset_top = -48.0
 offset_right = 8.0
@@ -102,13 +103,13 @@ offset_bottom = 48.0
 mouse_filter = 2
 color = Color(0.55, 0.4, 0.2, 1)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PortaEsquerda"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PortaEsquerda" unique_id=1236788186]
 shape = SubResource("Shape_porta")
 
-[node name="PortaDireita" type="StaticBody2D" parent="."]
+[node name="PortaDireita" type="StaticBody2D" parent="." unique_id=1320784509]
 position = Vector2(472, 150)
 
-[node name="Visual" type="ColorRect" parent="PortaDireita"]
+[node name="Visual" type="ColorRect" parent="PortaDireita" unique_id=368879448]
 offset_left = -8.0
 offset_top = -48.0
 offset_right = 8.0
@@ -116,5 +117,5 @@ offset_bottom = 48.0
 mouse_filter = 2
 color = Color(0.55, 0.4, 0.2, 1)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PortaDireita"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PortaDireita" unique_id=1135612886]
 shape = SubResource("Shape_porta")

@@ -1,6 +1,9 @@
 @tool
 extends Node2D
 
+# Diferenciar entre "SOCIAL", "MAQUINAS", 'COZINHA
+@export var classe = ""
+
 @export var porta_esquerda_aberta := false:
 	set(valor):
 		porta_esquerda_aberta = valor
@@ -14,7 +17,6 @@ extends Node2D
 
 func _ready() -> void:
 	_atualizar_portas()
-
 
 func _atualizar_portas() -> void:
 	if not is_node_ready():
