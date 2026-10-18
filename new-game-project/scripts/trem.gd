@@ -100,6 +100,9 @@ const PLAT_ABERTURA := 3 # Linha da abertura para a ponte (desenhada esticada).
 const PLAT_BORDA_INICIO := 4 # Borda que começa logo abaixo da abertura.
 const PLAT_BORDA := 5
 const PLAT_GRADE_INF := 6
+# Correntes da ponte (coluna PONTE): uma na linha acima da abertura e outra na linha abaixo.
+const PONTE_CORRENTE_SUP := 2
+const PONTE_CORRENTE_INF := 4
 # A ponte tem 1 tile no atlas; é esticada para a altura do bloco entre as portas,
 # repetindo a faixa do meio. Valores em px do atlas, dentro do tile.
 const PONTE_TOPO := 16
@@ -368,6 +371,8 @@ func _colocar_plataforma(paredes: TileMapLayer, x: int, lado: int) -> void:
 		return
 	var ponte_x := borda_x + 1
 	_coluna_esticada(PONTE, ponte_x, abertura, 2)
+	_colocar(paredes, ponte_x, abertura - 1, Vector2i(PONTE, PONTE_CORRENTE_SUP), false)
+	_colocar(paredes, ponte_x, abertura + 2, Vector2i(PONTE, PONTE_CORRENTE_INF), false)
 	# Grades da ponte: só dá para atravessar pelo meio.
 	var corpo := StaticBody2D.new()
 	_passarela.add_child(corpo)

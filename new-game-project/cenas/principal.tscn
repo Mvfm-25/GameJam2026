@@ -90,11 +90,13 @@ position = Vector2(300, 40)
 
 [node name="Vagao2" parent="." unique_id=1731480753 instance=ExtResource("1_trem")]
 position = Vector2(512, 0)
+classe = "SOCIAL"
 porta_esquerda_aberta = true
 porta_direita_aberta = true
 
 [node name="Vagao3" parent="." unique_id=1844564439 instance=ExtResource("1_trem")]
 position = Vector2(1408, 0)
+classe = "SOCIAL"
 porta_esquerda_aberta = true
 porta_direita_aberta = true
 
