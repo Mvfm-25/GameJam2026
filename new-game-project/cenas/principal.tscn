@@ -15,6 +15,7 @@
 [ext_resource type="Script" uid="uid://c8367ehdu5pe8" path="res://scripts/spawner_passageiros.gd" id="11_spawn"]
 [ext_resource type="Texture2D" uid="uid://ne8jwthsj1wm" path="res://assets/decorations/fornalha.png" id="12_fornalha"]
 [ext_resource type="Script" uid="uid://mics2wjbtbnn" path="res://scripts/som_trem.gd" id="12_somtrem"]
+[ext_resource type="AudioStream" uid="uid://jsbt5unj8xpt" path="res://audios/743697__michaelydian__elevator-music.wav" id="18_auskn"]
 [ext_resource type="Script" uid="uid://jn4dux3fqudl" path="res://scripts/chao.gd" id="chao_script"]
 [ext_resource type="Script" uid="uid://cep57ks7wxcce" path="res://scripts/trilhos.gd" id="trilhos_script"]
 
@@ -293,3 +294,24 @@ volume_db = 8.0
 
 [node name="Trilhos" type="AudioStreamPlayer" parent="SomTrem" unique_id=1907316256]
 stream = ExtResource("8_sflf3")
+
+[node name="743697MichaelydianElevatorMusic" type="AudioStreamPlayer2D" parent="." unique_id=216993022]
+position = Vector2(885, 214)
+stream = ExtResource("18_auskn")
+volume_db = 3.0
+autoplay = true
+max_distance = 360.0
+
+[node name="743697MichaelydianElevatorMusic2" type="AudioStreamPlayer2D" parent="." unique_id=997963183]
+position = Vector2(1831, 216)
+stream = ExtResource("18_auskn")
+volume_db = 3.0
+autoplay = true
+max_distance = 330.0
+
+[node name="743697MichaelydianElevatorMusic3" type="AudioStreamPlayer2D" parent="." unique_id=1098552490]
+position = Vector2(2672, 228)
+stream = ExtResource("18_auskn")
+volume_db = 3.0
+autoplay = true
+max_distance = 235.0
