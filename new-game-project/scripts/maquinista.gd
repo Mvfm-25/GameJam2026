@@ -165,10 +165,6 @@ func _physics_process(delta: float) -> void:
 		direcao = Vector2.ZERO
 	velocity = direcao * velocidade
 	move_and_slide()
-	
-	# Chance pequena (~0,5% por quadro, uma sujeira a cada ~3 s em média)
-	if randf() < 0.001 :
-		inicializa_sujeira(global_position)
 
 	_atualiza_direcao(direcao)
 	_anima_andar(direcao, delta)
@@ -189,14 +185,6 @@ func _anima_andar(direcao: Vector2, delta: float) -> void:
 	_sprite.rotation = lerp_angle(_sprite.rotation, angulo, peso)
 	_sprite.position = _sprite.position.lerp(_sprite_posicao + Vector2(0, pulo), peso)
 	_sprite.scale = _sprite.scale.lerp(_sprite_escala * Vector2(1.0 - amassada, 1.0 + amassada), peso)
-
-# Cria uma sujeira no chão na posição dada.
-func inicializa_sujeira(pos : Vector2) -> void :
-	var sujeira := Sujeira.new()
-	# Entra na cena logo antes do Maquinista: fica acima dos vagões e abaixo do jogador.
-	get_parent().add_child(sujeira)
-	get_parent().move_child(sujeira, get_index())
-	sujeira.global_position = pos  # define depois de entrar na árvore
 
 func _atualiza_direcao(direcao: Vector2) -> void:
 	var nova := _direcao_sprite

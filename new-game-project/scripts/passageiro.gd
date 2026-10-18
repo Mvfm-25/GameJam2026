@@ -32,6 +32,11 @@ var necessidades = []
 @export var intervalo_passeio_max := 30.0
 @export_range(0.0, 1.0) var chance_passeio := 0.4
 @export var velocidade_caminhada := 60.0
+# Chance de um passeio deixar sujeira (no máximo uma por passeio),
+# num ponto sorteado do trajeto.
+@export_range(0.0, 1.0) var chance_sujeira_passeio := 0.25
+# Distância que ainda falta andar até sujar; negativa = este passeio não suja.
+var _distancia_ate_sujar := -1.0
 
 enum Estado { SENTADO, ANDANDO }
 var estado = Estado.SENTADO
@@ -276,6 +281,14 @@ func _inicia_passeio(caminho : Caminho) -> void:
 	if cadeira != null :
 		_rota.append(cadeira.posicao_assento())
 		cadeira.levantar()
+	_distancia_ate_sujar = -1.0
+	if randf() < chance_sujeira_passeio :
+		var comprimento := 0.0
+		var anterior := global_position
+		for ponto in _rota :
+			comprimento += anterior.distance_to(ponto)
+			anterior = ponto
+		_distancia_ate_sujar = randf() * comprimento
 	estado = Estado.ANDANDO
 	# Andando não bloqueia o maquinista (o corpo é estático e só se teletransporta).
 	$CollisionShape2D.set_deferred("disabled", true)
@@ -283,6 +296,7 @@ func _inicia_passeio(caminho : Caminho) -> void:
 
 func _anda(delta : float) -> void:
 	var passo := velocidade_caminhada * delta
+	_avanca_sujeira(passo)
 	while passo > 0.0 and not _rota.is_empty() :
 		var alvo := _rota[0]
 		var dist := global_position.distance_to(alvo)
@@ -297,6 +311,18 @@ func _anda(delta : float) -> void:
 	if _rota.is_empty() :
 		$CollisionShape2D.set_deferred("disabled", false)
 		_senta()
+
+# Desconta a distância andada e suja o chão ao chegar no ponto sorteado.
+func _avanca_sujeira(andado : float) -> void:
+	if _distancia_ate_sujar < 0.0 :
+		return
+	_distancia_ate_sujar -= andado
+	if _distancia_ate_sujar > 0.0 :
+		return
+	_distancia_ate_sujar = -1.0
+	var diretor := get_tree().current_scene as Diretor
+	if diretor != null :
+		diretor.cria_sujeira(global_position)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:

@@ -109,12 +109,18 @@ func aposta_morte() -> Passageiro :
 
 # Deixa uma mancha de sangue onde o passageiro estava sentado.
 func marca_assento(p : Passageiro) :
-	var sangue := Sujeira.nova_sangue()
-	add_child(sangue)
-	# Fica acima dos vagões e abaixo do maquinista, como as outras sujeiras.
+	coloca_sujeira(Sujeira.nova_sangue(), p.global_position)
+
+# Cria uma sujeira comum no chão (os passageiros sujam o trem).
+func cria_sujeira(pos : Vector2) -> void :
+	coloca_sujeira(Sujeira.new(), pos)
+
+func coloca_sujeira(sujeira : Sujeira, pos : Vector2) -> void :
+	add_child(sujeira)
+	# Fica acima dos vagões e abaixo do maquinista.
 	if maquinista != null :
-		move_child(sangue, maquinista.get_index())
-	sangue.global_position = p.global_position
+		move_child(sujeira, maquinista.get_index())
+	sujeira.global_position = pos  # define depois de entrar na árvore
 
 # Verifica se todos passageiros estão mortos
 func verifica_morte_geral() -> bool :
