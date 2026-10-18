@@ -10,6 +10,10 @@ const CLASSE_COMIDA_PREPARADA := "ComidaP"
 # Diferenciar entre comidas, ferramentas por enquanto.
 @export var classe = ""
 
+# Se a tábua volta vazia para a posição inicial depois de consumida.
+# Tábuas criadas pelo respawn não voltam, simplesmente somem.
+@export var volta_para_origem := true
+
 # Se o item está nas mãos do maquinista (some do chão).
 var carregado := false
 # Se o item está sendo preparado na cozinha (não pode ser pego).
@@ -83,7 +87,7 @@ func terminar_preparo(posicao: Vector2) -> void:
 # Passageiro comeu: a tábua vazia volta para onde começou (geladeira).
 # Itens que não são tábua simplesmente somem.
 func consumir() -> void:
-	if not eh_comida_preparada():
+	if not eh_comida_preparada() or not volta_para_origem:
 		queue_free()
 		return
 	classe = CLASSE_TABUA_VAZIA
