@@ -23,6 +23,10 @@ const CENA_CAVEIRA := preload("res://cenas/caveira.tscn")
 # fora do desenho dela; senão a cadeira cobriria a poça e a caveira.
 # A cadeira desenhada vai de x -25 a +24 do centro; a poça tem ~24 px de cada lado.
 const DESLOCAMENTO_POCA_CADEIRA := Vector2(-50, -6)
+# O trem é quem mata os passageiros, mas o jogador não sabe: cada caveira queimada
+# na fornalha o alimenta e aumenta a chance de levar mais alguém no túnel.
+const CHANCE_VITIMA_EXTRA_POR_CAVEIRA = 0.15
+const CHANCE_VITIMA_EXTRA_MAX = 0.6
 
 const SOM_TUNEL := preload("res://audios/suspence2.wav")
 const SOM_SEGUINTE := preload("res://audios/suspence1.wav")
@@ -60,7 +64,9 @@ var fim_tunel = 0.0
 var passou_tunel = false
 # Morte já sorteada neste túnel, e quem morreu (anunciado quando a luz volta).
 var morte_sorteada = false
-var vitima_tunel : Passageiro = null
+var vitimas_tunel : Array[Passageiro] = []
+# Almas que o trem já recebeu na fornalha (escondido do jogador).
+var caveiras_queimadas := 0
 
 # Escurece a cena no túnel; o mapa e os avisos ficam em CanvasLayer e não são afetados.
 var escuridao : CanvasModulate = null
@@ -142,11 +148,40 @@ func marca_morte(p : Passageiro, cadeira : Cadeira = null) :
 		pos = cadeira.global_position + DESLOCAMENTO_POCA_CADEIRA
 	coloca_sujeira(Sujeira.nova_sangue(), pos)
 	var caveira : Item = CENA_CAVEIRA.instantiate()
+	caveira.add_to_group(Item.GRUPO_CAVEIRAS)
 	add_child(caveira)
 	# Por cima da poça (que acabou de entrar antes do maquinista) e abaixo do maquinista.
 	if maquinista != null :
 		move_child(caveira, maquinista.get_index())
 	caveira.global_position = pos
+
+# Caveiras a até 'raio' de 'pos'. A que está na mão do maquinista conta onde ele está.
+func caveiras_perto(pos : Vector2, raio : float) -> Array[Item] :
+	var perto : Array[Item] = []
+	for c in get_tree().get_nodes_in_group(Item.GRUPO_CAVEIRAS) :
+		var onde : Vector2 = c.global_position
+		if c.carregado and maquinista != null :
+			onde = maquinista.global_position
+		if onde.distance_to(pos) <= raio :
+			perto.append(c)
+	return perto
+
+# Caveira jogada na fornalha: quem pediu o sacrifício se acalma, e o trem fica mais forte.
+func caveira_queimada(caveira : Item) -> void :
+	caveiras_queimadas += 1
+	for p in caveira.testemunhas :
+		if is_instance_valid(p) and p.esta_vivo() :
+			p.ve_caveira_queimada()
+
+# Caveira jogada pela porta traseira: quem pediu o sacrifício fica furioso.
+func caveira_descartada(caveira : Item) -> void :
+	for p in caveira.testemunhas :
+		if is_instance_valid(p) and p.esta_vivo() :
+			p.ve_caveira_descartada()
+
+# Chance de o túnel levar um passageiro a mais, conforme o trem foi alimentado.
+func chance_vitima_extra() -> float :
+	return minf(CHANCE_VITIMA_EXTRA_MAX, CHANCE_VITIMA_EXTRA_POR_CAVEIRA * caveiras_queimadas)
 
 # Cria uma sujeira comum no chão (os passageiros sujam o trem).
 func cria_sujeira(pos : Vector2) -> void :
@@ -280,9 +315,12 @@ func sai_tunel():
 	print("Saindo do túnel!")
 	_anima_tunel(Color.WHITE, 0.0)
 
-	if vitima_tunel != null:
-		mostra_aviso("%s foi encontrado morto!" % vitima_tunel.nome)
-		vitima_tunel = null
+	if vitimas_tunel.size() == 1:
+		mostra_aviso("%s foi encontrado morto!" % vitimas_tunel[0].nome)
+	elif vitimas_tunel.size() > 1:
+		var nomes := vitimas_tunel.map(func(v): return v.nome)
+		mostra_aviso("%s e %s foram encontrados mortos!" % [", ".join(nomes.slice(0, -1)), nomes[-1]])
+	vitimas_tunel.clear()
 
 	if verifica_morte_geral():
 		game_over()
@@ -350,7 +388,7 @@ func inicia_viagem(duracao : float) :
 	tempo_decorrido = 0.0
 	passou_tunel = false
 	morte_sorteada = false
-	vitima_tunel = null
+	vitimas_tunel.clear()
 	inicio_tunel = duracao * randf_range(INICIO_TUNEL_MIN, INICIO_TUNEL_MAX)
 	var duracao_tunel = minf(randf_range(DURACAO_TUNEL_MIN, DURACAO_TUNEL_MAX), duracao * DURACAO_TUNEL_MAX_RELATIVA)
 	fim_tunel = inicio_tunel + duracao_tunel
@@ -443,9 +481,15 @@ func _process(delta: float) -> void:
 		# Morte acontece no meio do túnel, com tudo já escuro.
 		if not morte_sorteada and tempo_decorrido >= (inicio_tunel + fim_tunel) / 2.0 :
 			morte_sorteada = true
-			vitima_tunel = aposta_morte()
-			if vitima_tunel != null :
+			var vitima := aposta_morte()
+			if vitima != null :
+				vitimas_tunel.append(vitima)
 				musica_morte_ativa = true
+				# Alimentado com caveiras, o trem pode levar mais um.
+				if randf() < chance_vitima_extra() :
+					var extra := aposta_morte()
+					if extra != null :
+						vitimas_tunel.append(extra)
 		if tempo_decorrido >= fim_tunel :
 			sai_tunel()
 	elif etapa == Etapa.VIAJANDO and tempo_decorrido >= tempo_viagem_total :

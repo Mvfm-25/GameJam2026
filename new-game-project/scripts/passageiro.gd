@@ -59,6 +59,16 @@ var irado := false
 var _tempo_pulso := 0.0
 var _recarga := 0.0
 
+# --- Sacrificial -----------------------------------------------------------
+# Vendo uma caveira por perto (no chão ou nas mãos do maquinista), o passageiro
+# pede que ela seja jogada na fornalha: mostra o balão de fogo e vai ficando bravo.
+# Queimar a caveira acalma quem pedia; jogá-la pela porta traseira os enfurece.
+var sacrificial := false
+@export var raio_caveira := 220.0
+@export var raiva_sacrificio := 0.01
+@export var alivio_sacrificio := 0.3
+@export var raiva_descarte := 0.25
+
 # --- Cadeira & passeio ---------------------------------------------------
 # Cadeira onde o passageiro senta. Se ficar vazio, pega a cadeira livre
 # mais próxima dentro de raio_busca_cadeira.
@@ -327,6 +337,8 @@ func taxa_raiva(diretor : Diretor) -> float:
 	if diretor != null :
 		var sujeira := minf(diretor.peso_sujeiras_perto(global_position, raio_sujeira), sujeiras_max_raiva)
 		taxa += raiva_por_sujeira * sujeira
+	if sacrificial :
+		taxa += raiva_sacrificio
 	if imundo :
 		taxa *= multiplicador_imundo
 	return taxa
@@ -392,16 +404,43 @@ func _pulso_contagio(delta : float, diretor : Diretor) -> void:
 		if p != self and randf() < chance_contagio and p.contagia(raiva_contagio) :
 			print(nome + " contagiou " + p.nome + " com sua fúria!")
 
-# Contente = sem necessidades e nem bravo nem sujo.
-func _atualiza_contente() -> void:
-	contente = necessidades.is_empty() and not imundo and not irado
+# Liga o modo sacrificial enquanto houver uma caveira à vista, e marca cada caveira
+# vista para reagir ao destino dela depois.
+func _atualiza_sacrificial(diretor : Diretor) -> void:
+	var vistas : Array[Item] = diretor.caveiras_perto(global_position, raio_caveira) if diretor != null else []
+	for c in vistas :
+		if not c.testemunhas.has(self) :
+			c.testemunhas.append(self)
+	var agora := not vistas.is_empty()
+	if agora == sacrificial :
+		return
+	sacrificial = agora
+	if sacrificial :
+		print("Passageiro " + nome + " quer a caveira na fornalha!")
+	_atualiza_contente()
 
-# Um balão por vez: irado > fome > puto (raiva alta ou desconforto por estar imundo).
+# A caveira que ele via foi queimada: ficou satisfeito.
+func ve_caveira_queimada() -> void:
+	acalma(alivio_sacrificio)
+
+# A caveira que ele via foi jogada para fora do trem.
+func ve_caveira_descartada() -> void:
+	if not esta_vivo() :
+		return
+	nivel_raiva = minf(1.0, nivel_raiva + raiva_descarte)
+	_atualiza_irado()
+
+# Contente = sem necessidades, nem bravo nem sujo, e sem caveira à vista.
+func _atualiza_contente() -> void:
+	contente = necessidades.is_empty() and not imundo and not irado and not sacrificial
+
+# Um balão por vez: sacrifício > irado > fome > puto (raiva alta ou desconforto por estar imundo).
 func _atualiza_baloes() -> void:
 	var com_fome = necessidades.has("FAMINTO") and quantidade_fome >= 0.6
-	$muito_puto.visible = irado
-	$fome.visible = not irado and com_fome
-	$puto.visible = not irado and not com_fome and (nivel_raiva >= LIMIAR_PUTO or imundo)
+	$sacrificio.visible = sacrificial
+	$muito_puto.visible = not sacrificial and irado
+	$fome.visible = not sacrificial and not irado and com_fome
+	$puto.visible = not sacrificial and not irado and not com_fome and (nivel_raiva >= LIMIAR_PUTO or imundo)
 
 func esta_vivo() -> bool:
 	return status != "MORTO"
@@ -412,6 +451,7 @@ func morre() -> void:
 	contente = false
 	irado = false
 	imundo = false
+	sacrificial = false
 	necessidades.clear()
 	timer.stop()
 	set_process(false)
@@ -717,6 +757,7 @@ func _process(delta: float) -> void:
 
 	var diretor := get_tree().current_scene as Diretor
 	_recarga = maxf(0.0, _recarga - delta)
+	_atualiza_sacrificial(diretor)
 	atualiza_exposicao(delta, diretor)
 	# Parado na estação (dentro da paciência), ninguém fica com fome, bravo
 	# nem espalha a fúria.

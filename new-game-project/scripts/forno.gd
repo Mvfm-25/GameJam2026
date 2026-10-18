@@ -98,4 +98,9 @@ func _consumir_item(item: Item) -> void:
 		return
 	print("Fornalha consumiu: ", item.classe)
 	abastece(RENDIMENTO.get(item.classe, 0.0))
+	if item.eh_caveira():
+		# Sai do grupo já, senão os passageiros ainda a veem até o fim do quadro.
+		item.remove_from_group(Item.GRUPO_CAVEIRAS)
+		if _diretor != null:
+			_diretor.caveira_queimada(item)
 	item.queue_free()

@@ -6,6 +6,11 @@ const CLASSE_TABUA_VAZIA := "Comida"
 const CLASSE_COMIDA_PREPARADA := "ComidaP"
 # Caveira que fica na poça de sangue de um passageiro morto; vira combustível na fornalha.
 const CLASSE_CAVEIRA := "Caveira"
+# Grupo das caveiras no trem; os passageiros que veem uma entram no modo sacrificial.
+const GRUPO_CAVEIRAS := "caveiras"
+# Arremesso pela porta traseira: duração do voo e do sumiço no fim.
+const DURACAO_ARREMESSO := 0.5
+const DURACAO_SUMICO := 0.25
 
 @export var nome = ""
 
@@ -19,6 +24,10 @@ const CLASSE_CAVEIRA := "Caveira"
 # Se o item bloqueia a passagem quando está no chão. A caveira não bloqueia,
 # senão atrapalharia quem anda pelo corredor ao lado das cadeiras.
 @export var solido := true
+
+# Passageiros que viram esta caveira e pediram o sacrifício; reagem quando ela
+# for queimada ou jogada fora, mesmo que estejam longe na hora.
+var testemunhas : Array[Passageiro] = []
 
 # Se o item está nas mãos do maquinista (some do chão).
 var carregado := false
@@ -47,6 +56,9 @@ func eh_tabua_vazia() -> bool:
 
 func eh_comida_preparada() -> bool:
 	return classe == CLASSE_COMIDA_PREPARADA
+
+func eh_caveira() -> bool:
+	return classe == CLASSE_CAVEIRA
 
 # Tábuas (vazias ou com comida) usam o sprite do maquinista segurando a tábua.
 func eh_tabua() -> bool:
@@ -80,6 +92,26 @@ func ser_solto(posicao: Vector2) -> void:
 	carregado = false
 	visible = true
 	# Colisão continua desligada até o jogador sair da área, senão ele fica preso.
+
+# Jogado para fora do trem: voa de 'de' até 'para' girando e some.
+func ser_arremessado(de: Vector2, para: Vector2) -> void:
+	remove_from_group(GRUPO_CAVEIRAS)
+	# Não pode mais ser pego nem cair na fornalha.
+	em_preparo = true
+	carregado = false
+	_colisao.set_deferred("disabled", true)
+	_area.set_deferred("monitoring", false)
+	_area.set_deferred("monitorable", false)
+	global_position = de
+	visible = true
+	# Por cima das paredes do vagão enquanto passa pela porta.
+	z_index = 50
+	var voo := create_tween().set_parallel()
+	voo.tween_property(self, "global_position", para, DURACAO_ARREMESSO).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
+	voo.tween_property(self, "rotation", TAU * 1.5, DURACAO_ARREMESSO)
+	voo.chain().tween_property(self, "modulate:a", 0.0, DURACAO_SUMICO)
+	voo.tween_property(self, "scale", Vector2.ONE * 0.5, DURACAO_SUMICO)
+	voo.chain().tween_callback(queue_free)
 
 # A tábua vazia entra no forno: some enquanto a comida é preparada.
 func iniciar_preparo() -> void:

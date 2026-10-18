@@ -27,6 +27,31 @@ var limpando := false
 # Sujeira ou vaso entupido sendo limpo (os dois têm limpar()).
 var _alvo_limpeza : Node2D = null
 
+# Carregando uma caveira perto da porta traseira: abre a porta e joga a caveira fora do trem.
+func joga_pela_porta(porta : Porta) -> void:
+	var item := itemAtual
+	itemAtual = null
+	carregando = false
+	_atualiza_sprite()
+	itens_proximos.erase(item)
+	if not porta.aberta :
+		porta.interage()
+	item.ser_arremessado(global_position, porta.ponto_fora())
+	print("Jogou " + item.nome + " pela porta traseira!")
+	var diretor := get_tree().current_scene as Diretor
+	if diretor != null :
+		diretor.caveira_descartada(item)
+
+# Porta traseira mais próxima ao alcance (aberta ou fechada).
+func _porta_traseira_proxima() -> Porta :
+	var melhor : Porta = null
+	for porta in portas_proximas :
+		if not porta.traseira :
+			continue
+		if melhor == null or global_position.distance_to(porta.global_position) < global_position.distance_to(melhor.global_position) :
+			melhor = porta
+	return melhor
+
 # Jogador pega um item do chão e o carrega
 func pega_item(item : Item):
 	if carregando or item == null :
@@ -139,7 +164,11 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if event.is_action_pressed("interagir"):
 		if carregando :
-			solta_item()
+			var traseira := _porta_traseira_proxima()
+			if itemAtual.eh_caveira() and traseira != null :
+				joga_pela_porta(traseira)
+			else :
+				solta_item()
 		elif _item_mais_proximo() != null :
 			pega_item(_item_mais_proximo())
 		else :
