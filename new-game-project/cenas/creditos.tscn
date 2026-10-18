@@ -1,7 +1,6 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://scripts/creditos.gd" id="1_creditos"]
-[ext_resource type="Texture2D" path="res://assets/Outros/foto.jpeg" id="2_foto"]
 [ext_resource type="Texture2D" path="res://assets/Outros/botao.png" id="3_botao"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBox_normal"]
@@ -80,7 +79,9 @@ horizontal_alignment = 1
 [node name="Nomes" type="Label" parent="Margem/Colunas/LadoTexto/Textos" unique_id=1002008]
 layout_mode = 2
 theme_override_font_sizes/font_size = 36
-text = "Gustavo, Cadu e Marcus"
+text = "Gustavo - Sound Designer
+Cadu - Pixel Artista
+Marcus - Programador"
 horizontal_alignment = 1
 
 [node name="Voltar" type="Button" parent="Margem/Colunas/LadoTexto/Textos" unique_id=1002009]
@@ -94,15 +95,3 @@ theme_override_styles/hover = SubResource("StyleBox_hover")
 theme_override_styles/pressed = SubResource("StyleBox_pressed")
 theme_override_styles/focus = SubResource("StyleBox_hover")
 text = "Voltar"
-
-[node name="LadoFoto" type="CenterContainer" parent="Margem/Colunas" unique_id=1002010]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="Foto" type="TextureRect" parent="Margem/Colunas/LadoFoto" unique_id=1002011]
-texture_filter = 2
-custom_minimum_size = Vector2(560, 420)
-layout_mode = 2
-texture = ExtResource("2_foto")
-expand_mode = 1
-stretch_mode = 5

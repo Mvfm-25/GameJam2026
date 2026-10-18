@@ -1,7 +1,7 @@
 extends Control
 class_name Creditos
 
-# Tela de créditos: título e nomes à esquerda, a foto da equipe à direita.
+# Tela de créditos: título GCM e os nomes da equipe com suas funções.
 # Voltar (ou Esc) retorna ao menu.
 
 const CENA_MENU := "res://cenas/menu.tscn"
