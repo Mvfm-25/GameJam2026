@@ -59,7 +59,6 @@ var irado := false
 @export var recarga_contagio := 5.0
 var _tempo_pulso := 0.0
 var _recarga := 0.0
-var _tween_flash : Tween
 
 # --- Cadeira & passeio ---------------------------------------------------
 # Cadeira onde o passageiro senta. Se ficar vazio, pega a cadeira livre
@@ -150,6 +149,10 @@ const BALANCO_VELOCIDADE := 22.0
 const PULINHO := 1.5 # pixels
 const AMASSADA := 0.04
 const SUAVIZACAO := 18.0
+# IRADO anda mais agitado: balança, pula e amassa mais, com passos mais rápidos.
+const IRADO_BALANCO := 2.2
+const IRADO_PULINHO := 3.0
+const IRADO_VELOCIDADE := 1.4
 var _visual : Node2D
 var _fase_passo := 0.0
 
@@ -209,11 +212,13 @@ func _anima_andar(delta : float) -> void:
 	var pulo := 0.0
 	var amassada := 0.0
 	if estado == Estado.ANDANDO or (estado == Estado.NA_FILA and not _esperando) :
-		_fase_passo += delta * BALANCO_VELOCIDADE
-		angulo = sin(_fase_passo) * BALANCO_ANGULO
+		var balanco := IRADO_BALANCO if irado else 1.0
+		var pulinho := IRADO_PULINHO if irado else 1.0
+		_fase_passo += delta * BALANCO_VELOCIDADE * (IRADO_VELOCIDADE if irado else 1.0)
+		angulo = sin(_fase_passo) * BALANCO_ANGULO * balanco
 		var passo := absf(sin(_fase_passo))
-		pulo = -passo * PULINHO
-		amassada = (0.5 - passo) * AMASSADA
+		pulo = -passo * PULINHO * pulinho
+		amassada = (0.5 - passo) * AMASSADA * balanco
 	var peso := 1.0 - exp(-SUAVIZACAO * delta)
 	_visual.rotation = lerp_angle(_visual.rotation, angulo, peso)
 	_visual.position = _visual.position.lerp(Vector2(0, pulo), peso)
@@ -286,7 +291,6 @@ func contagia(valor : float) -> bool:
 		return false
 	_recarga = recarga_contagio
 	nivel_raiva = minf(1.0, nivel_raiva + valor)
-	_flash_raiva()
 	return true
 
 func _atualiza_irado() -> void:
@@ -317,14 +321,6 @@ func _atualiza_contente() -> void:
 func _aplica_cor() -> void:
 	if _visual != null :
 		_visual.modulate = COR_IMUNDO if imundo else Color.WHITE
-
-# Pisca vermelho ao ser contagiado.
-func _flash_raiva() -> void:
-	if _tween_flash :
-		_tween_flash.kill()
-	modulate = Color(1.6, 0.5, 0.5)
-	_tween_flash = create_tween()
-	_tween_flash.tween_property(self, "modulate", Color.WHITE, 0.6)
 
 # Um balão por vez: irado > fome > puto.
 func _atualiza_baloes() -> void:
