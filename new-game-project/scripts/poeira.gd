@@ -34,6 +34,9 @@ class_name Poeira
 @export var graos_por_segundo := 6.0
 @export var ativo := true
 
+# Folga entre o grão e o começo da parte escura do chão.
+const MARGEM_CHAO_ESCURO := 8.0
+
 var _trilhos : Trilhos
 var _velocidade := 0.0
 var _espera := 0.0
@@ -92,8 +95,10 @@ func _move(grao: Sprite2D, delta: float) -> void:
 	var t : float = grao.get_meta(META_TEMPO) + delta
 	grao.set_meta(META_TEMPO, t)
 	var base : float = grao.get_meta(META_BASE_Y) + grao.get_meta(META_DERIVA) * t
-	grao.position.y = base + sin(t * TAU * grao.get_meta(META_FREQUENCIA) + grao.get_meta(META_FASE)) \
+	var y : float = base + sin(t * TAU * grao.get_meta(META_FREQUENCIA) + grao.get_meta(META_FASE)) \
 		* grao.get_meta(META_AMPLITUDE)
+	# A ondulação e a deriva não podem levar o grão para a parte escura do chão.
+	grao.position.y = minf(y, _limite_inferior())
 
 
 # Área do mundo que a câmera está mostrando agora.
@@ -119,7 +124,7 @@ func _cria_grao(vista: Rect2, x: float) -> void:
 	grao.scale = Vector2.ONE * escala * randf_range(variacao_escala.x, variacao_escala.y)
 	grao.modulate.a = randf_range(opacidade.x, opacidade.y)
 	grao.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	var y := randf_range(vista.position.y, vista.end.y)
+	var y := randf_range(vista.position.y, minf(vista.end.y, _limite_inferior()))
 	grao.set_meta(META_BASE_Y, y)
 	grao.set_meta(META_VARIACAO, randf_range(variacao_velocidade.x, variacao_velocidade.y))
 	grao.set_meta(META_FASE, randf() * TAU)
@@ -129,3 +134,16 @@ func _cria_grao(vista: Rect2, x: float) -> void:
 	grao.set_meta(META_TEMPO, 0.0)
 	grao.position = Vector2(x, y)
 	add_child(grao)
+
+
+# y onde começa a parte escura do chão: logo abaixo da faixa clara que fica colada nos
+# trilhos (o vagão tem altura_tiles linhas mais a das rodas; a faixa é o bloco padrão do Chao).
+func _limite_inferior() -> float:
+	for filho in get_parent().get_children():
+		if filho is Node2D and "largura_tiles" in filho:
+			var faixa := 32.0
+			var chao := get_parent().get_node_or_null("Trilhos/Chao") as Chao
+			if chao != null:
+				faixa = chao.linhas_bloco_padrao * Chao.TILE_ARTE * chao.escala
+			return filho.global_position.y + (filho.altura_tiles + 1) * 32.0 + faixa - MARGEM_CHAO_ESCURO
+	return INF

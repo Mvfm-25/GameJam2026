@@ -1,5 +1,6 @@
 [gd_scene format=3]
 
+[ext_resource type="Script" path="res://scripts/fundo_animado.gd" id="3_fundo"]
 [ext_resource type="Script" path="res://scripts/creditos.gd" id="1_creditos"]
 [ext_resource type="Texture2D" path="res://assets/Outros/botao.png" id="3_botao"]
 
@@ -36,14 +37,14 @@ grow_vertical = 2
 texture_filter = 1
 script = ExtResource("1_creditos")
 
-[node name="Fundo" type="ColorRect" parent="." unique_id=1002002]
+[node name="Fundo" type="Control" parent="." unique_id=1002002]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.11, 0.1, 0.14, 1)
+script = ExtResource("3_fundo")
 
 [node name="Margem" type="MarginContainer" parent="." unique_id=1002003]
 layout_mode = 1
@@ -55,7 +56,7 @@ grow_vertical = 2
 theme_override_constants/margin_left = 96
 theme_override_constants/margin_top = 64
 theme_override_constants/margin_right = 96
-theme_override_constants/margin_bottom = 64
+theme_override_constants/margin_bottom = 190
 
 [node name="Colunas" type="HBoxContainer" parent="Margem" unique_id=1002004]
 layout_mode = 2

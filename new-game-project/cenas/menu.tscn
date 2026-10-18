@@ -1,5 +1,6 @@
 [gd_scene format=3]
 
+[ext_resource type="Script" path="res://scripts/fundo_animado.gd" id="3_fundo"]
 [ext_resource type="Script" path="res://scripts/menu.gd" id="1_menu"]
 [ext_resource type="Texture2D" path="res://assets/logo.png" id="2_logo"]
 [ext_resource type="Texture2D" path="res://assets/Outros/botao.png" id="3_botao"]
@@ -37,14 +38,14 @@ grow_vertical = 2
 texture_filter = 1
 script = ExtResource("1_menu")
 
-[node name="Fundo" type="ColorRect" parent="." unique_id=1001002]
+[node name="Fundo" type="Control" parent="." unique_id=1001002]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.11, 0.1, 0.14, 1)
+script = ExtResource("3_fundo")
 
 [node name="Margem" type="MarginContainer" parent="." unique_id=1001003]
 layout_mode = 1
@@ -54,9 +55,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/margin_left = 96
-theme_override_constants/margin_top = 64
+theme_override_constants/margin_top = 32
 theme_override_constants/margin_right = 96
-theme_override_constants/margin_bottom = 64
+theme_override_constants/margin_bottom = 190
 
 [node name="Colunas" type="HBoxContainer" parent="Margem" unique_id=1001004]
 layout_mode = 2
@@ -66,12 +67,27 @@ theme_override_constants/separation = 64
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Logo" type="TextureRect" parent="Margem/Colunas/LadoLogo" unique_id=1001006]
-custom_minimum_size = Vector2(384, 384)
+[node name="ColunaLogo" type="VBoxContainer" parent="Margem/Colunas/LadoLogo" unique_id=1001011]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Logo" type="TextureRect" parent="Margem/Colunas/LadoLogo/ColunaLogo" unique_id=1001006]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 300)
 layout_mode = 2
 texture = ExtResource("2_logo")
 expand_mode = 1
 stretch_mode = 5
+
+[node name="Titulo" type="Label" parent="Margem/Colunas/LadoLogo/ColunaLogo" unique_id=1001012]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.82, 0.45, 1)
+theme_override_constants/outline_size = 16
+theme_override_colors/font_outline_color = Color(0.1, 0.05, 0.1, 1)
+theme_override_font_sizes/font_size = 60
+text = "LOCO-MOTIVA"
+horizontal_alignment = 1
 
 [node name="LadoBotoes" type="CenterContainer" parent="Margem/Colunas" unique_id=1001007]
 layout_mode = 2

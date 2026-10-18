@@ -210,6 +210,9 @@ func _unhandled_input(event: InputEvent) -> void:
 			else :
 				limpa()
 
+# Intervalo, em segundos, entre uma piscada e outra (sorteado a cada vez).
+const INTERVALO_PISCADA := Vector2(1.5, 3.5)
+
 # Direção atual do sprite: "frente", "de_costas", "direita" ou "esquerda"
 var _direcao_sprite := "frente"
 var _piscando := false
@@ -259,7 +262,7 @@ func _ready() -> void:
 	_item_na_mao.position = ITEM_NA_MAO_POSICAO
 	_item_na_mao.visible = false
 	add_child(_item_na_mao)
-	_timer_piscada.wait_time = randf_range(5.0, 8.0)
+	_timer_piscada.wait_time = randf_range(INTERVALO_PISCADA.x, INTERVALO_PISCADA.y)
 	_sprite_posicao = _sprite.position
 	_sprite_escala = _sprite.scale
 
@@ -346,7 +349,7 @@ func _atualiza_item_na_mao() -> void:
 
 # A cada 5 a 8 s fecha os olhos por um instante
 func _ao_piscar() -> void:
-	_timer_piscada.wait_time = randf_range(5.0, 8.0)
+	_timer_piscada.wait_time = randf_range(INTERVALO_PISCADA.x, INTERVALO_PISCADA.y)
 	_piscando = true
 	_atualiza_sprite()
 	_timer_olho_fechado.start()

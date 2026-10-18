@@ -296,11 +296,11 @@ wait_time = 2.0
 one_shot = true
 
 [node name="TimerPiscada" type="Timer" parent="." unique_id=1260073892]
-wait_time = 6.5
+wait_time = 2.5
 autostart = true
 
 [node name="TimerOlhoFechado" type="Timer" parent="." unique_id=285980773]
-wait_time = 0.15
+wait_time = 0.2
 one_shot = true
 
 [connection signal="timeout" from="TimerLimpeza" to="." method="_ao_terminar_limpeza"]
