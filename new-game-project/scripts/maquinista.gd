@@ -42,7 +42,7 @@ func solta_item():
 	carregando = false
 	_atualiza_sprite()
 
-	if (item.classe == "Alimento" or item.classe == "ComidaP") and alimenta(item) :
+	if (item.classe == "Alimento" or item.eh_comida_preparada()) and alimenta(item) :
 		return
 	print("Deixando de carregar " + item.nome + "!")
 	item.ser_solto(global_position)
@@ -99,7 +99,7 @@ func _ao_terminar_limpeza() -> void:
 func _item_mais_proximo() -> Item :
 	var melhor : Item = null
 	for item in itens_proximos :
-		if item.carregado :
+		if not item.disponivel() :
 			continue
 		if melhor == null or global_position.distance_to(item.global_position) < global_position.distance_to(melhor.global_position) :
 			melhor = item

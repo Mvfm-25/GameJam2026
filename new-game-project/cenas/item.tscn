@@ -11,6 +11,14 @@
 atlas = ExtResource("2_io3oc")
 region = Rect2(0, 0, 128, 128)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_tabua_vazia"]
+atlas = ExtResource("2_io3oc")
+region = Rect2(0, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_comida_preparada"]
+atlas = ExtResource("2_io3oc")
+region = Rect2(0, 128, 128, 128)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_g7ga7"]
 animations = [{
 "frames": [{
@@ -19,6 +27,22 @@ animations = [{
 }],
 "loop": 1,
 "name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tabua_vazia")
+}],
+"loop": 1,
+"name": &"tabua_vazia",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_comida_preparada")
+}],
+"loop": 1,
+"name": &"comida_preparada",
 "speed": 5.0
 }]
 
