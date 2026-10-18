@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://dw5ugn4yl6ykb"]
+
+[ext_resource type="Texture2D" uid="uid://4hoy730ippwj" path="res://assets/decorations/frenteTrem.png" id="1_5cylv"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_g7ga7"]
+size = Vector2(244, 352)
+
+[node name="frente_trem" type="StaticBody2D" unique_id=1977508156]
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1200044382]
+scale = Vector2(1.275, 1.275)
+texture = ExtResource("1_5cylv")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=202541559]
+position = Vector2(-28, -7)
+shape = SubResource("RectangleShape2D_g7ga7")

@@ -18,6 +18,7 @@
 [ext_resource type="AudioStream" uid="uid://jsbt5unj8xpt" path="res://audios/743697__michaelydian__elevator-music.wav" id="18_auskn"]
 [ext_resource type="PackedScene" path="res://cenas/pilha_carvao.tscn" id="20_pilha_carvao"]
 [ext_resource type="PackedScene" path="res://cenas/apito.tscn" id="21_apito"]
+[ext_resource type="PackedScene" uid="uid://dw5ugn4yl6ykb" path="res://cenas/frente_trem.tscn" id="24_p7uii"]
 [ext_resource type="Script" uid="uid://jn4dux3fqudl" path="res://scripts/chao.gd" id="chao_script"]
 [ext_resource type="Texture2D" uid="uid://c4kyxtpt7o1ud" path="res://assets/decorations/gramas.png" id="gramas_tex"]
 [ext_resource type="Script" uid="uid://12fl5h0183wu" path="res://scripts/objetos_chao.gd" id="objetos_script"]
@@ -349,3 +350,6 @@ stream = ExtResource("9_wgbst")
 volume_db = 13.0
 autoplay = true
 max_distance = 884.0
+
+[node name="frente_trem" parent="." unique_id=1977508156 instance=ExtResource("24_p7uii")]
+position = Vector2(-60, 200)
