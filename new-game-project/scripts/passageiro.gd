@@ -211,7 +211,8 @@ func alimenta(item : Item) -> void:
 	necessidades.erase("FAMINTO")
 	quantidade_fome = 0.0
 	contente = necessidades.is_empty()
-	item.queue_free()
+	# A tábua volta vazia para a geladeira.
+	item.consumir()
 	print("Passageiro " + nome + " deixou de estar com fome!")
 	$fome.visible = false
 

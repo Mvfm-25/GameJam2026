@@ -1,6 +1,10 @@
 extends StaticBody2D
 class_name Item
 
+# Classes de comida: a tábua vazia vai para a cozinha e volta como comida preparada.
+const CLASSE_TABUA_VAZIA := "Comida"
+const CLASSE_COMIDA_PREPARADA := "ComidaP"
+
 @export var nome = ""
 
 # Diferenciar entre comidas, ferramentas por enquanto.
@@ -8,13 +12,31 @@ class_name Item
 
 # Se o item está nas mãos do maquinista (some do chão).
 var carregado := false
+# Se o item está sendo preparado na cozinha (não pode ser pego).
+var em_preparo := false
+
+# Onde o item começou; a tábua volta para cá depois que a comida é consumida.
+var _posicao_origem := Vector2.ZERO
 
 @onready var _colisao: CollisionShape2D = $CollisionShape2D
 @onready var _area: Area2D = $Area2D
+@onready var _sprite: AnimatedSprite2D = $AnimatedSprite2D
 
 func _ready() -> void:
 	_area.body_entered.connect(_ao_entrar_area)
 	_area.body_exited.connect(_ao_sair_area)
+	_posicao_origem = global_position
+	_atualiza_sprite()
+
+# Pode ser pego pelo maquinista agora?
+func disponivel() -> bool:
+	return not carregado and not em_preparo
+
+func eh_tabua_vazia() -> bool:
+	return classe == CLASSE_TABUA_VAZIA
+
+func eh_comida_preparada() -> bool:
+	return classe == CLASSE_COMIDA_PREPARADA
 
 # Maquinista chegou perto, pode pegar este item
 func _ao_entrar_area(body: Node2D) -> void:
@@ -40,10 +62,42 @@ func ser_solto(posicao: Vector2) -> void:
 	carregado = false
 	visible = true
 	# Colisão continua desligada até o jogador sair da área, senão ele fica preso.
-	
-func criar_item(posicao: Vector2) -> void:
+
+# A cozinha coloca a tábua vazia na bancada e começa a preparar.
+func iniciar_preparo(posicao: Vector2) -> void:
 	global_position = posicao
-	visible = true
+	em_preparo = true
 	carregado = false
-	$CollisionShape2D.set_deferred("disabled", false)
-	
+	visible = true
+	_colisao.set_deferred("disabled", true)
+
+# A comida ficou pronta: vira comida preparada e pode ser pega.
+func terminar_preparo() -> void:
+	em_preparo = false
+	rotation = 0.0
+	classe = CLASSE_COMIDA_PREPARADA
+	_atualiza_sprite()
+
+# Passageiro comeu: a tábua vazia volta para onde começou (geladeira).
+# Itens que não são tábua simplesmente somem.
+func consumir() -> void:
+	if not eh_comida_preparada():
+		queue_free()
+		return
+	classe = CLASSE_TABUA_VAZIA
+	em_preparo = false
+	carregado = false
+	rotation = 0.0
+	global_position = _posicao_origem
+	visible = true
+	_colisao.set_deferred("disabled", false)
+	_atualiza_sprite()
+
+# Mostra a tábua vazia ou a comida preparada conforme a classe.
+func _atualiza_sprite() -> void:
+	if eh_comida_preparada():
+		_sprite.play("comida_preparada")
+	elif eh_tabua_vazia():
+		_sprite.play("tabua_vazia")
+	else:
+		_sprite.play("default")
