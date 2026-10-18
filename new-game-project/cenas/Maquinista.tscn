@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://cippwo3lca06n" path="res://scripts/maquinista.gd" id="1_maq"]
 [ext_resource type="Texture2D" uid="uid://e3sjsjjm6ifb" path="res://assets/characters/Maquinista_basev3.png" id="2_tex"]
+[ext_resource type="Texture2D" uid="uid://ca6cuu2cwno7e" path="res://assets/Outros/Vassoura_ani.png" id="3_vas"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_0404l"]
 
@@ -128,6 +129,70 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="AtlasTexture" id="Atlas_vassoura_0"]
+atlas = ExtResource("3_vas")
+region = Rect2(0, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="Atlas_vassoura_1"]
+atlas = ExtResource("3_vas")
+region = Rect2(192, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="Atlas_vassoura_2"]
+atlas = ExtResource("3_vas")
+region = Rect2(384, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="Atlas_vassoura_3"]
+atlas = ExtResource("3_vas")
+region = Rect2(0, 192, 192, 192)
+
+[sub_resource type="AtlasTexture" id="Atlas_vassoura_4"]
+atlas = ExtResource("3_vas")
+region = Rect2(192, 192, 192, 192)
+
+[sub_resource type="AtlasTexture" id="Atlas_vassoura_5"]
+atlas = ExtResource("3_vas")
+region = Rect2(384, 192, 192, 192)
+
+[sub_resource type="AtlasTexture" id="Atlas_vassoura_6"]
+atlas = ExtResource("3_vas")
+region = Rect2(0, 384, 192, 192)
+
+[sub_resource type="AtlasTexture" id="Atlas_vassoura_7"]
+atlas = ExtResource("3_vas")
+region = Rect2(192, 384, 192, 192)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_vassoura"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("Atlas_vassoura_0")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_vassoura_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_vassoura_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_vassoura_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_vassoura_4")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_vassoura_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_vassoura_6")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_vassoura_7")
+}],
+"loop": true,
+"name": &"varrer",
+"speed": 10.0
+}]
+
 [node name="Maquinista" type="CharacterBody2D" unique_id=1770775664]
 motion_mode = 1
 script = ExtResource("1_maq")
@@ -145,6 +210,17 @@ scale = Vector2(0.355, 0.355)
 sprite_frames = SubResource("SpriteFrames_2r7n2")
 animation = &"de_costas"
 
+[node name="Vassoura" type="AnimatedSprite2D" parent="."]
+visible = false
+position = Vector2(14, 6)
+scale = Vector2(0.355, 0.355)
+sprite_frames = SubResource("SpriteFrames_vassoura")
+animation = &"varrer"
+
+[node name="TimerLimpeza" type="Timer" parent="."]
+wait_time = 5.0
+one_shot = true
+
 [node name="TimerPiscada" type="Timer" parent="." unique_id=1260073892]
 wait_time = 6.5
 autostart = true
@@ -155,3 +231,4 @@ one_shot = true
 
 [connection signal="timeout" from="TimerPiscada" to="." method="_ao_piscar"]
 [connection signal="timeout" from="TimerOlhoFechado" to="." method="_ao_abrir_olhos"]
+[connection signal="timeout" from="TimerLimpeza" to="." method="_ao_terminar_limpeza"]

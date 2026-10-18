@@ -18,6 +18,10 @@ var passageiros_proximos : Array[Passageiro] = []
 # Portas cuja área de interação o jogador está dentro (elas se registram aqui).
 var portas_proximas : Array[Porta] = []
 
+# Se o jogador está parado varrendo uma sujeira.
+var limpando := false
+var _sujeira_alvo : Sujeira = null
+
 # Jogador pega um item do chão e o carrega
 func pega_item(item : Item):
 	if carregando or item == null :
@@ -58,8 +62,14 @@ func alimenta(item : Item) -> bool:
 	melhor.alimenta(item)
 	return true
 
-# Limpa a sujeira mais próxima
+# Começa a varrer a sujeira mais próxima. O jogador fica parado
+# com a vassoura até o TimerLimpeza acabar (5 s).
 func limpa():
+	if limpando :
+		return
+	if carregando :
+		print("Solte o item antes de limpar!")
+		return
 	var melhor : Sujeira = null
 	for s in sujeiras_proximas :
 		if melhor == null or global_position.distance_to(s.global_position) < global_position.distance_to(melhor.global_position) :
@@ -67,8 +77,23 @@ func limpa():
 	if melhor == null :
 		print("Nada para limpar aqui!")
 		return
-	melhor.limpar()
-	print("Sujeira limpa!")
+	limpando = true
+	_sujeira_alvo = melhor
+	_direcao_sprite = "frente"
+	_atualiza_sprite()
+	_vassoura.show()
+	_vassoura.play("varrer")
+	_timer_limpeza.start()
+
+# Fim dos 5 s: remove a sujeira e libera o jogador.
+func _ao_terminar_limpeza() -> void:
+	limpando = false
+	_vassoura.stop()
+	_vassoura.hide()
+	if is_instance_valid(_sujeira_alvo) :
+		_sujeira_alvo.limpar()
+		print("Sujeira limpa!")
+	_sujeira_alvo = null
 
 # Item mais próximo que ainda está no chão
 func _item_mais_proximo() -> Item :
@@ -92,6 +117,9 @@ func _porta_mais_proxima() -> Porta :
 
 # Tecla de interagir pega o item mais próximo ou solta o que está carregando
 func _unhandled_input(event: InputEvent) -> void:
+	# Enquanto varre, o jogador não faz mais nada.
+	if limpando :
+		return
 	if event.is_action_pressed("interagir"):
 		var porta := _porta_mais_proxima()
 		if porta != null and not carregando and _item_mais_proximo() == null :
@@ -110,12 +138,17 @@ var _piscando := false
 @onready var _sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var _timer_piscada: Timer = $TimerPiscada
 @onready var _timer_olho_fechado: Timer = $TimerOlhoFechado
+@onready var _vassoura: AnimatedSprite2D = $Vassoura
+@onready var _timer_limpeza: Timer = $TimerLimpeza
 
 func _ready() -> void:
 	_timer_piscada.wait_time = randf_range(5.0, 8.0)
 
 func _physics_process(_delta: float) -> void:
 	var direcao := Input.get_vector("mover_esquerda", "mover_direita", "mover_cima", "mover_baixo")
+	# Parado enquanto varre.
+	if limpando :
+		direcao = Vector2.ZERO
 	velocity = direcao * velocidade
 	move_and_slide()
 	
