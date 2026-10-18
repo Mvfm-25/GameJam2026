@@ -1,9 +1,24 @@
 [gd_scene format=3 uid="uid://dw5ugn4yl6ykb"]
 
+[ext_resource type="Texture2D" path="res://assets/Outros/fumaça.png" id="2_fumaca"]
 [ext_resource type="Texture2D" uid="uid://4hoy730ippwj" path="res://assets/decorations/frenteTrem.png" id="1_5cylv"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_g7ga7"]
 size = Vector2(244, 352)
+
+[sub_resource type="Gradient" id="Gradient_fumaca"]
+offsets = PackedFloat32Array(0, 0.1, 0.6, 1)
+colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 0.85, 1, 1, 1, 0.6, 1, 1, 1, 0)
+
+[sub_resource type="Curve" id="Curve_fumaca"]
+_data = [Vector2(0, 0.5), 0.0, 0.0, 0, 0, Vector2(1, 1.6), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_fumaca"]
+particles_animation = true
+particles_anim_h_frames = 3
+particles_anim_v_frames = 2
+particles_anim_loop = false
 
 [node name="frente_trem" type="StaticBody2D" unique_id=1977508156]
 
@@ -14,3 +29,24 @@ texture = ExtResource("1_5cylv")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=202541559]
 position = Vector2(-28, -7)
 shape = SubResource("RectangleShape2D_g7ga7")
+
+[node name="Fumaca" type="CPUParticles2D" parent="." unique_id=1977508157]
+position = Vector2(43, -173)
+z_index = 5
+texture_filter = 1
+material = SubResource("CanvasItemMaterial_fumaca")
+amount = 28
+lifetime = 8.0
+texture = ExtResource("2_fumaca")
+direction = Vector2(0, -1)
+spread = 12.0
+gravity = Vector2(18, 0)
+initial_velocity_min = 25.0
+initial_velocity_max = 40.0
+angular_velocity_min = -20.0
+angular_velocity_max = 20.0
+scale_amount_min = 1.0
+scale_amount_max = 1.4
+scale_amount_curve = SubResource("Curve_fumaca")
+color_ramp = SubResource("Gradient_fumaca")
+anim_offset_max = 1.0
