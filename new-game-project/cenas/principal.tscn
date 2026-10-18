@@ -14,9 +14,17 @@
 [ext_resource type="Script" uid="uid://f24i0wstodfo" path="res://scripts/caminho.gd" id="10_cam"]
 [ext_resource type="Script" uid="uid://c8367ehdu5pe8" path="res://scripts/spawner_passageiros.gd" id="11_spawn"]
 [ext_resource type="Script" uid="uid://cep57ks7wxcce" path="res://scripts/trilhos.gd" id="trilhos_script"]
+[ext_resource type="Texture2D" uid="uid://ne8jwthsj1wm" path="res://assets/decorations/fornalha.png" id="12_fornalha"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_l0vsm"]
-size = Vector2(48, 166)
+size = Vector2(96, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fornalha"]
+atlas = ExtResource("12_fornalha")
+region = Rect2(0, 0, 192, 192)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_fornalha"]
+size = Vector2(56, 56)
 
 [sub_resource type="Curve2D" id="Curve2D_vagao2"]
 _data = {
@@ -38,26 +46,26 @@ position = Vector2(-1312, 32)
 script = ExtResource("trilhos_script")
 
 [node name="Vagao1" parent="." unique_id=988786515 instance=ExtResource("1_trem")]
-classe = "COZINHA"
+classe = "MAQUINAS"
 porta_direita_aberta = true
 
 [node name="forno" type="Area2D" parent="Vagao1" unique_id=1213485834]
-position = Vector2(42, 257)
+position = Vector2(112, 64)
 collision_mask = 255
 script = ExtResource("4_eewb4")
 
+[node name="Visual" type="Sprite2D" parent="Vagao1/forno" unique_id=1213485835]
+scale = Vector2(0.55, 0.55)
+texture = SubResource("AtlasTexture_fornalha")
+
+[node name="Corpo" type="StaticBody2D" parent="Vagao1/forno" unique_id=1213485836]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Vagao1/forno/Corpo" unique_id=1213485837]
+shape = SubResource("RectangleShape2D_fornalha")
+
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Vagao1/forno" unique_id=1729680063]
-position = Vector2(13, -35)
+position = Vector2(0, 60)
 shape = SubResource("RectangleShape2D_l0vsm")
-
-[node name="FornoCozinha" parent="Vagao1" unique_id=715590054 instance=ExtResource("4_k1xmn")]
-position = Vector2(455, 60)
-
-[node name="geladeira" parent="Vagao1" unique_id=190965248 instance=ExtResource("9_pilha")]
-position = Vector2(414, 358)
-
-[node name="FornoCozinha2" parent="Vagao1" unique_id=1233175405 instance=ExtResource("4_k1xmn")]
-position = Vector2(536, 60)
 
 [node name="Vagao2" parent="." unique_id=1731480753 instance=ExtResource("1_trem")]
 position = Vector2(896, 0)
@@ -67,6 +75,21 @@ porta_direita_aberta = true
 [node name="Vagao3" parent="." unique_id=1844564439 instance=ExtResource("1_trem")]
 position = Vector2(1792, 0)
 porta_esquerda_aberta = true
+porta_direita_aberta = true
+
+[node name="Vagao4" parent="." unique_id=1844564440 instance=ExtResource("1_trem")]
+position = Vector2(2688, 0)
+classe = "SERVICO"
+porta_esquerda_aberta = true
+
+[node name="FornoCozinha" parent="Vagao4" unique_id=715590054 instance=ExtResource("4_k1xmn")]
+position = Vector2(496, 60)
+
+[node name="FornoCozinha2" parent="Vagao4" unique_id=1233175405 instance=ExtResource("4_k1xmn")]
+position = Vector2(608, 60)
+
+[node name="geladeira" parent="Vagao4" unique_id=190965248 instance=ExtResource("9_pilha")]
+position = Vector2(448, 358)
 
 [node name="Maquinista" parent="." unique_id=1473250640 instance=ExtResource("2_maq")]
 position = Vector2(120, 198)
@@ -258,22 +281,22 @@ autoplay = true
 max_distance = 648.0
 
 [node name="comida1" parent="." unique_id=1412582290 instance=ExtResource("8_djk5k")]
-position = Vector2(462, 358)
+position = Vector2(3184, 358)
 nome = "comida1"
 classe = "Comida"
 
 [node name="comida2" parent="." unique_id=1447504206 instance=ExtResource("8_djk5k")]
-position = Vector2(510, 358)
+position = Vector2(3232, 358)
 nome = "comida2"
 classe = "Comida"
 
 [node name="comida3" parent="." instance=ExtResource("8_djk5k")]
-position = Vector2(558, 358)
+position = Vector2(3280, 358)
 nome = "comida3"
 classe = "Comida"
 
 [node name="comida4" parent="." instance=ExtResource("8_djk5k")]
-position = Vector2(606, 358)
+position = Vector2(3328, 358)
 nome = "comida4"
 classe = "Comida"
 

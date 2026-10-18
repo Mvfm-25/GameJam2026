@@ -2,7 +2,9 @@
 
 extends Area2D
 
-@export var classe_aceita: String = "Carvao"
+# Fornalha da sala das máquinas: consome o carvão e os cadáveres dos passageiros
+# que o maquinista solta na frente dela.
+@export var classes_aceitas: Array[String] = ["Carvao", "Cadaver"]
 
 func _ready() -> void:
 	body_entered.connect(_ao_entrar_corpo)
@@ -37,7 +39,7 @@ func _verificar_item(body: Node2D) -> void:
 func _consumir_item(item: Item) -> void:
 	print("Item detectado: ", item.nome, " | Classe: ", item.classe)
 
-	if item.classe != classe_aceita:
+	if not classes_aceitas.has(item.classe):
 		print("Classe não aceita pelo forno.")
 		return
 
@@ -45,5 +47,5 @@ func _consumir_item(item: Item) -> void:
 		print("Item ainda está sendo carregado.")
 		return
 
-	print("Carvão consumido!")
+	print("Fornalha consumiu: ", item.classe)
 	item.queue_free()
