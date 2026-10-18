@@ -51,7 +51,7 @@ func _draw() -> void:
 		draw_circle(Vector2.ZERO, raio + 5.0, Color.WHITE)
 	draw_circle(Vector2.ZERO, raio, cor.lightened(0.3) if hover else cor)
 	var fonte = ThemeDB.fallback_font
-	draw_string(fonte, Vector2(-raio * 4.0, raio + 20.0), nome, HORIZONTAL_ALIGNMENT_CENTER, raio * 8.0, 14)
+	draw_string(fonte, Vector2(-raio * 4.0, raio + 20.0), nome, HORIZONTAL_ALIGNMENT_CENTER, raio * 8.0, 14, Color(0.13, 0.125, 0.2))
 
 func _mouse_em_cima(event: InputEvent) -> bool:
 	return make_input_local(event).position.length() <= raio
