@@ -18,15 +18,13 @@ extends Node2D
 		_construir()
 
 # Tamanho do vagão em tiles (cada tile ocupa TAMANHO_TILE px na tela).
-# 17 x 16 tiles = 544 x 512 px: cabem 4 fileiras de 3 cadeiras em cada lado do corredor
-# sem encostar nas paredes, deixando uma faixa livre junto de cada parede lateral
-# para ir da porta ao corredor. Com altura par as portas ficam centralizadas.
-@export_range(5, 60) var largura_tiles := 17:
+# 23 x 13 tiles = 736 x 416 px: vagão mais largo que alto.
+@export_range(5, 60) var largura_tiles := 23:
 	set(valor):
 		largura_tiles = valor
 		_construir()
 
-@export_range(5, 40) var altura_tiles := 16:
+@export_range(5, 40) var altura_tiles := 13:
 	set(valor):
 		altura_tiles = valor
 		_construir()

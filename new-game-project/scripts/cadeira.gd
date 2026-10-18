@@ -6,6 +6,9 @@ class_name Cadeira
 # Vazia mostra a cadeira inteira. Ocupada mostra o corpo atrás do passageiro
 # e o braço ($Braco, com z_index maior) por cima dele.
 
+# Marque para o spawner (nó "Passageiros") criar um passageiro sentado aqui ao começar.
+@export var com_passageiro := false
+
 # Passageiro dono da cadeira. Continua dono mesmo quando levanta para passear,
 # assim ninguém mais pega o lugar dele.
 var dono : Node2D = null
