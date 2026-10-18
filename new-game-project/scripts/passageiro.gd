@@ -33,7 +33,10 @@ func enfurece():
 	nivel_raiva = nivel_raiva * quantidade_fome
 	
 func atualiza_raiva() : 
-	nivel_raiva += 0.02
+	var chance = randi_range(0, 100)
+	if(chance > 85) :
+		nivel_raiva += 0.002
+		
 
 func atualiza_fome():
 	quantidade_fome = (quantidade_fome + 0.02) * nivel_raiva
@@ -48,6 +51,7 @@ func alimenta(item : Item) -> void:
 	contente = necessidades.is_empty()
 	item.queue_free()
 	print("Passageiro " + nome + " deixou de estar com fome!")
+	$fome.visible = false
 
 # Maquinista entra/sai da área de interação do passageiro
 func _on_body_entered(body : Node2D) -> void:
@@ -74,9 +78,12 @@ func _process(delta: float) -> void:
 		
 	atualiza_raiva()
 	
-	#if(quantidade_fome >= 0.2) :
-	#	print("Passageiro " + nome + " está com muita fome!")
+	if(quantidade_fome >= 0.6) :
+		$fome.visible = true
 		
-	#if(nivel_raiva >= 0.5) :
-	#	print("Passageiro " + nome + " está muito irado!")
+	if(nivel_raiva >= 0.5) :
+		$puto.visible = true
+	elif(nivel_raiva >= 0.9) :
+		$puto.visible = false
+		$muito_puto.visible = true
 	pass
