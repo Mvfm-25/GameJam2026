@@ -311,11 +311,6 @@ position = Vector2(2944, 358)
 nome = "comida4"
 classe = "Comida"
 
-[node name="carvao" parent="." unique_id=1542137560 instance=ExtResource("8_djk5k")]
-position = Vector2(254, 43)
-nome = "carvao"
-classe = "Carvao"
-
 [node name="SomTrem" type="Node" parent="." unique_id=1907316254]
 script = ExtResource("12_somtrem")
 
