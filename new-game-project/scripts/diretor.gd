@@ -248,10 +248,15 @@ func caveira_descartada(caveira : Item) -> void :
 	if caveiras_descartadas >= CAVEIRAS_PARA_FINAL :
 		mostra_final(TelaFinal.Tipo.FELIZ)
 
+var _final_mostrado := false
+
 # Fim da história: espera um pouco, pausa o jogo e mostra a tela do final.
-func mostra_final(tipo : TelaFinal.Tipo) -> void :
-	if jogo_acabou :
+func mostra_final(tipo : TelaFinal.Tipo, forcar := false) -> void :
+	if jogo_acabou and not forcar :
 		return
+	if _final_mostrado :
+		return
+	_final_mostrado = true
 	jogo_acabou = true
 	await get_tree().create_timer(ESPERA_TELA_FINAL).timeout
 	get_tree().paused = true
@@ -335,7 +340,8 @@ func jogador_capturado() -> void :
 	deixa_restos(pos)
 	for p in lista_passageiros :
 		p.para_perseguicao()
-	mostra_aviso("Os passageiros te pegaram! Você perdeu!")
+	# A revolta já marcou o jogo como acabado; o final da revolta vale mesmo assim.
+	mostra_final(TelaFinal.Tipo.REVOLTA, true)
 
 # Mostra um aviso genérico na tela por alguns segundos.
 func mostra_aviso(texto : String) :

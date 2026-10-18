@@ -1,26 +1,32 @@
 extends CanvasLayer
 class_name TelaFinal
 
-# Tela cheia mostrada quando o jogador decide o destino das caveiras:
-# FELIZ = jogou fora pela traseira (recusou o trem), TRISTE = alimentou a fornalha.
-enum Tipo { FELIZ, TRISTE }
+# Tela cheia mostrada no fim da partida:
+# FELIZ = jogou fora pela traseira (recusou o trem), TRISTE = alimentou a fornalha,
+# REVOLTA = todos ficaram furiosos e os passageiros pegaram o maquinista.
+enum Tipo { FELIZ, TRISTE, REVOLTA }
 
-# Folha com as artes dos finais, em células de 96 px; a ordem segue o enum Tipo.
+# Folha com as artes dos finais: grade de células de 384 px, 2 por linha; a ordem segue o enum Tipo.
 const FOLHA := preload("res://assets/Outros/finais.png")
-const TAMANHO_CELULA := 96
-const ESCALA_ARTE := 3.0
+const TAMANHO_CELULA := 384
+const CELULAS_POR_LINHA := 2
+# A arte é desenhada em 2x; exibida na metade do tamanho da célula (192 px × 1.5).
+const ESCALA_ARTE := 0.75
 
 const TITULOS := {
 	Tipo.FELIZ: "FIM DA LINHA",
 	Tipo.TRISTE: "PASSAGEM SÓ DE IDA",
+	Tipo.REVOLTA: "REVOLTA A BORDO",
 }
 const TEXTOS := {
 	Tipo.FELIZ: "Você recusou o banquete.\nO trem esfriou, os túneis acabaram, e o sol entrou pelas janelas.\nÀs vezes, ser maquinista é saber quando parar.",
 	Tipo.TRISTE: "O fogo comeu os ossos e pediu mais.\nVocê atendeu, como um bom maquinista atende os passageiros.\nO trem segue viagem para sempre, e o cardápio é você.",
+	Tipo.REVOLTA: "Ninguém foi atendido, e todo mundo perdeu a paciência.\nOs passageiros te alcançaram antes da próxima estação.\nO trem segue, mas agora o maquinista é só mais um do cardápio.",
 }
 const CORES := {
 	Tipo.FELIZ: Color(0.55, 0.9, 0.45),
 	Tipo.TRISTE: Color(1.0, 0.4, 0.2),
+	Tipo.REVOLTA: Color(0.9, 0.15, 0.2),
 }
 
 const DURACAO_FADE := 1.5
@@ -57,7 +63,9 @@ func _ready() -> void:
 	var arte := TextureRect.new()
 	var atlas := AtlasTexture.new()
 	atlas.atlas = FOLHA
-	atlas.region = Rect2(int(tipo) * TAMANHO_CELULA, 0, TAMANHO_CELULA, TAMANHO_CELULA)
+	var indice := int(tipo)
+	atlas.region = Rect2((indice % CELULAS_POR_LINHA) * TAMANHO_CELULA, (indice / CELULAS_POR_LINHA) * TAMANHO_CELULA,
+		TAMANHO_CELULA, TAMANHO_CELULA)
 	arte.texture = atlas
 	arte.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	arte.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
