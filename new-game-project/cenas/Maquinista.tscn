@@ -133,7 +133,7 @@ motion_mode = 1
 script = ExtResource("1_maq")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1556360099]
-scale = Vector2(2.055, 2.055)
+scale = Vector2(1.795, 1.795)
 shape = SubResource("CircleShape2D_0404l")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=757508176]

@@ -21,12 +21,26 @@ signal selecionada(estacao: Estacao)
 # Quanto tempo (segundos) o trem leva para chegar nesta estação após escolhida.
 @export var tempo_viagem = 500.0
 
+# Marcada como ponto de origem
+@export var originaria = false
+
+# Estações vizinhas (ligadas por trilho no mapa). Preenchidas pelo Mapa.
+var estacoes_vizinhas : Array[Estacao] = []
+
 var selecionado = false
 # Mouse em cima do círculo.
 var hover = false
 
 # Recompensa jogador quantidade pequena de pontos ao chegar na estação.
 var pontos_por_chegada = 10.0
+
+# Só é possível viajar para estações vizinhas.
+func viagem_possivel(destino : Estacao) -> bool:
+	if not estacoes_vizinhas.has(destino) :
+		print("Viajar para estações não vizinhas não é possível!")
+		return false
+	print("Viagem possível!")
+	return true
 
 func _ready() -> void:
 	if not Engine.is_editor_hint():
@@ -37,7 +51,7 @@ func _draw() -> void:
 		draw_circle(Vector2.ZERO, raio + 5.0, Color.WHITE)
 	draw_circle(Vector2.ZERO, raio, cor.lightened(0.3) if hover else cor)
 	var fonte = ThemeDB.fallback_font
-	draw_string(fonte, Vector2(-raio * 4.0, raio + 20.0), nome, HORIZONTAL_ALIGNMENT_CENTER, raio * 8.0, 14)
+	draw_string(fonte, Vector2(-raio * 4.0, raio + 20.0), nome, HORIZONTAL_ALIGNMENT_CENTER, raio * 8.0, 14, Color(0.13, 0.125, 0.2))
 
 func _mouse_em_cima(event: InputEvent) -> bool:
 	return make_input_local(event).position.length() <= raio

@@ -1,4 +1,5 @@
 extends Node2D
+class_name Passageiro
 
 @export var nome = ""
 @export var status = "VIVO"
@@ -32,37 +33,57 @@ func enfurece():
 	nivel_raiva = nivel_raiva * quantidade_fome
 	
 func atualiza_raiva() : 
-	nivel_raiva += 0.02
+	var chance = randi_range(0, 100)
+	if(chance > 85) :
+		nivel_raiva += 0.002
+		
 
 func atualiza_fome():
 	quantidade_fome = (quantidade_fome + 0.02) * nivel_raiva
 	
+func esta_faminto() -> bool:
+	return status != "MORTO" and necessidades.has("FAMINTO")
+
+# Come o alimento entregue pelo maquinista
+func alimenta(item : Item) -> void:
+	necessidades.erase("FAMINTO")
+	quantidade_fome = 0.0
+	contente = necessidades.is_empty()
+	item.queue_free()
+	print("Passageiro " + nome + " deixou de estar com fome!")
+	$fome.visible = false
+
+# Maquinista entra/sai da área de interação do passageiro
 func _on_body_entered(body : Node2D) -> void:
-	if body is Maquinista :
+	if body is Maquinista and not body.passageiros_proximos.has(self) :
+		body.passageiros_proximos.append(self)
 		print("Maquinista entrou na área do passageiro " + nome + "!")
-	if body is Item :
-		if(necessidades.has("FOME")) :
-			print("Comida entregue!")
-			necessidades.remove_at(necessidades.find("FOME"))
-			print("Passageiro " + nome + " deixou de estar com fome!")
+
+func _on_body_exited(body : Node2D) -> void:
+	if body is Maquinista :
+		body.passageiros_proximos.erase(self)
 
 func _ready() -> void:
 	add_child(timer)
 	$Area2D.body_entered.connect(_on_body_entered)
+	$Area2D.body_exited.connect(_on_body_exited)
 	aposta_nome()
 	aposta_necessidade()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	
-	if necessidades.has("FOME") :
+	if necessidades.has("FAMINTO") :
 		atualiza_fome()
 		
 	atualiza_raiva()
 	
-	#if(quantidade_fome >= 0.2) :
-	#	print("Passageiro " + nome + " está com muita fome!")
+	if(quantidade_fome >= 0.6) :
+		$fome.visible = true
 		
-	#if(nivel_raiva >= 0.5) :
-	#	print("Passageiro " + nome + " está muito irado!")
+	if(nivel_raiva >= 0.9) :
+		$puto.visible = false
+		$muito_puto.visible = true
+	elif(nivel_raiva >= 0.5) :
+		$puto.visible = true
 	pass
