@@ -12,7 +12,7 @@
 [ext_resource type="AudioStream" uid="uid://cyghqmwexq3hn" path="res://audios/271382__rudicangiotti__synthetic-steam-engine.wav" id="9_wgbst"]
 [ext_resource type="Script" uid="uid://f24i0wstodfo" path="res://scripts/caminho.gd" id="10_cam"]
 [ext_resource type="Script" uid="uid://c8367ehdu5pe8" path="res://scripts/spawner_passageiros.gd" id="11_spawn"]
-[ext_resource type="Script" path="res://scripts/trilhos.gd" id="trilhos_script"]
+[ext_resource type="Script" uid="uid://cep57ks7wxcce" path="res://scripts/trilhos.gd" id="trilhos_script"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_l0vsm"]
 size = Vector2(48, 166)
@@ -35,10 +35,12 @@ point_count = 1
 [node name="Principal" type="Node2D" unique_id=1716720350]
 script = ExtResource("1_0cijk")
 
-[node name="Trilhos" type="Node2D" parent="."]
+[node name="Trilhos" type="Node2D" parent="." unique_id=1848332910]
+position = Vector2(-1312, 0)
 script = ExtResource("trilhos_script")
 
 [node name="Vagao1" parent="." unique_id=988786515 instance=ExtResource("1_trem")]
+classe = "COZINHA"
 porta_direita_aberta = true
 
 [node name="forno" type="Area2D" parent="Vagao1" unique_id=1213485834]
