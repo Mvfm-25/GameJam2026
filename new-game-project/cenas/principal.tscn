@@ -25,6 +25,12 @@ _data = {
 }
 point_count = 2
 
+[sub_resource type="Curve2D" id="Curve2D_k1xmn"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 0, 0)
+}
+point_count = 1
+
 [node name="Principal" type="Node2D" unique_id=1716720350]
 script = ExtResource("1_0cijk")
 
@@ -233,8 +239,14 @@ com_passageiro = true
 [node name="Caminhos" type="Node2D" parent="." unique_id=1384920571]
 
 [node name="CorredorVagao2" type="Path2D" parent="Caminhos" unique_id=1938475620]
+position = Vector2(-56.75, 0)
 curve = SubResource("Curve2D_vagao2")
 script = ExtResource("10_cam")
+
+[node name="Caminho" type="Path2D" parent="Caminhos" unique_id=1808217491]
+curve = SubResource("Curve2D_k1xmn")
+script = ExtResource("10_cam")
+metadata/_custom_type_script = "uid://f24i0wstodfo"
 
 [node name="Mapa" parent="." unique_id=1290344715 instance=ExtResource("6_mapa")]
 
