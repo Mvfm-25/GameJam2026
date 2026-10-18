@@ -267,7 +267,9 @@ func _construir_servico(solo: TileMapLayer) -> void:
 	for x in range(1, fim_banheiros + 1):
 		for y in range(1, PROFUNDIDADE_CABINE + 1):
 			solo.set_cell(Vector2i(x, y), FONTE, PISOS["BANHEIRO"])
-	for x in range(fim_banheiros + 1, largura_tiles - 1):
+	# Até a última coluna (a da parede da ponta): o vão da porta que liga a cozinha
+	# à plataforma de ferro também tem o piso da cozinha.
+	for x in range(fim_banheiros + 1, largura_tiles):
 		for y in range(1, altura_tiles - 1):
 			solo.set_cell(Vector2i(x, y), FONTE, PISOS["COZINHA"])
 
