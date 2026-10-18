@@ -23,6 +23,13 @@ extends Node2D
 		porta_direita_aberta = valor
 		_construir()
 
+# Último vagão do trem: a plataforma da direita não tem ponte e fica toda cercada
+# pela grade. Por cima dela o maquinista joga as caveiras para fora do trem.
+@export var fim_do_trem := false:
+	set(valor):
+		fim_do_trem = valor
+		_construir()
+
 # Tamanho do vagão em tiles (cada tile ocupa TAMANHO_TILE px na tela).
 # 23 x 13 tiles = 736 x 416 px: vagão mais largo que alto.
 @export_range(5, 60) var largura_tiles := 23:
@@ -46,6 +53,9 @@ const TAMANHO_TILE := 32
 const TAMANHO_TILE_ATLAS := 64
 const FONTE := 0
 const ESPELHADO := TileSetAtlasSource.TRANSFORM_FLIP_H
+# Grade deitada de lado: o tile da grade de cima girado para ficar vertical, com o
+# corrimão do lado de fora (direita).
+const GRADE_LATERAL := TileSetAtlasSource.TRANSFORM_TRANSPOSE | TileSetAtlasSource.TRANSFORM_FLIP_H
 
 # Coordenadas no atlas. O desenho original tem a porta à esquerda,
 # então o lado direito usa os mesmos tiles espelhados.
@@ -345,6 +355,10 @@ func _colocar_plataforma(paredes: TileMapLayer, x: int, lado: int) -> void:
 	var interna := PLAT_DIR_INTERNA if lado > 0 else PLAT_ESQ_INTERNA
 	var borda := PLAT_DIR_BORDA if lado > 0 else PLAT_ESQ_BORDA
 
+	if lado > 0 and fim_do_trem:
+		_colocar_plataforma_traseira(paredes, x, grade_sup, grade_inf)
+		return
+
 	for y in range(grade_sup, grade_inf + 1):
 		var linha := PLAT_BORDA
 		if y == grade_sup:
@@ -385,6 +399,35 @@ func _colocar_plataforma(paredes: TileMapLayer, x: int, lado: int) -> void:
 		colisao.shape = forma
 		colisao.position = topo + Vector2(TAMANHO_TILE / 2.0, dy)
 		corpo.add_child(colisao)
+
+
+# Plataforma no fim do trem: sem abertura nem ponte, a borda de fora vira uma grade
+# lateral que fecha o cercado. Uma área em cima dela deixa o maquinista jogar
+# caveiras por cima da grade (ver BordaTraseira).
+func _colocar_plataforma_traseira(paredes: TileMapLayer, x: int, grade_sup: int, grade_inf: int) -> void:
+	var borda_x := x + 1
+	for y in range(grade_sup, grade_inf + 1):
+		var linha := PLAT_BORDA
+		if y == grade_sup:
+			linha = PLAT_GRADE_SUP
+		elif y == grade_inf:
+			linha = PLAT_GRADE_INF
+		_colocar(paredes, x, y, Vector2i(PLAT_DIR_INTERNA, linha), false)
+		if linha == PLAT_BORDA:
+			paredes.set_cell(Vector2i(borda_x, y), FONTE, Vector2i(PLAT_DIR_INTERNA, PLAT_GRADE_SUP), GRADE_LATERAL)
+		else:
+			_colocar(paredes, borda_x, y, Vector2i(PLAT_DIR_BORDA, linha), false)
+
+	if _passarela == null:
+		_passarela = Node2D.new()
+		_passarela.name = "Passarela"
+		add_child(_passarela)
+	var area := BordaTraseira.new()
+	area.name = "BordaTraseira"
+	_passarela.add_child(area)
+	# Cobre o chão da plataforma, entre as grades de cima e de baixo.
+	var topo := Vector2(x, grade_sup + 1) * TAMANHO_TILE
+	area.configurar(Rect2(topo, Vector2(2, grade_inf - grade_sup - 1) * TAMANHO_TILE))
 
 
 # Desenha uma coluna da linha PLAT_ABERTURA do atlas esticada para "linhas" tiles:

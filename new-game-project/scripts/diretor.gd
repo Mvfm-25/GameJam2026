@@ -26,6 +26,9 @@ const DESLOCAMENTO_POCA_CADEIRA := Vector2(-50, -6)
 # O trem é quem mata os passageiros, mas o jogador não sabe: cada caveira queimada
 # na fornalha o alimenta e aumenta a chance de levar mais alguém no túnel.
 const CHANCE_VITIMA_EXTRA_POR_CAVEIRA = 0.15
+# Quantos passageiros mostram a seta azul (em vez do ícone chifrado) com a caveira na mão.
+const SETA_AZUL_MIN := 1
+const SETA_AZUL_MAX := 2
 const CHANCE_VITIMA_EXTRA_MAX = 0.6
 
 const SOM_TUNEL := preload("res://audios/suspence2.wav")
@@ -165,11 +168,21 @@ func marca_morte(p : Passageiro, cadeira : Cadeira = null) :
 	coloca_sujeira(Sujeira.nova_sangue(), pos)
 	var caveira : Item = CENA_CAVEIRA.instantiate()
 	caveira.add_to_group(Item.GRUPO_CAVEIRAS)
+	caveira.seta_azul = sorteia_seta_azul()
 	add_child(caveira)
 	# Por cima da poça (que acabou de entrar antes do maquinista) e abaixo do maquinista.
 	if maquinista != null :
 		move_child(caveira, maquinista.get_index())
 	caveira.global_position = pos
+
+# Sorteia 1 ou 2 passageiros vivos para mostrarem a seta azul quando a caveira for carregada.
+func sorteia_seta_azul() -> Array[Passageiro] :
+	var vivos : Array[Passageiro] = []
+	for p in lista_passageiros :
+		if p.esta_vivo() :
+			vivos.append(p)
+	vivos.shuffle()
+	return vivos.slice(0, randi_range(SETA_AZUL_MIN, SETA_AZUL_MAX))
 
 # Caveiras a até 'raio' de 'pos'. A que está na mão do maquinista conta onde ele está.
 func caveiras_perto(pos : Vector2, raio : float) -> Array[Item] :
@@ -484,11 +497,12 @@ func _textura_lanterna() -> GradientTexture2D :
 	return textura
 
 func _process(delta: float) -> void:
-	
+	# Todos furiosos: a partida acaba e a viagem não avança mais.
 	if todos_com_raiva():
-		game_over()
-	return
-	
+		if not jogo_acabou :
+			game_over()
+		return
+
 	if not em_transito() :
 		tempo_parado += delta
 		_move_trem(false)

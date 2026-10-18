@@ -107,6 +107,7 @@ position = Vector2(2304, 0)
 classe = "SERVICO"
 porta_esquerda_aberta = true
 porta_direita_aberta = true
+fim_do_trem = true
 
 [node name="FornoCozinha" parent="Vagao4" unique_id=715590054 instance=ExtResource("4_k1xmn")]
 position = Vector2(496, 60)

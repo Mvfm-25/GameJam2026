@@ -64,6 +64,8 @@ var _recarga := 0.0
 # pede que ela seja jogada na fornalha: mostra o balão de fogo e vai ficando bravo.
 # Queimar a caveira acalma quem pedia; jogá-la pela porta traseira os enfurece.
 var sacrificial := false
+# Sorteado para a caveira que o maquinista carrega: mostra a seta azul em vez do chifrado.
+var _seta_azul := false
 @export var raio_caveira := 220.0
 @export var raiva_sacrificio := 0.01
 @export var alivio_sacrificio := 0.3
@@ -413,6 +415,7 @@ func _atualiza_sacrificial(diretor : Diretor) -> void:
 	for c in vistas :
 		if not c.testemunhas.has(self) :
 			c.testemunhas.append(self)
+	_seta_azul = vistas.any(func(c : Item) : return c.carregado and c.seta_azul.has(self))
 	var agora := not vistas.is_empty()
 	if agora == sacrificial :
 		return
@@ -439,7 +442,8 @@ func _atualiza_contente() -> void:
 # Um balão por vez: sacrifício > irado > fome > puto (raiva alta ou desconforto por estar imundo).
 func _atualiza_baloes() -> void:
 	var com_fome = necessidades.has("FAMINTO") and quantidade_fome >= 0.6
-	$sacrificio.visible = sacrificial
+	$sacrificio.visible = sacrificial and not _seta_azul
+	$seta_azul.visible = sacrificial and _seta_azul
 	$muito_puto.visible = not sacrificial and irado
 	$fome.visible = not sacrificial and not irado and com_fome
 	$puto.visible = not sacrificial and not irado and not com_fome and (nivel_raiva >= LIMIAR_PUTO or imundo)
@@ -459,6 +463,7 @@ func morre() -> void:
 	irado = false
 	imundo = false
 	sacrificial = false
+	_seta_azul = false
 	necessidades.clear()
 	timer.stop()
 	set_process(false)

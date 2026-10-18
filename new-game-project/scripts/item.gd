@@ -28,6 +28,9 @@ const DURACAO_SUMICO := 0.25
 # Passageiros que viram esta caveira e pediram o sacrifício; reagem quando ela
 # for queimada ou jogada fora, mesmo que estejam longe na hora.
 var testemunhas : Array[Passageiro] = []
+# Passageiros sorteados (1 ou 2) que mostram a seta azul em vez do ícone chifrado
+# enquanto o maquinista carrega esta caveira.
+var seta_azul : Array[Passageiro] = []
 
 # Se o item está nas mãos do maquinista (some do chão).
 var carregado := false

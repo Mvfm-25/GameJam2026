@@ -27,17 +27,29 @@ var limpando := false
 # Sujeira ou vaso entupido sendo limpo (os dois têm limpar()).
 var _alvo_limpeza : Node2D = null
 
+# Plataforma do fim do trem em que o maquinista está (ela se registra aqui), ou null.
+var borda_traseira : BordaTraseira = null
+
+# Carregando uma caveira na plataforma do fim do trem: joga a caveira por cima da grade.
+func joga_pela_borda(borda : BordaTraseira) -> void:
+	_arremessa_caveira(borda.ponto_fora(global_position))
+	print("Jogou a caveira por cima da grade!")
+
 # Carregando uma caveira perto da porta traseira: abre a porta e joga a caveira fora do trem.
 func joga_pela_porta(porta : Porta) -> void:
+	if not porta.aberta :
+		porta.interage()
+	_arremessa_caveira(porta.ponto_fora())
+	print("Jogou a caveira pela porta traseira!")
+
+# Tira a caveira das mãos e a joga até 'destino'; quem pediu o sacrifício fica furioso.
+func _arremessa_caveira(destino : Vector2) -> void:
 	var item := itemAtual
 	itemAtual = null
 	carregando = false
 	_atualiza_sprite()
 	itens_proximos.erase(item)
-	if not porta.aberta :
-		porta.interage()
-	item.ser_arremessado(global_position, porta.ponto_fora())
-	print("Jogou " + item.nome + " pela porta traseira!")
+	item.ser_arremessado(global_position, destino)
 	var diretor := get_tree().current_scene as Diretor
 	if diretor != null :
 		diretor.caveira_descartada(item)
@@ -165,7 +177,9 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("interagir"):
 		if carregando :
 			var traseira := _porta_traseira_proxima()
-			if itemAtual.eh_caveira() and traseira != null :
+			if itemAtual.eh_caveira() and borda_traseira != null :
+				joga_pela_borda(borda_traseira)
+			elif itemAtual.eh_caveira() and traseira != null :
 				joga_pela_porta(traseira)
 			else :
 				solta_item()
