@@ -64,7 +64,7 @@ const ESTILOS_CABECA := 4
 const ESTILOS_OLHOS := 5
 const ESTILOS_BOCA := 5
 const MODELOS_CHAPEU := 6
-const CHANCE_CHAPEU := 0.5
+const CHANCE_CHAPEU := 0.0 # Chapéus desligados por enquanto (era 0.5).
 
 # Cores de cabelo sorteadas no lugar do verde da folha de cabeças.
 const TROCA_CABELO := preload("res://shaders/troca_cabelo.gdshader")
