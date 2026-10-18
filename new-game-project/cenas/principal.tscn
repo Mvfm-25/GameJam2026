@@ -113,6 +113,9 @@ position = Vector2(608, 60)
 position = Vector2(448, 358)
 
 [node name="Maquinista" parent="." unique_id=1473250640 instance=ExtResource("2_maq")]
+light_mask = 4
+visibility_layer = 4
+z_index = 5
 position = Vector2(120, 198)
 
 [node name="Passageiros" type="Node2D" parent="." unique_id=1268757404]

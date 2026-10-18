@@ -29,6 +29,9 @@ const QUADRO_RECOLHIDO := 3
 
 # A outra porta da mesma parede: as duas selecionam e abrem juntas.
 var parceira: Porta
+# Porta da parede direita: o trem anda para a esquerda, então ela dá para trás do trem.
+# Só existe fechada no último vagão; por ela o maquinista pode jogar caveiras fora.
+var traseira := false
 
 var aberta := false
 var _ocupada := false
@@ -49,6 +52,7 @@ var _passagem: Area2D
 func configurar(x: int, inicio: int, tamanho: int, espelhar: bool) -> void:
 	_tamanho = tamanho
 	_espelhar = espelhar
+	traseira = espelhar
 	position = Vector2(x, inicio - 1) * TAMANHO_TILE
 	_construir()
 
@@ -122,6 +126,13 @@ func _construir() -> void:
 	forma_passagem.position = _colisao_vao.position
 	_passagem.add_child(forma_passagem)
 	add_child(_passagem)
+
+
+# Ponto do lado de fora da porta, na altura do meio do vão (para onde as coisas são jogadas).
+func ponto_fora() -> Vector2:
+	var direcao := 1.0 if _espelhar else -1.0
+	var altura_vao := TAMANHO_TILE * _tamanho
+	return to_global(Vector2(TAMANHO_TILE / 2.0 + direcao * TAMANHO_TILE * 4, TAMANHO_TILE + altura_vao / 2.0))
 
 
 func _retangulo(tamanho: Vector2) -> RectangleShape2D:
