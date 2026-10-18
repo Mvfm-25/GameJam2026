@@ -186,7 +186,8 @@ func _alvo_interacao() -> Node2D :
 			melhor = alvo
 	return melhor
 
-# Tecla de interagir pega o item mais próximo ou solta o que está carregando
+# Espaço (interagir) faz tudo: solta ou joga o que carrega, pega o item mais próximo,
+# usa a porta/objeto mais próximo e, se não houver nada disso, limpa a sujeira ou o vaso por perto.
 func _unhandled_input(event: InputEvent) -> void:
 	# Enquanto varre, o jogador não faz mais nada.
 	if limpando :
@@ -206,8 +207,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			var alvo := _alvo_interacao()
 			if alvo != null :
 				alvo.interage()
-	elif event.is_action_pressed("limpar"):
-		limpa()
+			else :
+				limpa()
 
 # Direção atual do sprite: "frente", "de_costas", "direita" ou "esquerda"
 var _direcao_sprite := "frente"

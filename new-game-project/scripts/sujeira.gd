@@ -78,7 +78,7 @@ func _ao_sair_area(body: Node2D) -> void:
 		_maquinista = null
 		_define_destaque(false)
 
-# Só a sujeira mais próxima ganha o contorno, que é a que a tecla de limpar remove.
+# Só a sujeira mais próxima ganha o contorno, que é a que a tecla de interagir (espaço) limpa.
 func _process(_delta: float) -> void:
 	if _maquinista == null:
 		return
