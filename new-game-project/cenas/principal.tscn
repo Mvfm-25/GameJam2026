@@ -5,8 +5,8 @@
 [ext_resource type="PackedScene" uid="uid://crr8571fx8t3n" path="res://cenas/Maquinista.tscn" id="2_maq"]
 [ext_resource type="PackedScene" uid="uid://cxa1g1rqaebyx" path="res://cenas/passageiro.tscn" id="3_42xuo"]
 [ext_resource type="Script" uid="uid://cwgwam7do7f5e" path="res://scripts/passageiro.gd" id="4_0404l"]
-[ext_resource type="Script" path="res://cenas/forno.gd" id="4_eewb4"]
-[ext_resource type="Script" path="res://cenas/cozinha.gd" id="4_k1xmn"]
+[ext_resource type="Script" uid="uid://d0h8bxrfw350h" path="res://scripts/forno.gd" id="4_eewb4"]
+[ext_resource type="Script" uid="uid://bdwgqseqwqf6q" path="res://scripts/cozinha.gd" id="4_k1xmn"]
 [ext_resource type="PackedScene" uid="uid://cjq7h812stu2o" path="res://cenas/deco.tscn" id="5_ff0xt"]
 [ext_resource type="PackedScene" uid="uid://c7mapa0trem01" path="res://cenas/mapa.tscn" id="6_mapa"]
 [ext_resource type="PackedScene" uid="uid://2ke7qr5pifkm" path="res://cenas/item.tscn" id="8_djk5k"]
@@ -22,7 +22,7 @@ size = Vector2(115, 33)
 
 [sub_resource type="Curve2D" id="Curve2D_vagao2"]
 _data = {
-"points": PackedVector2Array(0, 0, 0, 0, 505, 141, 0, 0, 0, 0, 945, 141)
+"points": PackedVector2Array(0, 0, 0, 0, 768, 259, 0, 0, 0, 0, 1184, 259)
 }
 point_count = 2
 
@@ -33,7 +33,7 @@ script = ExtResource("1_0cijk")
 porta_direita_aberta = true
 
 [node name="forno" type="Area2D" parent="Vagao1" unique_id=1213485834]
-position = Vector2(42, 209)
+position = Vector2(42, 305)
 collision_mask = 255
 script = ExtResource("4_eewb4")
 
@@ -45,150 +45,246 @@ shape = SubResource("RectangleShape2D_l0vsm")
 script = ExtResource("4_k1xmn")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Vagao1/cozinha" unique_id=1980927349]
-position = Vector2(391.5, 47.5)
+position = Vector2(455.5, 47.5)
 shape = SubResource("RectangleShape2D_f3m2v")
 
 [node name="geladeira" type="Node2D" parent="Vagao1" unique_id=190965248]
-position = Vector2(349, 230)
+position = Vector2(413, 454)
 
 [node name="preparado" type="Node2D" parent="Vagao1" unique_id=41486205]
-position = Vector2(390, 48)
+position = Vector2(454, 48)
 
 [node name="Vagao2" parent="." unique_id=1731480753 instance=ExtResource("1_trem")]
-position = Vector2(480, 0)
+position = Vector2(704, 0)
 porta_esquerda_aberta = true
 porta_direita_aberta = true
 
 [node name="Vagao3" parent="." unique_id=1844564439 instance=ExtResource("1_trem")]
-position = Vector2(960, 0)
+position = Vector2(1408, 0)
 porta_esquerda_aberta = true
 
 [node name="Maquinista" parent="." unique_id=1473250640 instance=ExtResource("2_maq")]
-position = Vector2(120, 150)
+position = Vector2(120, 246)
 
 [node name="Passageiros" type="Node2D" parent="." unique_id=1268757404]
 
-[node name="Passageiro" parent="Passageiros" unique_id=1947273246 instance=ExtResource("3_42xuo")]
-position = Vector2(611, 23)
+[node name="Passageiro" parent="Passageiros" unique_id=1165917688 instance=ExtResource("3_42xuo")]
+position = Vector2(826, 59.35)
 script = ExtResource("4_0404l")
 cadeira = NodePath("../../Decos/Cadeira1")
 
-[node name="Passageiro7" parent="Passageiros" unique_id=1209110748 instance=ExtResource("3_42xuo")]
-position = Vector2(611, 72)
+[node name="Passageiro2" parent="Passageiros" unique_id=1691670265 instance=ExtResource("3_42xuo")]
+position = Vector2(967, 59.35)
 script = ExtResource("4_0404l")
 cadeira = NodePath("../../Decos/Cadeira2")
 
-[node name="Passageiro5" parent="Passageiros" unique_id=1649335550 instance=ExtResource("3_42xuo")]
-position = Vector2(893, 22)
+[node name="Passageiro3" parent="Passageiros" unique_id=1816793652 instance=ExtResource("3_42xuo")]
+position = Vector2(1108, 59.35)
 script = ExtResource("4_0404l")
 cadeira = NodePath("../../Decos/Cadeira3")
 
-[node name="Passageiro3" parent="Passageiros" unique_id=455356552 instance=ExtResource("3_42xuo")]
-position = Vector2(609, 210)
+[node name="Passageiro4" parent="Passageiros" unique_id=1945132741 instance=ExtResource("3_42xuo")]
+position = Vector2(826, 103.35)
 script = ExtResource("4_0404l")
 cadeira = NodePath("../../Decos/Cadeira4")
 
-[node name="Passageiro10" parent="Passageiros" unique_id=1891015230 instance=ExtResource("3_42xuo")]
-position = Vector2(609, 259)
+[node name="Passageiro5" parent="Passageiros" unique_id=123554545 instance=ExtResource("3_42xuo")]
+position = Vector2(967, 103.35)
 script = ExtResource("4_0404l")
 cadeira = NodePath("../../Decos/Cadeira5")
 
-[node name="Passageiro6" parent="Passageiros" unique_id=1293564904 instance=ExtResource("3_42xuo")]
-position = Vector2(891, 209)
+[node name="Passageiro6" parent="Passageiros" unique_id=1229730264 instance=ExtResource("3_42xuo")]
+position = Vector2(1108, 103.35)
 script = ExtResource("4_0404l")
 cadeira = NodePath("../../Decos/Cadeira6")
 
-[node name="Passageiro11" parent="Passageiros" unique_id=266971181 instance=ExtResource("3_42xuo")]
-position = Vector2(892, 259)
+[node name="Passageiro7" parent="Passageiros" unique_id=2025539914 instance=ExtResource("3_42xuo")]
+position = Vector2(826, 147.35)
 script = ExtResource("4_0404l")
 cadeira = NodePath("../../Decos/Cadeira7")
 
-[node name="Passageiro4" parent="Passageiros" unique_id=457670639 instance=ExtResource("3_42xuo")]
-position = Vector2(750, 210)
+[node name="Passageiro8" parent="Passageiros" unique_id=457909479 instance=ExtResource("3_42xuo")]
+position = Vector2(967, 147.35)
 script = ExtResource("4_0404l")
 cadeira = NodePath("../../Decos/Cadeira8")
 
-[node name="Passageiro12" parent="Passageiros" unique_id=480119354 instance=ExtResource("3_42xuo")]
-position = Vector2(750, 259)
+[node name="Passageiro9" parent="Passageiros" unique_id=943749404 instance=ExtResource("3_42xuo")]
+position = Vector2(1108, 147.35)
 script = ExtResource("4_0404l")
 cadeira = NodePath("../../Decos/Cadeira9")
 
-[node name="Passageiro9" parent="Passageiros" unique_id=573432624 instance=ExtResource("3_42xuo")]
-position = Vector2(894, 72)
+[node name="Passageiro10" parent="Passageiros" unique_id=318979168 instance=ExtResource("3_42xuo")]
+position = Vector2(826, 191.35)
 script = ExtResource("4_0404l")
 cadeira = NodePath("../../Decos/Cadeira10")
 
-[node name="Passageiro2" parent="Passageiros" unique_id=2109555587 instance=ExtResource("3_42xuo")]
-position = Vector2(752, 23)
+[node name="Passageiro11" parent="Passageiros" unique_id=948810243 instance=ExtResource("3_42xuo")]
+position = Vector2(967, 191.35)
 script = ExtResource("4_0404l")
 cadeira = NodePath("../../Decos/Cadeira11")
 
-[node name="Passageiro8" parent="Passageiros" unique_id=1548718433 instance=ExtResource("3_42xuo")]
-position = Vector2(752, 72)
+[node name="Passageiro12" parent="Passageiros" unique_id=1743439120 instance=ExtResource("3_42xuo")]
+position = Vector2(1108, 191.35)
 script = ExtResource("4_0404l")
 cadeira = NodePath("../../Decos/Cadeira12")
+
+[node name="Passageiro13" parent="Passageiros" unique_id=1847571055 instance=ExtResource("3_42xuo")]
+position = Vector2(826, 299.35)
+script = ExtResource("4_0404l")
+cadeira = NodePath("../../Decos/Cadeira13")
+
+[node name="Passageiro14" parent="Passageiros" unique_id=147982208 instance=ExtResource("3_42xuo")]
+position = Vector2(967, 299.35)
+script = ExtResource("4_0404l")
+cadeira = NodePath("../../Decos/Cadeira14")
+
+[node name="Passageiro15" parent="Passageiros" unique_id=2048367895 instance=ExtResource("3_42xuo")]
+position = Vector2(1108, 299.35)
+script = ExtResource("4_0404l")
+cadeira = NodePath("../../Decos/Cadeira15")
+
+[node name="Passageiro16" parent="Passageiros" unique_id=430911510 instance=ExtResource("3_42xuo")]
+position = Vector2(826, 343.35)
+script = ExtResource("4_0404l")
+cadeira = NodePath("../../Decos/Cadeira16")
+
+[node name="Passageiro17" parent="Passageiros" unique_id=1396211365 instance=ExtResource("3_42xuo")]
+position = Vector2(967, 343.35)
+script = ExtResource("4_0404l")
+cadeira = NodePath("../../Decos/Cadeira17")
+
+[node name="Passageiro18" parent="Passageiros" unique_id=727851914 instance=ExtResource("3_42xuo")]
+position = Vector2(1108, 343.35)
+script = ExtResource("4_0404l")
+cadeira = NodePath("../../Decos/Cadeira18")
+
+[node name="Passageiro19" parent="Passageiros" unique_id=1669386164 instance=ExtResource("3_42xuo")]
+position = Vector2(826, 387.35)
+script = ExtResource("4_0404l")
+cadeira = NodePath("../../Decos/Cadeira19")
+
+[node name="Passageiro20" parent="Passageiros" unique_id=1073120126 instance=ExtResource("3_42xuo")]
+position = Vector2(967, 387.35)
+script = ExtResource("4_0404l")
+cadeira = NodePath("../../Decos/Cadeira20")
+
+[node name="Passageiro21" parent="Passageiros" unique_id=243008906 instance=ExtResource("3_42xuo")]
+position = Vector2(1108, 387.35)
+script = ExtResource("4_0404l")
+cadeira = NodePath("../../Decos/Cadeira21")
+
+[node name="Passageiro22" parent="Passageiros" unique_id=700043495 instance=ExtResource("3_42xuo")]
+position = Vector2(826, 431.35)
+script = ExtResource("4_0404l")
+cadeira = NodePath("../../Decos/Cadeira22")
+
+[node name="Passageiro23" parent="Passageiros" unique_id=938760326 instance=ExtResource("3_42xuo")]
+position = Vector2(967, 431.35)
+script = ExtResource("4_0404l")
+cadeira = NodePath("../../Decos/Cadeira23")
+
+[node name="Passageiro24" parent="Passageiros" unique_id=1174529464 instance=ExtResource("3_42xuo")]
+position = Vector2(1108, 431.35)
+script = ExtResource("4_0404l")
+cadeira = NodePath("../../Decos/Cadeira24")
 
 [node name="Decos" type="Node2D" parent="." unique_id=1142493343]
 
 [node name="Deco" parent="Decos" unique_id=1767330768 instance=ExtResource("5_ff0xt")]
-position = Vector2(1044, 237.99998)
+position = Vector2(1476, 440)
 
 [node name="Deco2" parent="Decos" unique_id=1247764334 instance=ExtResource("5_ff0xt")]
-position = Vector2(1135.0001, 237.00002)
+position = Vector2(1567, 440)
 
 [node name="Deco3" parent="Decos" unique_id=772861847 instance=ExtResource("5_ff0xt")]
-position = Vector2(1252, 237)
+position = Vector2(1684, 440)
 
 [node name="Deco4" parent="Decos" unique_id=1503685042 instance=ExtResource("5_ff0xt")]
-position = Vector2(1337.0001, 238)
+position = Vector2(1769, 440)
 
 [node name="Deco5" parent="Decos" unique_id=1691847347 instance=ExtResource("5_ff0xt")]
-position = Vector2(1044, 59.999985)
+position = Vector2(1476, 72)
 
 [node name="Deco6" parent="Decos" unique_id=838197673 instance=ExtResource("5_ff0xt")]
-position = Vector2(1127.0001, 61)
+position = Vector2(1567, 72)
 
 [node name="Deco7" parent="Decos" unique_id=530682975 instance=ExtResource("5_ff0xt")]
-position = Vector2(1253, 61)
+position = Vector2(1684, 72)
 
 [node name="Deco8" parent="Decos" unique_id=916942998 instance=ExtResource("5_ff0xt")]
-position = Vector2(1340.0001, 61)
+position = Vector2(1769, 72)
 
-[node name="Cadeira1" parent="Decos" unique_id=795425564 instance=ExtResource("5_ff0xt")]
-position = Vector2(620.1, 36.65)
+[node name="Cadeira1" parent="Decos" unique_id=205435271 instance=ExtResource("5_ff0xt")]
+position = Vector2(835.1, 73)
 
-[node name="Cadeira2" parent="Decos" unique_id=423946139 instance=ExtResource("5_ff0xt")]
-position = Vector2(620.1, 85.65)
+[node name="Cadeira2" parent="Decos" unique_id=1297148340 instance=ExtResource("5_ff0xt")]
+position = Vector2(976.1, 73)
 
-[node name="Cadeira3" parent="Decos" unique_id=947876999 instance=ExtResource("5_ff0xt")]
-position = Vector2(902.1, 35.65)
+[node name="Cadeira3" parent="Decos" unique_id=642042596 instance=ExtResource("5_ff0xt")]
+position = Vector2(1117.1, 73)
 
-[node name="Cadeira4" parent="Decos" unique_id=1497871144 instance=ExtResource("5_ff0xt")]
-position = Vector2(618.1, 223.65)
+[node name="Cadeira4" parent="Decos" unique_id=1406528938 instance=ExtResource("5_ff0xt")]
+position = Vector2(835.1, 117)
 
-[node name="Cadeira5" parent="Decos" unique_id=203694312 instance=ExtResource("5_ff0xt")]
-position = Vector2(618.1, 272.65)
+[node name="Cadeira5" parent="Decos" unique_id=773987054 instance=ExtResource("5_ff0xt")]
+position = Vector2(976.1, 117)
 
-[node name="Cadeira6" parent="Decos" unique_id=255555737 instance=ExtResource("5_ff0xt")]
-position = Vector2(900.1, 222.65)
+[node name="Cadeira6" parent="Decos" unique_id=1773102237 instance=ExtResource("5_ff0xt")]
+position = Vector2(1117.1, 117)
 
-[node name="Cadeira7" parent="Decos" unique_id=1863673106 instance=ExtResource("5_ff0xt")]
-position = Vector2(901.1, 272.65)
+[node name="Cadeira7" parent="Decos" unique_id=1664825899 instance=ExtResource("5_ff0xt")]
+position = Vector2(835.1, 161)
 
-[node name="Cadeira8" parent="Decos" unique_id=1250797845 instance=ExtResource("5_ff0xt")]
-position = Vector2(759.1, 223.65)
+[node name="Cadeira8" parent="Decos" unique_id=1353119738 instance=ExtResource("5_ff0xt")]
+position = Vector2(976.1, 161)
 
-[node name="Cadeira9" parent="Decos" unique_id=302142728 instance=ExtResource("5_ff0xt")]
-position = Vector2(759.1, 272.65)
+[node name="Cadeira9" parent="Decos" unique_id=184745437 instance=ExtResource("5_ff0xt")]
+position = Vector2(1117.1, 161)
 
-[node name="Cadeira10" parent="Decos" unique_id=885310972 instance=ExtResource("5_ff0xt")]
-position = Vector2(903.1, 85.65)
+[node name="Cadeira10" parent="Decos" unique_id=1125771919 instance=ExtResource("5_ff0xt")]
+position = Vector2(835.1, 205)
 
-[node name="Cadeira11" parent="Decos" unique_id=1351527726 instance=ExtResource("5_ff0xt")]
-position = Vector2(761.1, 36.65)
+[node name="Cadeira11" parent="Decos" unique_id=1157560268 instance=ExtResource("5_ff0xt")]
+position = Vector2(976.1, 205)
 
-[node name="Cadeira12" parent="Decos" unique_id=224551738 instance=ExtResource("5_ff0xt")]
-position = Vector2(761.1, 85.65)
+[node name="Cadeira12" parent="Decos" unique_id=1547259148 instance=ExtResource("5_ff0xt")]
+position = Vector2(1117.1, 205)
+
+[node name="Cadeira13" parent="Decos" unique_id=610015455 instance=ExtResource("5_ff0xt")]
+position = Vector2(835.1, 313)
+
+[node name="Cadeira14" parent="Decos" unique_id=556970072 instance=ExtResource("5_ff0xt")]
+position = Vector2(976.1, 313)
+
+[node name="Cadeira15" parent="Decos" unique_id=287995817 instance=ExtResource("5_ff0xt")]
+position = Vector2(1117.1, 313)
+
+[node name="Cadeira16" parent="Decos" unique_id=197593038 instance=ExtResource("5_ff0xt")]
+position = Vector2(835.1, 357)
+
+[node name="Cadeira17" parent="Decos" unique_id=993044588 instance=ExtResource("5_ff0xt")]
+position = Vector2(976.1, 357)
+
+[node name="Cadeira18" parent="Decos" unique_id=434434252 instance=ExtResource("5_ff0xt")]
+position = Vector2(1117.1, 357)
+
+[node name="Cadeira19" parent="Decos" unique_id=123330787 instance=ExtResource("5_ff0xt")]
+position = Vector2(835.1, 401)
+
+[node name="Cadeira20" parent="Decos" unique_id=1526454585 instance=ExtResource("5_ff0xt")]
+position = Vector2(976.1, 401)
+
+[node name="Cadeira21" parent="Decos" unique_id=2075562593 instance=ExtResource("5_ff0xt")]
+position = Vector2(1117.1, 401)
+
+[node name="Cadeira22" parent="Decos" unique_id=410427830 instance=ExtResource("5_ff0xt")]
+position = Vector2(835.1, 445)
+
+[node name="Cadeira23" parent="Decos" unique_id=1829677597 instance=ExtResource("5_ff0xt")]
+position = Vector2(976.1, 445)
+
+[node name="Cadeira24" parent="Decos" unique_id=1883743869 instance=ExtResource("5_ff0xt")]
+position = Vector2(1117.1, 445)
 
 [node name="Caminhos" type="Node2D" parent="." unique_id=1384920571]
 
@@ -197,7 +293,6 @@ curve = SubResource("Curve2D_vagao2")
 script = ExtResource("10_cam")
 
 [node name="Mapa" parent="." unique_id=1290344715 instance=ExtResource("6_mapa")]
-visible = false
 
 [node name="TrilhosCortado1" type="AudioStreamPlayer" parent="." unique_id=2102914520]
 stream = ExtResource("8_sflf3")
@@ -205,24 +300,24 @@ volume_db = 2.0
 autoplay = true
 
 [node name="271382RudicangiottiSyntheticSteamEngine" type="AudioStreamPlayer2D" parent="." unique_id=1361654464]
-position = Vector2(121, 153)
+position = Vector2(121, 249)
 stream = ExtResource("9_wgbst")
 volume_db = 15.0
 autoplay = true
 max_distance = 648.0
 
 [node name="comida1" parent="." unique_id=1412582290 instance=ExtResource("8_djk5k")]
-position = Vector2(398.00003, 230.00002)
+position = Vector2(462, 454)
 nome = "comida1"
 classe = "Comida"
 
 [node name="comidaPreparada" parent="." unique_id=2047840127 instance=ExtResource("8_djk5k")]
-position = Vector2(398.00003, 230.00002)
+position = Vector2(462, 454)
 nome = "preparada"
 classe = "ComidaP"
 
 [node name="comida2" parent="." unique_id=1447504206 instance=ExtResource("8_djk5k")]
-position = Vector2(350, 230)
+position = Vector2(414, 454)
 nome = "comida2"
 classe = "Comida"
 
