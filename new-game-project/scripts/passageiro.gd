@@ -165,15 +165,27 @@ var _tempo_chilique := 0.0
 var _visual : Node2D
 var _fase_passo := 0.0
 
+# Rosto (cabeça, olhos e boca) e o estilo de cada peça, para trocar de pose ao andar.
+# Poses da folha: 0 = de frente, 1 = olhando para a esquerda, 2 = olhando para a direita.
+var _rosto : Array[Sprite2D] = []
+var _estilos_rosto : Array[int] = []
+var _texturas_rosto : Array[Texture2D] = []
+var _pose_sentado := 0
+var _pose := -1
+var _posicao_anterior := Vector2.ZERO
+
 var corpo = "Normal"
 var tem_chapeu = false
 var cor_cabelo : Color
 
-func _camada(textura: Texture2D, indice: int, tamanho: int, posicao := Vector2.ZERO) -> Sprite2D:
+func _regiao(textura: Texture2D, indice: int, tamanho: int) -> Rect2:
 	var colunas := textura.get_width() / tamanho
+	return Rect2((indice % colunas) * tamanho, (indice / colunas) * tamanho, tamanho, tamanho)
+
+func _camada(textura: Texture2D, indice: int, tamanho: int, posicao := Vector2.ZERO) -> Sprite2D:
 	var atlas := AtlasTexture.new()
 	atlas.atlas = textura
-	atlas.region = Rect2((indice % colunas) * tamanho, (indice / colunas) * tamanho, tamanho, tamanho)
+	atlas.region = _regiao(textura, indice, tamanho)
 	var camada := Sprite2D.new()
 	camada.texture = atlas
 	camada.centered = false
@@ -198,20 +210,51 @@ func aposta_aparencia() :
 	visual.add_child(camadas)
 
 	var pose := randi() % POSES
+	_pose_sentado = pose
+	_pose = pose
 	corpo = CORPOS.keys().pick_random()
 	var dados : Dictionary = CORPOS[corpo]
 	camadas.add_child(_camada(dados["folha"], randi() % int(dados["cores"]), CELULA))
-	var cabeca := _camada(CABECAS, (randi() % ESTILOS_CABECA) * POSES + pose, CELULA)
+	var estilo_cabeca := randi() % ESTILOS_CABECA
+	var cabeca := _camada(CABECAS, estilo_cabeca * POSES + pose, CELULA)
 	cor_cabelo = CORES_CABELO.pick_random()
 	cabeca.material = ShaderMaterial.new()
 	cabeca.material.shader = TROCA_CABELO
 	cabeca.material.set_shader_parameter("cor_cabelo", cor_cabelo)
 	camadas.add_child(cabeca)
-	camadas.add_child(_camada(OLHOS, (randi() % ESTILOS_OLHOS) * POSES + pose, CELULA))
-	camadas.add_child(_camada(BOCAS, (randi() % ESTILOS_BOCA) * POSES + pose, CELULA))
+	var estilo_olhos := randi() % ESTILOS_OLHOS
+	var olhos := _camada(OLHOS, estilo_olhos * POSES + pose, CELULA)
+	camadas.add_child(olhos)
+	var estilo_boca := randi() % ESTILOS_BOCA
+	var boca := _camada(BOCAS, estilo_boca * POSES + pose, CELULA)
+	camadas.add_child(boca)
+	_rosto = [cabeca, olhos, boca]
+	_estilos_rosto = [estilo_cabeca, estilo_olhos, estilo_boca]
+	_texturas_rosto = [CABECAS, OLHOS, BOCAS]
 	tem_chapeu = randf() < CHANCE_CHAPEU
 	if tem_chapeu :
 		camadas.add_child(_camada(CHAPEUS, randi() % MODELOS_CHAPEU, TAMANHO_CHAPEU, POSICAO_CHAPEU))
+
+# Vira o rosto para onde está indo: esquerda/direita pelo lado, de frente subindo ou descendo.
+# Parado (sentado ou esperando na fila), volta à pose sorteada ao sentar.
+func _atualiza_pose() -> void:
+	var movimento := global_position - _posicao_anterior
+	_posicao_anterior = global_position
+	var nova := _pose_sentado
+	if estado == Estado.ANDANDO or estado == Estado.NA_FILA :
+		if movimento.length_squared() > 0.0001 :
+			if absf(movimento.x) > absf(movimento.y) :
+				nova = 1 if movimento.x < 0.0 else 2
+			else :
+				nova = 0
+		else :
+			nova = _pose
+	if nova == _pose or _rosto.is_empty() :
+		return
+	_pose = nova
+	for i in _rosto.size() :
+		var atlas := _rosto[i].texture as AtlasTexture
+		atlas.region = _regiao(_texturas_rosto[i], _estilos_rosto[i] * POSES + nova, CELULA)
 
 # Inclina o corpo enquanto anda; sentado, volta suavemente à posição normal.
 func _anima_andar(delta : float) -> void:
@@ -667,6 +710,7 @@ func _process(delta: float) -> void:
 		_anda(delta)
 	elif estado == Estado.NA_FILA :
 		_anda_na_fila(delta)
+	_atualiza_pose()
 	_anima_andar(delta)
 	if not esta_vivo() :
 		return
