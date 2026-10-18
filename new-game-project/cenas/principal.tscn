@@ -4,19 +4,20 @@
 [ext_resource type="PackedScene" uid="uid://biwta2ryc83b4" path="res://cenas/vagao.tscn" id="1_trem"]
 [ext_resource type="PackedScene" uid="uid://crr8571fx8t3n" path="res://cenas/Maquinista.tscn" id="2_maq"]
 [ext_resource type="PackedScene" uid="uid://cxa1g1rqaebyx" path="res://cenas/passageiro.tscn" id="3_42xuo"]
-[ext_resource type="Script" uid="uid://30b5cwqilks" path="res://cenas/area_coleta.gd" id="3_k1xmn"]
 [ext_resource type="Script" uid="uid://cwgwam7do7f5e" path="res://scripts/passageiro.gd" id="4_0404l"]
 [ext_resource type="Script" uid="uid://d0h8bxrfw350h" path="res://cenas/forno.gd" id="4_eewb4"]
+[ext_resource type="Script" uid="uid://bdwgqseqwqf6q" path="res://cenas/cozinha.gd" id="4_k1xmn"]
 [ext_resource type="PackedScene" uid="uid://cjq7h812stu2o" path="res://cenas/deco.tscn" id="5_ff0xt"]
 [ext_resource type="PackedScene" uid="uid://c7mapa0trem01" path="res://cenas/mapa.tscn" id="6_mapa"]
 [ext_resource type="PackedScene" uid="uid://2ke7qr5pifkm" path="res://cenas/item.tscn" id="8_djk5k"]
 [ext_resource type="AudioStream" uid="uid://boqts0js6cve4" path="res://audios/trilhos cortado1.mp3" id="8_sflf3"]
 [ext_resource type="AudioStream" uid="uid://cyghqmwexq3hn" path="res://audios/271382__rudicangiotti__synthetic-steam-engine.wav" id="9_wgbst"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_47te7"]
-
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_l0vsm"]
-size = Vector2(34, 70)
+size = Vector2(48, 166)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_f3m2v"]
+size = Vector2(115, 33)
 
 [node name="Principal" type="Node2D" unique_id=1716720350]
 script = ExtResource("1_0cijk")
@@ -24,20 +25,27 @@ script = ExtResource("1_0cijk")
 [node name="Vagao1" parent="." unique_id=988786515 instance=ExtResource("1_trem")]
 porta_direita_aberta = true
 
-[node name="areaColeta" type="Area2D" parent="Vagao1" unique_id=207086401]
-position = Vector2(214, 40)
-script = ExtResource("3_k1xmn")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Vagao1/areaColeta" unique_id=1456601166]
-shape = SubResource("RectangleShape2D_47te7")
-
 [node name="forno" type="Area2D" parent="Vagao1" unique_id=1213485834]
 position = Vector2(42, 209)
+collision_mask = 255
 script = ExtResource("4_eewb4")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Vagao1/forno" unique_id=1729680063]
-position = Vector2(7, 25)
+position = Vector2(13, -35)
 shape = SubResource("RectangleShape2D_l0vsm")
+
+[node name="cozinha" type="Area2D" parent="Vagao1" unique_id=715590054]
+script = ExtResource("4_k1xmn")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Vagao1/cozinha" unique_id=1980927349]
+position = Vector2(391.5, 47.5)
+shape = SubResource("RectangleShape2D_f3m2v")
+
+[node name="geladeira" type="Node2D" parent="Vagao1" unique_id=190965248]
+position = Vector2(349, 230)
+
+[node name="preparado" type="Node2D" parent="Vagao1" unique_id=41486205]
+position = Vector2(390, 48)
 
 [node name="Vagao2" parent="." unique_id=1731480753 instance=ExtResource("1_trem")]
 position = Vector2(480, 0)
@@ -142,8 +150,22 @@ volume_db = 15.0
 autoplay = true
 max_distance = 648.0
 
-[node name="Item" parent="." unique_id=1412582290 instance=ExtResource("8_djk5k")]
+[node name="comida1" parent="." unique_id=1412582290 instance=ExtResource("8_djk5k")]
 position = Vector2(398.00003, 230.00002)
+nome = "comida1"
+classe = "Comida"
 
-[node name="Item2" parent="." unique_id=1447504206 instance=ExtResource("8_djk5k")]
+[node name="comidaPreparada" parent="." unique_id=2047840127 instance=ExtResource("8_djk5k")]
+position = Vector2(398.00003, 230.00002)
+nome = "preparada"
+classe = "ComidaP"
+
+[node name="comida2" parent="." unique_id=1447504206 instance=ExtResource("8_djk5k")]
 position = Vector2(350, 230)
+nome = "comida2"
+classe = "Comida"
+
+[node name="carvao" parent="." unique_id=1542137560 instance=ExtResource("8_djk5k")]
+position = Vector2(254, 43)
+nome = "carvao"
+classe = "Carvao"

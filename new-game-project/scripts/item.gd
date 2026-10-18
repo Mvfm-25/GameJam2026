@@ -40,3 +40,10 @@ func ser_solto(posicao: Vector2) -> void:
 	carregado = false
 	visible = true
 	# Colisão continua desligada até o jogador sair da área, senão ele fica preso.
+	
+func criar_item(posicao: Vector2) -> void:
+	global_position = posicao
+	visible = true
+	carregado = false
+	$CollisionShape2D.set_deferred("disabled", false)
+	
