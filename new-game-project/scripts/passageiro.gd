@@ -45,7 +45,7 @@ var _rota := PackedVector2Array()
 var _timer_passeio := Timer.new()
 
 # O passageiro é montado em camadas, sorteando cada peça: corpo, cabeça, olhos, boca e chapéu.
-# Todas as folhas foram desenhadas em células de 192 px (a boca em 48 px e o chapéu em 64 px),
+# Todas as folhas foram desenhadas em células de 192 px (só o chapéu é de 64 px),
 # com o dobro da resolução do passageiro antigo, então o conjunto é reduzido pela metade.
 const ESCALA_VISUAL := 0.5
 const CELULA := 192
@@ -77,9 +77,7 @@ const CORES_CABELO := [
 ]
 
 # Onde cada peça fica dentro da célula de 192 px da cabeça.
-const POSICAO_BOCA := Vector2(74, 71)
 const POSICAO_CHAPEU := Vector2(64, 8)
-const TAMANHO_BOCA := 48
 const TAMANHO_CHAPEU := 64
 
 # Mesma animação de andar do maquinista: inclina, pula de leve e amassa a cada passo.
@@ -134,7 +132,7 @@ func aposta_aparencia() :
 	cabeca.material.set_shader_parameter("cor_cabelo", cor_cabelo)
 	camadas.add_child(cabeca)
 	camadas.add_child(_camada(OLHOS, (randi() % ESTILOS_OLHOS) * POSES + pose, CELULA))
-	camadas.add_child(_camada(BOCAS, (randi() % ESTILOS_BOCA) * POSES + pose, TAMANHO_BOCA, POSICAO_BOCA))
+	camadas.add_child(_camada(BOCAS, (randi() % ESTILOS_BOCA) * POSES + pose, CELULA))
 	tem_chapeu = randf() < CHANCE_CHAPEU
 	if tem_chapeu :
 		camadas.add_child(_camada(CHAPEUS, randi() % MODELOS_CHAPEU, TAMANHO_CHAPEU, POSICAO_CHAPEU))
