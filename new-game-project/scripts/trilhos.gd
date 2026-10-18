@@ -17,6 +17,9 @@ const TAMANHO_TILE_ATLAS := 64
 @export var ativo := true
 # Quantos tiles os trilhos passam além do primeiro e do último vagão.
 @export var margem_tiles := 40
+# Quantos tiles a menos de altura os trilhos têm em relação ao trem, tirados de cima
+# (o trilho de cima desce junto). Útil para testes.
+@export var linhas_a_menos_em_cima := 1
 
 var _deslocamento := 0.0
 var _base_x := 0.0
@@ -51,10 +54,10 @@ func _construir() -> void:
 	var ultima : int = int(ceil(direita / TAMANHO_TILE)) + margem_tiles
 	var colunas : int = ultima - primeira
 	# O vagão tem altura_tiles linhas, mais a lateral externa embaixo.
-	var linhas : int = vagoes[0].altura_tiles + 1
+	var linhas : int = vagoes[0].altura_tiles + 1 - linhas_a_menos_em_cima
 
 	_base_x = primeira * TAMANHO_TILE
-	position = Vector2(_base_x, vagoes[0].position.y)
+	position = Vector2(_base_x, vagoes[0].position.y + linhas_a_menos_em_cima * TAMANHO_TILE)
 	_deslocamento = 0.0
 
 	_camada(SUPERIOR, 0, 1, colunas)

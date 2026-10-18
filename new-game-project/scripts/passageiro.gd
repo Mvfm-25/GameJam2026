@@ -82,6 +82,15 @@ const POSICAO_CHAPEU := Vector2(64, 8)
 const TAMANHO_BOCA := 48
 const TAMANHO_CHAPEU := 64
 
+# Mesma animação de andar do maquinista: inclina, pula de leve e amassa a cada passo.
+const BALANCO_ANGULO := 0.09 # radianos (~5 graus)
+const BALANCO_VELOCIDADE := 22.0
+const PULINHO := 1.5 # pixels
+const AMASSADA := 0.04
+const SUAVIZACAO := 18.0
+var _visual : Node2D
+var _fase_passo := 0.0
+
 var corpo = "Normal"
 var tem_chapeu = false
 var cor_cabelo : Color
@@ -104,25 +113,50 @@ func aposta_aparencia() :
 	visual.scale = Vector2.ONE * ESCALA_VISUAL
 	# Sem suavização: o pixel art fica nítido e a troca de cor do cabelo não deixa franja verde.
 	visual.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	visual.position = Vector2(-CELULA, -CELULA) / 2.0 * ESCALA_VISUAL
 	add_child(visual)
 	move_child(visual, $AnimatedSprite2D.get_index() + 1)
+	_visual = visual
+	# As peças ficam num nó deslocado para o centro da célula ser a origem do visual;
+	# assim a inclinação de andar gira em torno do meio do corpo.
+	var camadas := Node2D.new()
+	camadas.name = "Camadas"
+	camadas.position = Vector2(-CELULA, -CELULA) / 2.0
+	visual.add_child(camadas)
 
 	var pose := randi() % POSES
 	corpo = ["Normal", "Magro"].pick_random()
 	var folha_corpo := CORPOS_NORMAIS if corpo == "Normal" else CORPOS_MAGROS
-	visual.add_child(_camada(folha_corpo, randi() % CORES_CORPO, CELULA))
+	camadas.add_child(_camada(folha_corpo, randi() % CORES_CORPO, CELULA))
 	var cabeca := _camada(CABECAS, (randi() % ESTILOS_CABECA) * POSES + pose, CELULA)
 	cor_cabelo = CORES_CABELO.pick_random()
 	cabeca.material = ShaderMaterial.new()
 	cabeca.material.shader = TROCA_CABELO
 	cabeca.material.set_shader_parameter("cor_cabelo", cor_cabelo)
-	visual.add_child(cabeca)
-	visual.add_child(_camada(OLHOS, (randi() % ESTILOS_OLHOS) * POSES + pose, CELULA))
-	visual.add_child(_camada(BOCAS, (randi() % ESTILOS_BOCA) * POSES + pose, TAMANHO_BOCA, POSICAO_BOCA))
+	camadas.add_child(cabeca)
+	camadas.add_child(_camada(OLHOS, (randi() % ESTILOS_OLHOS) * POSES + pose, CELULA))
+	camadas.add_child(_camada(BOCAS, (randi() % ESTILOS_BOCA) * POSES + pose, TAMANHO_BOCA, POSICAO_BOCA))
 	tem_chapeu = randf() < CHANCE_CHAPEU
 	if tem_chapeu :
-		visual.add_child(_camada(CHAPEUS, randi() % MODELOS_CHAPEU, TAMANHO_CHAPEU, POSICAO_CHAPEU))
+		camadas.add_child(_camada(CHAPEUS, randi() % MODELOS_CHAPEU, TAMANHO_CHAPEU, POSICAO_CHAPEU))
+
+# Inclina o corpo enquanto anda; sentado, volta suavemente à posição normal.
+func _anima_andar(delta : float) -> void:
+	if _visual == null :
+		return
+	var angulo := 0.0
+	var pulo := 0.0
+	var amassada := 0.0
+	if estado == Estado.ANDANDO :
+		_fase_passo += delta * BALANCO_VELOCIDADE
+		angulo = sin(_fase_passo) * BALANCO_ANGULO
+		var passo := absf(sin(_fase_passo))
+		pulo = -passo * PULINHO
+		amassada = (0.5 - passo) * AMASSADA
+	var peso := 1.0 - exp(-SUAVIZACAO * delta)
+	_visual.rotation = lerp_angle(_visual.rotation, angulo, peso)
+	_visual.position = _visual.position.lerp(Vector2(0, pulo), peso)
+	var escala := Vector2.ONE * ESCALA_VISUAL
+	_visual.scale = _visual.scale.lerp(escala * Vector2(1.0 - amassada, 1.0 + amassada), peso)
 
 func aposta_necessidade() :
 	var sorteado = ["FAMINTO", "IMUNDO", "DESACONCHEGADO", "IRADO"].pick_random()
@@ -328,6 +362,7 @@ func _avanca_sujeira(andado : float) -> void:
 func _process(delta: float) -> void:
 	if estado == Estado.ANDANDO :
 		_anda(delta)
+	_anima_andar(delta)
 
 	if necessidades.has("FAMINTO") :
 		atualiza_fome()
