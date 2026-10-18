@@ -16,6 +16,10 @@ run/main_scene="res://cenas/menu.tscn"
 config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="uid://cbhbydw8l3jx4"
 
+[autoload]
+
+MusicaMenu="*res://scripts/musica_menu.gd"
+
 [display]
 
 window/size/mode=3
