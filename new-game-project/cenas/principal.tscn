@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://biwta2ryc83b4" path="res://cenas/vagao.tscn" id="1_trem"]
 [ext_resource type="PackedScene" uid="uid://crr8571fx8t3n" path="res://cenas/Maquinista.tscn" id="2_maq"]
 [ext_resource type="Script" uid="uid://d0h8bxrfw350h" path="res://scripts/forno.gd" id="4_eewb4"]
-[ext_resource type="Script" uid="uid://bdwgqseqwqf6q" path="res://scripts/cozinha.gd" id="4_k1xmn"]
+[ext_resource type="PackedScene" uid="uid://c7forno0cozinha" path="res://cenas/forno_cozinha.tscn" id="4_k1xmn"]
 [ext_resource type="PackedScene" uid="uid://cjq7h812stu2o" path="res://cenas/deco.tscn" id="5_ff0xt"]
 [ext_resource type="PackedScene" uid="uid://c7mapa0trem01" path="res://cenas/mapa.tscn" id="6_mapa"]
 [ext_resource type="PackedScene" uid="uid://2ke7qr5pifkm" path="res://cenas/item.tscn" id="8_djk5k"]
@@ -16,9 +16,6 @@
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_l0vsm"]
 size = Vector2(48, 166)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_f3m2v"]
-size = Vector2(115, 33)
 
 [sub_resource type="Curve2D" id="Curve2D_vagao2"]
 _data = {
@@ -35,11 +32,16 @@ point_count = 1
 [node name="Principal" type="Node2D" unique_id=1716720350]
 script = ExtResource("1_0cijk")
 
+<<<<<<< HEAD
 [node name="Trilhos" type="Node2D" parent="." unique_id=1469876535]
+=======
+[node name="Trilhos" type="Node2D" parent="." unique_id=1848332910]
+>>>>>>> 50e5c5161bdfccc98eb73f54c6512b6ed86960be
 position = Vector2(-1312, 0)
 script = ExtResource("trilhos_script")
 
 [node name="Vagao1" parent="." unique_id=988786515 instance=ExtResource("1_trem")]
+classe = "COZINHA"
 porta_direita_aberta = true
 
 [node name="forno" type="Area2D" parent="Vagao1" unique_id=1213485834]
@@ -51,18 +53,11 @@ script = ExtResource("4_eewb4")
 position = Vector2(13, -35)
 shape = SubResource("RectangleShape2D_l0vsm")
 
-[node name="cozinha" type="Area2D" parent="Vagao1" unique_id=715590054]
-script = ExtResource("4_k1xmn")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Vagao1/cozinha" unique_id=1980927349]
-position = Vector2(455.5, 47.5)
-shape = SubResource("RectangleShape2D_f3m2v")
+[node name="FornoCozinha" parent="Vagao1" unique_id=715590054 instance=ExtResource("4_k1xmn")]
+position = Vector2(455, 60)
 
 [node name="geladeira" type="Node2D" parent="Vagao1" unique_id=190965248]
 position = Vector2(413, 358)
-
-[node name="preparado" type="Node2D" parent="Vagao1" unique_id=41486205]
-position = Vector2(454, 48)
 
 [node name="Vagao2" parent="." unique_id=1731480753 instance=ExtResource("1_trem")]
 position = Vector2(896, 0)
@@ -266,11 +261,6 @@ max_distance = 648.0
 position = Vector2(462, 358)
 nome = "comida1"
 classe = "Comida"
-
-[node name="comidaPreparada" parent="." unique_id=2047840127 instance=ExtResource("8_djk5k")]
-position = Vector2(462, 358)
-nome = "preparada"
-classe = "ComidaP"
 
 [node name="comida2" parent="." unique_id=1447504206 instance=ExtResource("8_djk5k")]
 position = Vector2(414, 358)
