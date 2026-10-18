@@ -27,6 +27,23 @@ var limpando := false
 # Sujeira ou vaso entupido sendo limpo (os dois têm limpar()).
 var _alvo_limpeza : Node2D = null
 
+# Pego pelos passageiros revoltados: some e não responde mais aos controles.
+var morto := false
+
+func morre() -> void:
+	if morto :
+		return
+	morto = true
+	if carregando :
+		solta_item()
+	limpando = false
+	velocity = Vector2.ZERO
+	visible = false
+	set_physics_process(false)
+	set_process_unhandled_input(false)
+	$CollisionShape2D.set_deferred("disabled", true)
+	print("O maquinista foi pego pelos passageiros!")
+
 # Plataforma do fim do trem em que o maquinista está (ela se registra aqui), ou null.
 var borda_traseira : BordaTraseira = null
 

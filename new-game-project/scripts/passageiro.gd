@@ -71,6 +71,19 @@ var _seta_azul := false
 @export var alivio_sacrificio := 0.3
 @export var raiva_descarte := 0.25
 
+# --- Revolta -------------------------------------------------------------
+# Todos IRADOS: correm atrás do maquinista, cada vez mais rápido, até alcançá-lo.
+const VELOCIDADE_PERSEGUICAO := 160.0
+const VELOCIDADE_PERSEGUICAO_MAX := 650.0
+const ACELERACAO_PERSEGUICAO := 45.0
+# Distância em que o maquinista é pego.
+const RAIO_CAPTURA := 30.0
+# Mais longe que isso (medido na linha do corredor) ele segue pela linha, para passar
+# pelas portas; mais perto, corre direto até o maquinista.
+const ALCANCE_DIRETO := 48.0
+var _alvo_perseguicao : Node2D = null
+var _velocidade_perseguicao := VELOCIDADE_PERSEGUICAO
+
 # --- Cadeira & passeio ---------------------------------------------------
 # Cadeira onde o passageiro senta. Se ficar vazio, pega a cadeira livre
 # mais próxima dentro de raio_busca_cadeira.
@@ -91,7 +104,7 @@ var _seta_azul := false
 # Distância que ainda falta andar até sujar; negativa = este passeio não suja.
 var _distancia_ate_sujar := -1.0
 
-enum Estado { SENTADO, ANDANDO, NA_FILA, NO_VASO }
+enum Estado { SENTADO, ANDANDO, NA_FILA, NO_VASO, PERSEGUINDO }
 var estado = Estado.SENTADO
 # Pontos (globais) que faltam percorrer no passeio atual.
 var _rota := PackedVector2Array()
@@ -253,7 +266,7 @@ func _atualiza_pose() -> void:
 	var movimento := global_position - _posicao_anterior
 	_posicao_anterior = global_position
 	var nova := _pose_sentado
-	if estado == Estado.ANDANDO or estado == Estado.NA_FILA :
+	if estado in [Estado.ANDANDO, Estado.NA_FILA, Estado.PERSEGUINDO] :
 		if movimento.length_squared() > 0.0001 :
 			if absf(movimento.x) > absf(movimento.y) :
 				nova = 1 if movimento.x < 0.0 else 2
@@ -277,7 +290,7 @@ func _anima_andar(delta : float) -> void:
 	var amassada := 0.0
 	var agitado := esta_vivo() and (irado or imundo)
 	var direto := false
-	if estado == Estado.ANDANDO or (estado == Estado.NA_FILA and not _esperando) :
+	if estado == Estado.ANDANDO or estado == Estado.PERSEGUINDO or (estado == Estado.NA_FILA and not _esperando) :
 		var balanco := IRADO_BALANCO if agitado else 1.0
 		var pulinho := IRADO_PULINHO if agitado else 1.0
 		_fase_passo += delta * BALANCO_VELOCIDADE * (IRADO_VELOCIDADE if agitado else 1.0)
@@ -744,6 +757,52 @@ func _sai_do_banheiro() -> void :
 	_ao_fim_rota = Callable()
 	estado = Estado.SENTADO
 
+# Larga a cadeira, a fila ou o vaso e passa a correr atrás de 'alvo'.
+func persegue(alvo : Node2D) -> void :
+	if not esta_vivo() or alvo == null :
+		return
+	if estado == Estado.SENTADO and cadeira != null and cadeira.ocupada :
+		cadeira.levantar()
+	_sai_do_banheiro()
+	_timer_passeio.stop()
+	_rota.clear()
+	_distancia_ate_sujar = -1.0
+	_alvo_perseguicao = alvo
+	_velocidade_perseguicao = VELOCIDADE_PERSEGUICAO
+	estado = Estado.PERSEGUINDO
+	$CollisionShape2D.set_deferred("disabled", true)
+
+# Pegou o maquinista (ou outro pegou): fica parado onde está.
+func para_perseguicao() -> void :
+	if estado != Estado.PERSEGUINDO :
+		return
+	_alvo_perseguicao = null
+	estado = Estado.SENTADO
+
+func _persegue(delta : float) -> void :
+	if not is_instance_valid(_alvo_perseguicao) :
+		return
+	_velocidade_perseguicao = minf(VELOCIDADE_PERSEGUICAO_MAX, _velocidade_perseguicao + ACELERACAO_PERSEGUICAO * delta)
+	var passo := _velocidade_perseguicao * delta
+	var alvo := _alvo_perseguicao.global_position
+	var destino := alvo
+	var rede := _rede()
+	if rede != null :
+		var eu := rede.projeta(global_position)
+		var ele := rede.projeta(alvo)
+		if absf(eu.x - ele.x) > ALCANCE_DIRETO :
+			# Primeiro volta ao corredor, depois anda pela linha até a altura do maquinista.
+			if eu.y > 2.0 :
+				destino = rede.ponto_em(eu.x)
+			else :
+				destino = rede.ponto_em(move_toward(eu.x, ele.x, passo))
+	global_position = global_position.move_toward(destino, passo)
+	z_index = Cadeira.z_por_y(global_position.y) + 1
+	if global_position.distance_to(alvo) <= RAIO_CAPTURA :
+		var diretor := get_tree().current_scene as Diretor
+		if diretor != null :
+			diretor.jogador_capturado()
+
 # Desconta a distância andada e suja o chão ao chegar no ponto sorteado.
 func _avanca_sujeira(andado : float) -> void:
 	if _distancia_ate_sujar < 0.0 :
@@ -762,6 +821,8 @@ func _process(delta: float) -> void:
 		_anda(delta)
 	elif estado == Estado.NA_FILA :
 		_anda_na_fila(delta)
+	elif estado == Estado.PERSEGUINDO :
+		_persegue(delta)
 	_atualiza_pose()
 	_anima_andar(delta)
 	if not esta_vivo() :

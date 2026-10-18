@@ -30,6 +30,10 @@ const CHANCE_VITIMA_EXTRA_POR_CAVEIRA = 0.15
 const SETA_AZUL_MIN := 1
 const SETA_AZUL_MAX := 2
 const CHANCE_VITIMA_EXTRA_MAX = 0.6
+# Quantas caveiras decidem o final: jogadas pela traseira (feliz) ou queimadas (triste).
+const CAVEIRAS_PARA_FINAL := 2
+# Espera antes da tela de final, para o jogador ver a caveira voar ou queimar.
+const ESPERA_TELA_FINAL := 1.2
 
 const SOM_TUNEL := preload("res://audios/suspence2.wav")
 const SOM_SEGUINTE := preload("res://audios/suspence1.wav")
@@ -70,6 +74,8 @@ var morte_sorteada = false
 var vitimas_tunel : Array[Passageiro] = []
 # Almas que o trem já recebeu na fornalha (escondido do jogador).
 var caveiras_queimadas := 0
+# Caveiras jogadas para fora do trem (oferta recusada).
+var caveiras_descartadas := 0
 
 # Escurece a cena no túnel; o mapa e os avisos ficam em CanvasLayer e não são afetados.
 var escuridao : CanvasModulate = null
@@ -108,16 +114,12 @@ func em_transito() -> bool :
 	return etapa != Etapa.NA_ESTACAO
 
 
+# Todos os vivos estão IRADOS (balão muito_puto). Sem ninguém vivo não há revolta.
 func todos_com_raiva() -> bool:
-	if lista_passageiros.is_empty():
+	var vivos := lista_passageiros.filter(func(p): return p.esta_vivo())
+	if vivos.is_empty() :
 		return false
-
-	for p in lista_passageiros:
-		if p.esta_vivo() and p.nivel_raiva < 1.0:
-			return false
-	
-	
-	return true
+	return vivos.all(func(p): return p.irado)
 # Fração da viagem atual já percorrida (0 parado na estação, 1 chegando).
 func progresso_viagem() -> float :
 	if not em_transito() or tempo_viagem_total <= 0.0 :
@@ -165,6 +167,10 @@ func marca_morte(p : Passageiro, cadeira : Cadeira = null) :
 	var pos := p.global_position
 	if cadeira != null :
 		pos = cadeira.global_position + DESLOCAMENTO_POCA_CADEIRA
+	deixa_restos(pos)
+
+# Poça de sangue com uma caveira por cima, em 'pos'.
+func deixa_restos(pos : Vector2) -> void :
 	coloca_sujeira(Sujeira.nova_sangue(), pos)
 	var caveira : Item = CENA_CAVEIRA.instantiate()
 	caveira.add_to_group(Item.GRUPO_CAVEIRAS)
@@ -201,12 +207,26 @@ func caveira_queimada(caveira : Item) -> void :
 	for p in caveira.testemunhas :
 		if is_instance_valid(p) and p.esta_vivo() :
 			p.ve_caveira_queimada()
+	if caveiras_queimadas >= CAVEIRAS_PARA_FINAL :
+		mostra_final(TelaFinal.Tipo.TRISTE)
 
 # Caveira jogada pela porta traseira: quem pediu o sacrifício fica furioso.
 func caveira_descartada(caveira : Item) -> void :
+	caveiras_descartadas += 1
 	for p in caveira.testemunhas :
 		if is_instance_valid(p) and p.esta_vivo() :
 			p.ve_caveira_descartada()
+	if caveiras_descartadas >= CAVEIRAS_PARA_FINAL :
+		mostra_final(TelaFinal.Tipo.FELIZ)
+
+# Fim da história: espera um pouco, pausa o jogo e mostra a tela do final.
+func mostra_final(tipo : TelaFinal.Tipo) -> void :
+	if jogo_acabou :
+		return
+	jogo_acabou = true
+	await get_tree().create_timer(ESPERA_TELA_FINAL).timeout
+	get_tree().paused = true
+	add_child(TelaFinal.new(tipo))
 
 # Chance de o túnel levar um passageiro a mais, conforme o trem foi alimentado.
 func chance_vitima_extra() -> float :
@@ -256,17 +276,37 @@ func alivio_limpeza(pos : Vector2) -> void :
 func verifica_morte_geral() -> bool :
 	if lista_passageiros.is_empty() :
 		return false
-	for p in lista_passageiros :
-		if p.esta_vivo() :
-			return false
-	print("Todo mundo morreu!")
-	return true
+	return not lista_passageiros.any(func(p): return p.esta_vivo())
 
 # Todos os passageiros morreram.
 func game_over() :
+	if jogo_acabou :
+		return
 	jogo_acabou = true
-	print("Você perdeu!")
+	print("Todo mundo morreu! Você perdeu!")
 	mostra_aviso("Todos os passageiros morreram! Você perdeu!")
+
+# Todos ficaram IRADOS: largam o que estão fazendo e correm atrás do maquinista.
+func inicia_revolta() -> void :
+	if jogo_acabou :
+		return
+	jogo_acabou = true
+	print("Os passageiros se revoltaram!")
+	mostra_aviso("Os passageiros se revoltaram! Corra!")
+	for p in lista_passageiros :
+		if p.esta_vivo() :
+			p.persegue(maquinista)
+
+# Um passageiro alcançou o maquinista: ele morre e deixa sangue e caveira no chão.
+func jogador_capturado() -> void :
+	if maquinista == null or maquinista.morto :
+		return
+	var pos := maquinista.global_position
+	maquinista.morre()
+	deixa_restos(pos)
+	for p in lista_passageiros :
+		p.para_perseguicao()
+	mostra_aviso("Os passageiros te pegaram! Você perdeu!")
 
 # Mostra um aviso genérico na tela por alguns segundos.
 func mostra_aviso(texto : String) :
@@ -497,11 +537,9 @@ func _textura_lanterna() -> GradientTexture2D :
 	return textura
 
 func _process(delta: float) -> void:
-	# Todos furiosos: a partida acaba e a viagem não avança mais.
-	if todos_com_raiva():
-		if not jogo_acabou :
-			game_over()
-		return
+	# Todos furiosos: revolta, eles perseguem o maquinista.
+	if not jogo_acabou and todos_com_raiva() :
+		inicia_revolta()
 
 	if not em_transito() :
 		tempo_parado += delta
