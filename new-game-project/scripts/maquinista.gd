@@ -12,6 +12,8 @@ var carregando := false
 var itens_proximos : Array[Item] = []
 # Sujeiras perto o bastante para serem limpas (as sujeiras se registram aqui).
 var sujeiras_proximas : Array[Sujeira] = []
+# Vasos perto o bastante para serem desentupidos (os vasos se registram aqui).
+var vasos_proximos : Array[Vaso] = []
 # Passageiros cuja área de interação o jogador está dentro (eles se registram aqui).
 var passageiros_proximos : Array[Passageiro] = []
 
@@ -20,7 +22,8 @@ var portas_proximas : Array[Porta] = []
 
 # Se o jogador está parado varrendo uma sujeira.
 var limpando := false
-var _sujeira_alvo : Sujeira = null
+# Sujeira ou vaso entupido sendo limpo (os dois têm limpar()).
+var _alvo_limpeza : Node2D = null
 
 # Jogador pega um item do chão e o carrega
 func pega_item(item : Item):
@@ -62,7 +65,7 @@ func alimenta(item : Item) -> bool:
 	melhor.alimenta(item)
 	return true
 
-# Começa a varrer a sujeira mais próxima. O jogador fica parado
+# Começa a varrer a sujeira (ou desentupir o vaso) mais próximo. O jogador fica parado
 # com a vassoura até o TimerLimpeza acabar (5 s).
 func limpa():
 	if limpando :
@@ -70,15 +73,18 @@ func limpa():
 	if carregando :
 		print("Solte o item antes de limpar!")
 		return
-	var melhor : Sujeira = null
-	for s in sujeiras_proximas :
+	var alvos : Array[Node2D] = []
+	alvos.append_array(sujeiras_proximas)
+	alvos.append_array(vasos_proximos.filter(func(v): return v.pode_desentupir()))
+	var melhor : Node2D = null
+	for s in alvos :
 		if melhor == null or global_position.distance_to(s.global_position) < global_position.distance_to(melhor.global_position) :
 			melhor = s
 	if melhor == null :
 		print("Nada para limpar aqui!")
 		return
 	limpando = true
-	_sujeira_alvo = melhor
+	_alvo_limpeza = melhor
 	_direcao_sprite = "frente"
 	_atualiza_sprite()
 	_vassoura.show()
@@ -90,10 +96,11 @@ func _ao_terminar_limpeza() -> void:
 	limpando = false
 	_vassoura.stop()
 	_vassoura.hide()
-	if is_instance_valid(_sujeira_alvo) :
-		_sujeira_alvo.limpar()
-		print("Sujeira limpa!")
-	_sujeira_alvo = null
+	if is_instance_valid(_alvo_limpeza) :
+		_alvo_limpeza.limpar()
+		if _alvo_limpeza is Sujeira :
+			print("Sujeira limpa!")
+	_alvo_limpeza = null
 
 # Item mais próximo que ainda está no chão
 func _item_mais_proximo() -> Item :

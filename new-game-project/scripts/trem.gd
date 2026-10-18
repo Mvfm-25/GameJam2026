@@ -6,7 +6,9 @@ extends Node2D
 # MAQUINAS é onde o jogador deve re-abastecer o 'forno' do trem com carvão encontrado no trem ou ganho das estações.
 # COZINHA é onde o jogador guarda as comidas recompensadas da estação para futura entrega para os passageiros.
 # BANHEIRO é o banheiro dos passageiros.
-@export_enum("SOCIAL", "COZINHA", "BANHEIRO", "MAQUINAS") var classe := "SOCIAL":
+# SERVICO junta as duas coisas: banheiros (cabines com vaso) na parte de cima
+# à esquerda e a cozinha no lado direito, cada sala com o seu piso.
+@export_enum("SOCIAL", "COZINHA", "BANHEIRO", "MAQUINAS", "SERVICO") var classe := "SOCIAL":
 	set(valor):
 		classe = valor
 		_construir()
@@ -70,7 +72,21 @@ const PISOS := {
 	"COZINHA": Vector2i(9, 2), # Xadrez
 	"BANHEIRO": Vector2i(9, 4), # Bege com losango
 	"MAQUINAS": Vector2i(7, 4), # Cinza escuro
+<<<<<<< HEAD
+=======
+	"SERVICO": Vector2i(7, 2), # Corredor do vagão de serviço: tijolo
+>>>>>>> 29cda7da70a0f42103d113641ad7ac829092325a
 }
+
+# Vagão de serviço (ver _construir_servico).
+const VASOS := 3
+const LARGURA_CABINE := 3 # Tiles livres dentro de cada cabine.
+const PROFUNDIDADE_CABINE := 4 # Tiles, a partir da parede de cima.
+# Peça de parede vertical do atlas (2 tiles de altura, em px do atlas), usada nas divisórias.
+# É esticada: borda de cima, faixa do meio e a base (frente da parede).
+const DIVISORIA := Rect2(1344, 192, 64, 128)
+const DIVISORIA_TOPO := 4
+const DIVISORIA_BASE := 32
 
 # Passarela entre vagões (bloco cinza do tileset, colunas 12 a 16, linhas 1 a 6).
 # Colunas 12-13: plataforma presa ao lado direito de um vagão (13 é a borda externa).
@@ -106,6 +122,8 @@ const TILESET := preload("res://assets/tileset/tileset_v1.png")
 var _portas : Array[Porta] = []
 # Partes da passarela que não cabem no TileMap (abertura e ponte esticadas, colisão da ponte).
 var _passarela : Node2D
+# Divisórias e vasos do vagão de serviço (o nó também cuida da fila do banheiro).
+var _interior : Banheiro
 
 
 func _ready() -> void:
@@ -122,6 +140,9 @@ func _construir() -> void:
 	if is_instance_valid(_passarela):
 		_passarela.queue_free()
 	_passarela = null
+	if is_instance_valid(_interior):
+		_interior.queue_free()
+	_interior = null
 	var solo := get_node_or_null("Solo") as TileMapLayer
 	var paredes := get_node_or_null("Paredes") as TileMapLayer
 	if solo == null or paredes == null:
@@ -141,6 +162,8 @@ func _construir() -> void:
 	for x in largura_tiles:
 		for y in altura_tiles:
 			solo.set_cell(Vector2i(x, y), FONTE, piso)
+	if classe == "SERVICO":
+		_construir_servico(solo)
 
 	# Parede de cima
 	_colocar(paredes, 0, 0, CANTO_SUP, false)
@@ -173,6 +196,91 @@ func _construir() -> void:
 		var distancia := posmod(x - centro, ESPACO_JANELAS)
 		_colocar(paredes, x, ultima_lin, JANELA if distancia == 0 else PAREDE_INF, false)
 		_colocar(paredes, x, altura_tiles, RODA_MEIO, false)
+
+
+# Banheiro deste vagão (só o de serviço tem), ou null.
+func banheiro() -> Banheiro:
+	return _interior if is_instance_valid(_interior) else null
+
+
+# Alturas (locais, em px) usadas pela RedeCaminhos para atravessar o vagão:
+# corredor do meio, vão da porta de cima e a ponte da passarela.
+func y_corredor() -> float:
+	return altura_tiles * TAMANHO_TILE / 2.0
+
+
+func y_porta() -> float:
+	return (_topo_portas() + 1 + _tamanho_porta() / 2.0) * TAMANHO_TILE
+
+
+func y_ponte() -> float:
+	return (_topo_portas() + _tamanho_porta() + 2) * TAMANHO_TILE
+
+
+# Vagão de serviço: na parte de cima, à esquerda, uma fileira de cabines de banheiro
+# (um vaso em cada, separadas por divisórias); o lado direito inteiro é a cozinha.
+# O resto (embaixo dos banheiros) é o corredor que liga a porta à cozinha.
+func _construir_servico(solo: TileMapLayer) -> void:
+	_interior = Banheiro.new()
+	_interior.name = "Banheiro"
+	add_child(_interior)
+
+	# Última coluna dos banheiros é a divisória que separa a última cabine da cozinha.
+	var fim_banheiros := VASOS * (LARGURA_CABINE + 1)
+	for x in range(1, fim_banheiros + 1):
+		for y in range(1, PROFUNDIDADE_CABINE + 1):
+			solo.set_cell(Vector2i(x, y), FONTE, PISOS["BANHEIRO"])
+	for x in range(fim_banheiros + 1, largura_tiles - 1):
+		for y in range(1, altura_tiles - 1):
+			solo.set_cell(Vector2i(x, y), FONTE, PISOS["COZINHA"])
+
+	for i in VASOS:
+		var inicio := 1 + i * (LARGURA_CABINE + 1)
+		_colocar_divisoria(inicio + LARGURA_CABINE, 1, PROFUNDIDADE_CABINE)
+		var vaso := Vaso.new()
+		vaso.name = "Vaso%d" % (i + 1)
+		# Encostado na parede de cima, no meio da cabine.
+		vaso.position = Vector2((inicio + LARGURA_CABINE / 2.0) * TAMANHO_TILE, TAMANHO_TILE + Vaso.TAMANHO / 2.0)
+		_interior.add_child(vaso)
+		_interior.vasos.append(vaso)
+	# Fila: começa no corredor, embaixo da última cabine, e cresce em direção à porta.
+	_interior.cabeca = Vector2((fim_banheiros - 0.5) * TAMANHO_TILE, y_corredor())
+	_interior.entrada_y = (PROFUNDIDADE_CABINE + 1.5) * TAMANHO_TILE
+
+
+# Parede vertical de "linhas" tiles na coluna x, começando na linha y, com colisão.
+func _colocar_divisoria(x: int, y: int, linhas: int) -> void:
+	var escala := float(TAMANHO_TILE) / TAMANHO_TILE_ATLAS
+	var topo := Vector2(x, y) * TAMANHO_TILE
+	var altura := linhas * TAMANHO_TILE
+	var meio_atlas := DIVISORIA.size.y - DIVISORIA_TOPO - DIVISORIA_BASE
+	var meio_tela := altura - (DIVISORIA_TOPO + DIVISORIA_BASE) * escala
+	var o := DIVISORIA.position
+	var w := DIVISORIA.size.x
+	var partes := [
+		[Rect2(o, Vector2(w, DIVISORIA_TOPO)), 0.0, escala],
+		[Rect2(o + Vector2(0, DIVISORIA_TOPO), Vector2(w, meio_atlas)), DIVISORIA_TOPO * escala, meio_tela / meio_atlas],
+		[Rect2(o + Vector2(0, DIVISORIA.size.y - DIVISORIA_BASE), Vector2(w, DIVISORIA_BASE)), altura - DIVISORIA_BASE * escala, escala],
+	]
+	for parte in partes:
+		var sprite := Sprite2D.new()
+		sprite.texture = TILESET
+		sprite.region_enabled = true
+		sprite.region_rect = parte[0]
+		sprite.region_filter_clip_enabled = true
+		sprite.centered = false
+		sprite.scale = Vector2(escala, parte[2])
+		sprite.position = topo + Vector2(0, parte[1])
+		_interior.add_child(sprite)
+
+	var corpo := StaticBody2D.new()
+	var forma := RectangleShape2D.new()
+	forma.size = Vector2(TAMANHO_TILE, altura)
+	var colisao := CollisionShape2D.new()
+	colisao.shape = forma
+	colisao.position = topo + Vector2(TAMANHO_TILE, altura) / 2.0
+	corpo.add_child(colisao)
+	_interior.add_child(corpo)
 
 
 # Duas portas por parede lateral, com um bloco de parede entre elas.
