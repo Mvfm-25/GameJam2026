@@ -63,20 +63,22 @@ func ser_solto(posicao: Vector2) -> void:
 	visible = true
 	# Colisão continua desligada até o jogador sair da área, senão ele fica preso.
 
-# A cozinha coloca a tábua vazia na bancada e começa a preparar.
-func iniciar_preparo(posicao: Vector2) -> void:
-	global_position = posicao
+# A tábua vazia entra no forno: some enquanto a comida é preparada.
+func iniciar_preparo() -> void:
 	em_preparo = true
 	carregado = false
-	visible = true
+	visible = false
 	_colisao.set_deferred("disabled", true)
 
-# A comida ficou pronta: vira comida preparada e pode ser pega.
-func terminar_preparo() -> void:
+# A comida ficou pronta: sai do forno na posição indicada e pode ser pega.
+func terminar_preparo(posicao: Vector2) -> void:
+	global_position = posicao
 	em_preparo = false
+	visible = true
 	rotation = 0.0
 	classe = CLASSE_COMIDA_PREPARADA
 	_atualiza_sprite()
+	# Colisão continua desligada até o jogador sair da área, senão ele fica preso.
 
 # Passageiro comeu: a tábua vazia volta para onde começou (geladeira).
 # Itens que não são tábua simplesmente somem.
