@@ -33,16 +33,8 @@ point_count = 1
 [node name="Principal" type="Node2D" unique_id=1716720350]
 script = ExtResource("1_0cijk")
 
-<<<<<<< HEAD
-[node name="Trilhos" type="Node2D" parent="." unique_id=1469876535]
-=======
 [node name="Trilhos" type="Node2D" parent="." unique_id=1848332910]
-<<<<<<< HEAD
->>>>>>> 50e5c5161bdfccc98eb73f54c6512b6ed86960be
-position = Vector2(-1312, 0)
-=======
 position = Vector2(-1312, 32)
->>>>>>> 7b1e8ce56463e26c5a8fe8608418bc5afa2802f7
 script = ExtResource("trilhos_script")
 
 [node name="Vagao1" parent="." unique_id=988786515 instance=ExtResource("1_trem")]
