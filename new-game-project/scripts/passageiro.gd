@@ -92,8 +92,12 @@ var _timer_passeio := Timer.new()
 # com o dobro da resolução do passageiro antigo, então o conjunto é reduzido pela metade.
 const ESCALA_VISUAL := 0.5
 const CELULA := 192
-const CORPOS_NORMAIS := preload("res://assets/characters/corpos_normais_mas.png")
-const CORPOS_MAGROS := preload("res://assets/characters/corpos_magro_mas.png")
+# Tipos de corpo: folha de cores e quantas cores ela tem.
+const CORPOS := {
+	"Normal": { "folha": preload("res://assets/characters/corpos_normais_mas.png"), "cores": 4 },
+	"Magro": { "folha": preload("res://assets/characters/corpos_magro_mas.png"), "cores": 4 },
+	"Forte": { "folha": preload("res://assets/characters/corpos_forte_mas.png"), "cores": 6 },
+}
 const CABECAS := preload("res://assets/characters/cabeças_masculinas.png")
 const OLHOS := preload("res://assets/characters/olhos_masculinos.png")
 const BOCAS := preload("res://assets/characters/bocas_masculinas.png")
@@ -102,7 +106,6 @@ const CHAPEUS := preload("res://assets/characters/chapeus_mas.png")
 # Cabeças, olhos e bocas vêm em grupos de 3 poses (olhando em direções diferentes);
 # a mesma pose é usada nas três peças para o rosto combinar.
 const POSES := 3
-const CORES_CORPO := 4
 const ESTILOS_CABECA := 4
 const ESTILOS_OLHOS := 5
 const ESTILOS_BOCA := 5
@@ -165,9 +168,9 @@ func aposta_aparencia() :
 	visual.add_child(camadas)
 
 	var pose := randi() % POSES
-	corpo = ["Normal", "Magro"].pick_random()
-	var folha_corpo := CORPOS_NORMAIS if corpo == "Normal" else CORPOS_MAGROS
-	camadas.add_child(_camada(folha_corpo, randi() % CORES_CORPO, CELULA))
+	corpo = CORPOS.keys().pick_random()
+	var dados : Dictionary = CORPOS[corpo]
+	camadas.add_child(_camada(dados["folha"], randi() % int(dados["cores"]), CELULA))
 	var cabeca := _camada(CABECAS, (randi() % ESTILOS_CABECA) * POSES + pose, CELULA)
 	cor_cabelo = CORES_CABELO.pick_random()
 	cabeca.material = ShaderMaterial.new()
