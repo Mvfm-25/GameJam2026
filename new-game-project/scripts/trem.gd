@@ -134,23 +134,22 @@ func _colocar_porta(paredes: TileMapLayer, x: int, aberta: bool, espelhar: bool)
 		var topo := primeira + k * (tamanho + 2)
 		var inicio := topo + 1
 		for y in range(inicio, inicio + tamanho):
-			if aberta:
-				paredes.erase_cell(Vector2i(x, y))
-			else:
-				_colocar(paredes, x, y, PORTA, espelhar)
+			paredes.erase_cell(Vector2i(x, y))
 		# Bloco de parede logo abaixo do vão (no meio das duas portas, ou antes da quina).
 		var base := inicio + tamanho
 		if base < altura_tiles - 1:
 			_colocar(paredes, x, base, PORTA_BASE, espelhar)
 		if aberta:
 			continue
-		# A moldura de cima e o primeiro tile do vão passam a ser desenhados pela Porta.
+		# A moldura de cima e o vão passam a ser desenhados pela Porta.
 		paredes.erase_cell(Vector2i(x, topo))
-		paredes.erase_cell(Vector2i(x, inicio))
 		var porta := Porta.new()
 		add_child(porta)
-		porta.configurar(paredes, x, inicio, tamanho, espelhar)
+		porta.configurar(x, inicio, tamanho, espelhar)
 		_portas.append(porta)
+	if _portas.size() >= 2:
+		_portas[-1].parceira = _portas[-2]
+		_portas[-2].parceira = _portas[-1]
 
 
 func _colocar(camada: TileMapLayer, x: int, y: int, atlas: Vector2i, espelhar: bool) -> void:
