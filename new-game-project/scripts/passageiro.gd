@@ -81,9 +81,9 @@ func _process(delta: float) -> void:
 	if(quantidade_fome >= 0.6) :
 		$fome.visible = true
 		
-	if(nivel_raiva >= 0.5) :
-		$puto.visible = true
-	elif(nivel_raiva >= 0.9) :
+	if(nivel_raiva >= 0.9) :
 		$puto.visible = false
 		$muito_puto.visible = true
+	elif(nivel_raiva >= 0.5) :
+		$puto.visible = true
 	pass

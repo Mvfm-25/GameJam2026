@@ -34,86 +34,50 @@ position = Vector2(120, 150)
 [node name="Passageiro" parent="Passageiros" unique_id=1947273246 instance=ExtResource("3_42xuo")]
 position = Vector2(611, 23)
 script = ExtResource("4_0404l")
-nome = null
-status = null
-hp = null
 
 [node name="Passageiro7" parent="Passageiros" unique_id=1209110748 instance=ExtResource("3_42xuo")]
 position = Vector2(611, 72)
 script = ExtResource("4_0404l")
-nome = null
-status = null
-hp = null
 
 [node name="Passageiro5" parent="Passageiros" unique_id=1649335550 instance=ExtResource("3_42xuo")]
 position = Vector2(893, 22)
 script = ExtResource("4_0404l")
-nome = null
-status = null
-hp = null
 
 [node name="Passageiro3" parent="Passageiros" unique_id=455356552 instance=ExtResource("3_42xuo")]
 position = Vector2(609, 210)
 script = ExtResource("4_0404l")
-nome = null
-status = null
-hp = null
 
 [node name="Passageiro10" parent="Passageiros" unique_id=1891015230 instance=ExtResource("3_42xuo")]
 position = Vector2(609, 259)
 script = ExtResource("4_0404l")
-nome = null
-status = null
-hp = null
 
 [node name="Passageiro6" parent="Passageiros" unique_id=1293564904 instance=ExtResource("3_42xuo")]
 position = Vector2(891, 209)
 script = ExtResource("4_0404l")
-nome = null
-status = null
-hp = null
 
 [node name="Passageiro11" parent="Passageiros" unique_id=266971181 instance=ExtResource("3_42xuo")]
 position = Vector2(892, 259)
 script = ExtResource("4_0404l")
-nome = null
-status = null
-hp = null
 
 [node name="Passageiro4" parent="Passageiros" unique_id=457670639 instance=ExtResource("3_42xuo")]
 position = Vector2(750, 210)
 script = ExtResource("4_0404l")
-nome = null
-status = null
-hp = null
 
 [node name="Passageiro12" parent="Passageiros" unique_id=480119354 instance=ExtResource("3_42xuo")]
 position = Vector2(750, 259)
 script = ExtResource("4_0404l")
-nome = null
-status = null
-hp = null
 
 [node name="Passageiro9" parent="Passageiros" unique_id=573432624 instance=ExtResource("3_42xuo")]
 position = Vector2(894, 72)
 script = ExtResource("4_0404l")
-nome = null
-status = null
-hp = null
 
 [node name="Passageiro2" parent="Passageiros" unique_id=2109555587 instance=ExtResource("3_42xuo")]
 position = Vector2(752, 23)
 script = ExtResource("4_0404l")
-nome = null
-status = null
-hp = null
 
 [node name="Passageiro8" parent="Passageiros" unique_id=1548718433 instance=ExtResource("3_42xuo")]
 position = Vector2(752, 72)
 script = ExtResource("4_0404l")
-nome = null
-status = null
-hp = null
 
 [node name="Decos" type="Node2D" parent="." unique_id=1142493343]
 

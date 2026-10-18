@@ -79,6 +79,21 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_fome0"]
+atlas = ExtResource("4_ba636")
+region = Rect2(0, 0, 128, 128)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_fome0"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fome0")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 5.0
+}]
+
 [node name="Passageiro" type="StaticBody2D" unique_id=1947273246]
 scale = Vector2(0.72, 0.72)
 
@@ -117,4 +132,4 @@ sprite_frames = SubResource("SpriteFrames_onu3a")
 visible = false
 position = Vector2(0, -51.388893)
 scale = Vector2(0.533, 0.533)
-sprite_frames = SubResource("SpriteFrames_onu3a")
+sprite_frames = SubResource("SpriteFrames_fome0")
