@@ -104,6 +104,17 @@ var _avisou_fornalha_apagada := false
 func em_transito() -> bool :
 	return etapa != Etapa.NA_ESTACAO
 
+
+func todos_com_raiva() -> bool:
+	if lista_passageiros.is_empty():
+		return false
+
+	for p in lista_passageiros:
+		if p.esta_vivo() and p.nivel_raiva < 1.0:
+			return false
+	
+	
+	return true
 # Fração da viagem atual já percorrida (0 parado na estação, 1 chegando).
 func progresso_viagem() -> float :
 	if not em_transito() or tempo_viagem_total <= 0.0 :
@@ -473,6 +484,11 @@ func _textura_lanterna() -> GradientTexture2D :
 	return textura
 
 func _process(delta: float) -> void:
+	
+	if todos_com_raiva():
+		game_over()
+	return
+	
 	if not em_transito() :
 		tempo_parado += delta
 		_move_trem(false)

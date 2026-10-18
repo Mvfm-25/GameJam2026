@@ -444,6 +444,11 @@ func _atualiza_baloes() -> void:
 	$fome.visible = not sacrificial and not irado and com_fome
 	$puto.visible = not sacrificial and not irado and not com_fome and (nivel_raiva >= LIMIAR_PUTO or imundo)
 
+# Enquanto houver uma caveira no trem (no chão ou nas mãos do maquinista), ninguém tem olhos.
+func _atualiza_olhos() -> void:
+	if _rosto.size() > 1 :
+		_rosto[1].visible = get_tree().get_nodes_in_group(Item.GRUPO_CAVEIRAS).is_empty()
+
 func esta_vivo() -> bool:
 	return status != "MORTO"
 
@@ -770,3 +775,4 @@ func _process(delta: float) -> void:
 		_pulso_contagio(delta, diretor)
 	_atualiza_irado()
 	_atualiza_baloes()
+	_atualiza_olhos()
