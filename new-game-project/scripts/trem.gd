@@ -29,8 +29,8 @@ extends Node2D
 		altura_tiles = valor
 		_construir()
 
-# Altura da porta em tiles (3 tiles = 96 px, igual ao vagão antigo).
-@export_range(1, 20) var altura_porta_tiles := 3:
+# Altura do vão de cada uma das duas portas, em tiles.
+@export_range(1, 20) var altura_porta_tiles := 2:
 	set(valor):
 		altura_porta_tiles = valor
 		_construir()
@@ -60,6 +60,9 @@ const PISO := Vector2i(7, 2)
 # Distância (em tiles) entre as janelas da parede de baixo.
 const ESPACO_JANELAS := 4
 
+# Portas fechadas do vagão; cada uma abre com a tecla de interagir.
+var _portas : Array[Porta] = []
+
 
 func _ready() -> void:
 	_construir()
@@ -68,6 +71,10 @@ func _ready() -> void:
 func _construir() -> void:
 	if not is_node_ready():
 		return
+	for porta in _portas:
+		if is_instance_valid(porta):
+			porta.queue_free()
+	_portas.clear()
 	var solo := get_node_or_null("Solo") as TileMapLayer
 	var paredes := get_node_or_null("Paredes") as TileMapLayer
 	if solo == null or paredes == null:
@@ -115,21 +122,35 @@ func _construir() -> void:
 		_colocar(paredes, x, altura_tiles, externo, false)
 
 
-# Porta centralizada na parede lateral. Aberta = vão livre, sem colisão.
+# Duas portas por parede lateral, com um bloco de parede entre elas.
+# Aberta = vão livre, sem colisão. Fechada = Porta animada, que o jogador abre com a tecla de interagir.
 func _colocar_porta(paredes: TileMapLayer, x: int, aberta: bool, espelhar: bool) -> void:
 	var interno := altura_tiles - 2
-	var tamanho := clampi(altura_porta_tiles, 1, interno - 2)
-	if tamanho < 1:
-		return
-	var inicio := 1 + (interno - tamanho) / 2
-	for y in range(inicio, inicio + tamanho):
+	# Cada porta usa a moldura de cima + o vão; mais o bloco no meio.
+	var tamanho := clampi(altura_porta_tiles, 1, maxi(1, (interno - 3) / 2))
+	var total := 2 * (1 + tamanho) + 1
+	var primeira := 1 + maxi(0, interno - total) / 2
+	for k in 2:
+		var topo := primeira + k * (tamanho + 2)
+		var inicio := topo + 1
+		for y in range(inicio, inicio + tamanho):
+			if aberta:
+				paredes.erase_cell(Vector2i(x, y))
+			else:
+				_colocar(paredes, x, y, PORTA, espelhar)
+		# Bloco de parede logo abaixo do vão (no meio das duas portas, ou antes da quina).
+		var base := inicio + tamanho
+		if base < altura_tiles - 1:
+			_colocar(paredes, x, base, PORTA_BASE, espelhar)
 		if aberta:
-			paredes.erase_cell(Vector2i(x, y))
-		else:
-			_colocar(paredes, x, y, PORTA, espelhar)
-	if not aberta:
-		_colocar(paredes, x, inicio - 1, PORTA_TOPO, espelhar)
-		_colocar(paredes, x, inicio + tamanho, PORTA_BASE, espelhar)
+			continue
+		# A moldura de cima e o primeiro tile do vão passam a ser desenhados pela Porta.
+		paredes.erase_cell(Vector2i(x, topo))
+		paredes.erase_cell(Vector2i(x, inicio))
+		var porta := Porta.new()
+		add_child(porta)
+		porta.configurar(paredes, x, inicio, tamanho, espelhar)
+		_portas.append(porta)
 
 
 func _colocar(camada: TileMapLayer, x: int, y: int, atlas: Vector2i, espelhar: bool) -> void:

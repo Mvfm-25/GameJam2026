@@ -15,6 +15,9 @@ var sujeiras_proximas : Array[Sujeira] = []
 # Passageiros cuja área de interação o jogador está dentro (eles se registram aqui).
 var passageiros_proximos : Array[Passageiro] = []
 
+# Portas cuja área de interação o jogador está dentro (elas se registram aqui).
+var portas_proximas : Array[Porta] = []
+
 # Jogador pega um item do chão e o carrega
 func pega_item(item : Item):
 	if carregando or item == null :
@@ -77,10 +80,23 @@ func _item_mais_proximo() -> Item :
 			melhor = item
 	return melhor
 
+# Porta mais próxima do jogador entre as que estão ao alcance
+func _porta_mais_proxima() -> Porta :
+	var melhor : Porta = null
+	for porta in portas_proximas :
+		if porta.aberta :
+			continue
+		if melhor == null or global_position.distance_to(porta.global_position) < global_position.distance_to(melhor.global_position) :
+			melhor = porta
+	return melhor
+
 # Tecla de interagir pega o item mais próximo ou solta o que está carregando
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("interagir"):
-		if carregando :
+		var porta := _porta_mais_proxima()
+		if porta != null and not carregando and _item_mais_proximo() == null :
+			porta.interage()
+		elif carregando :
 			solta_item()
 		else :
 			pega_item(_item_mais_proximo())
