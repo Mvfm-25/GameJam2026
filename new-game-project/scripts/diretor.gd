@@ -20,10 +20,11 @@ const PESO_BASE_MORTE = 0.2
 
 const SOM_TUNEL := preload("res://audios/suspence2.wav")
 const SOM_SEGUINTE := preload("res://audios/suspence1.wav")
+# Duração do fade-out da música de suspense ao chegar na estação.
+const DURACAO_FADE_MUSICA = 2.0
 # Etapas do loop: parado na estação -> viajando -> túnel -> viajando -> chega na estação.
 enum Etapa { NA_ESTACAO, VIAJANDO, TUNEL }
 var etapa = Etapa.NA_ESTACAO
-var loop_tunel_ativo := false
 # Quem são os passageiros sendo transportados.
 var lista_passageiros = []
 # Jogador, recebe os pontos.
@@ -56,6 +57,7 @@ var escuridao : CanvasModulate = null
 var lanterna : PointLight2D = null
 var som_tunel : AudioStreamPlayer = null
 var _tween_tunel : Tween
+var _tween_musica : Tween
 
 # Estação de destino selecionada
 var estacao_selecionada : Estacao = null
@@ -88,25 +90,24 @@ func tempo_restante() -> float :
 
 # Passando pelo tunel: sorteia um passageiro vivo para morrer.
 # Quanto maior a raiva, maior a chance de ser o escolhido.
-#func aposta_morte() -> Passageiro :
-#	var vivos = lista_passageiros.filter(func(p): return p.esta_vivo())
-#	if vivos.is_empty() :
-#		return null
-#	#var pesos = vivos.map(func(p): return PESO_BASE_MORTE + p.nivel_raiva)
-#	var pesos = 0
-#	var total = 0.0
-#	for peso in pesos :
-#		total += peso
-#	var sorteio = randf() * total
-#	var vitima : Passageiro = vivos.back()
-#	for i in vivos.size() :
-#		sorteio -= pesos[i]
-#		if sorteio <= 0.0 :
-#			vitima = vivos[i]
-#			break
-#	vitima.morre()
-#	marca_assento(vitima)
-#s	return vitima
+func aposta_morte() -> Passageiro :
+	var vivos = lista_passageiros.filter(func(p): return p.esta_vivo())
+	if vivos.is_empty() :
+		return null
+	var pesos = vivos.map(func(p): return PESO_BASE_MORTE + p.nivel_raiva)
+	var total = 0.0
+	for peso in pesos :
+		total += peso
+	var sorteio = randf() * total
+	var vitima : Passageiro = vivos.back()
+	for i in vivos.size() :
+		sorteio -= pesos[i]
+		if sorteio <= 0.0 :
+			vitima = vivos[i]
+			break
+	vitima.morre()
+	marca_assento(vitima)
+	return vitima
 
 # Deixa uma mancha de sangue onde o passageiro estava sentado.
 func marca_assento(p : Passageiro) :
@@ -179,37 +180,49 @@ func entra_tunel():
 	etapa = Etapa.TUNEL
 	em_tunel = true
 	passou_tunel = true
-	loop_tunel_ativo = false
 
 	print("Entrando no túnel!")
 
-	som_tunel.stream = SOM_TUNEL
-	som_tunel.play()
+	_toca_musica(SOM_TUNEL)
 
 	_anima_tunel(COR_TUNEL, 1.0)
 
-
-func _ao_som_tunel_terminar() -> void:
-	var existe_morto = lista_passageiros.any(
-		func(p): return not p.esta_vivo()
-	)
-
-	if not existe_morto:
-		return
-
-	if not loop_tunel_ativo:
-		loop_tunel_ativo = true
-		som_tunel.stream = SOM_SEGUINTE
-
+# Toca uma música de suspense do zero, cancelando um fade-out em andamento.
+func _toca_musica(musica : AudioStream) -> void:
+	if _tween_musica :
+		_tween_musica.kill()
+	som_tunel.volume_db = 0.0
+	som_tunel.stream = musica
 	som_tunel.play()
-	
+
+# A música do túnel toca uma vez só. Se alguém morreu nesta viagem,
+# a música de morte entra depois dela e repete até a chegada na estação.
+func _ao_som_tunel_terminar() -> void:
+	if not musica_morte_ativa :
+		return
+	if som_tunel.stream != SOM_SEGUINTE :
+		_toca_musica(SOM_SEGUINTE)
+	else :
+		som_tunel.play()
+
 func tocar_musica_morte() -> void:
 	if not em_tunel:
 		return
 
 	musica_morte_ativa = true
-	som_tunel.stream = SOM_SEGUINTE
-	som_tunel.play()
+	_toca_musica(SOM_SEGUINTE)
+
+# Chegou na estação: a música de suspense (túnel ou morte) some aos poucos.
+func _fade_out_musica() -> void:
+	musica_morte_ativa = false
+	if not som_tunel.playing :
+		return
+	if _tween_musica :
+		_tween_musica.kill()
+	_tween_musica = create_tween()
+	_tween_musica.tween_property(som_tunel, "volume_db", -40.0, DURACAO_FADE_MUSICA)
+	_tween_musica.tween_callback(som_tunel.stop)
+	_tween_musica.tween_property(som_tunel, "volume_db", 0.0, 0.0)
 
 func sai_tunel():
 	
@@ -242,6 +255,7 @@ func chega_destino() :
 		return
 	etapa = Etapa.NA_ESTACAO
 	quantidade_visitas += 1
+	_fade_out_musica()
 
 	var pontos = estacao_selecionada.pontos_por_chegada
 	for p in lista_passageiros :
@@ -373,7 +387,9 @@ func _process(delta: float) -> void:
 		# Morte acontece no meio do túnel, com tudo já escuro.
 		if not morte_sorteada and tempo_decorrido >= (inicio_tunel + fim_tunel) / 2.0 :
 			morte_sorteada = true
-			#vitima_tunel = aposta_morte()
+			vitima_tunel = aposta_morte()
+			if vitima_tunel != null :
+				musica_morte_ativa = true
 		if tempo_decorrido >= fim_tunel :
 			sai_tunel()
 	elif etapa == Etapa.VIAJANDO and tempo_decorrido >= tempo_viagem_total :

@@ -81,11 +81,29 @@ var _tween_flash : Tween
 # Distância que ainda falta andar até sujar; negativa = este passeio não suja.
 var _distancia_ate_sujar := -1.0
 
-enum Estado { SENTADO, ANDANDO }
+enum Estado { SENTADO, ANDANDO, NA_FILA, NO_VASO }
 var estado = Estado.SENTADO
 # Pontos (globais) que faltam percorrer no passeio atual.
 var _rota := PackedVector2Array()
+# O que fazer ao terminar a rota; vazio = sentar na cadeira.
+var _ao_fim_rota := Callable()
 var _timer_passeio := Timer.new()
+
+# --- Banheiro ------------------------------------------------------------
+# Quando pensa em levantar, chance de ir ao banheiro (antes de pensar em passear).
+@export_range(0.0, 1.0) var chance_banheiro := 0.04
+@export var tempo_banheiro_min := 4.0
+@export var tempo_banheiro_max := 7.0
+# Raiva por segundo parado na fila.
+@export var raiva_fila := 0.01
+# Distância entre quem está na fila.
+const ESPACO_FILA := 30.0
+var _banheiro : Banheiro = null
+var _vaso : Vaso = null
+# Posição na linha da RedeCaminhos (a fila anda por ela) e onde ele entrou nela.
+var _s := 0.0
+var _s_entrada := 0.0
+var _esperando := false
 
 # O passageiro é montado em camadas, sorteando cada peça: corpo, cabeça, olhos, boca e chapéu.
 # Todas as folhas foram desenhadas em células de 192 px (só o chapéu é de 64 px),
@@ -190,7 +208,7 @@ func _anima_andar(delta : float) -> void:
 	var angulo := 0.0
 	var pulo := 0.0
 	var amassada := 0.0
-	if estado == Estado.ANDANDO :
+	if estado == Estado.ANDANDO or (estado == Estado.NA_FILA and not _esperando) :
 		_fase_passo += delta * BALANCO_VELOCIDADE
 		angulo = sin(_fase_passo) * BALANCO_ANGULO
 		var passo := absf(sin(_fase_passo))
@@ -219,6 +237,8 @@ func taxa_raiva(diretor : Diretor) -> float:
 	var taxa = taxa_raiva_base
 	if necessidades.has("FAMINTO") :
 		taxa += raiva_fome
+	if estado == Estado.NA_FILA and _esperando :
+		taxa += raiva_fila
 	if diretor != null :
 		var sujeira := minf(diretor.peso_sujeiras_perto(global_position, raio_sujeira), sujeiras_max_raiva)
 		taxa += raiva_por_sujeira * sujeira
@@ -327,6 +347,7 @@ func morre() -> void:
 	set_process(false)
 	_timer_passeio.stop()
 	_rota.clear()
+	_sai_do_banheiro()
 	visible = false
 	if cadeira != null :
 		cadeira.liberar()
@@ -407,6 +428,8 @@ func _senta() -> void:
 func _pensa_em_passear() -> void:
 	if not esta_vivo() or estado != Estado.SENTADO :
 		return
+	if randf() < chance_banheiro and _vai_ao_banheiro() :
+		return
 	var caminho : Caminho = null
 	if randf() < chance_passeio :
 		caminho = _escolhe_caminho()
@@ -436,16 +459,28 @@ func _escolhe_caminho() -> Caminho :
 	return opcoes.back()
 
 # Monta a rota: ponta mais próxima -> outra ponta -> volta -> cadeira.
+# Se o caminho está na linha da RedeCaminhos, vai e volta da cadeira pelo corredor
+# (e pelas portas, se a ponta estiver em outro vagão) em vez de cortar em linha reta.
 func _inicia_passeio(caminho : Caminho) -> void:
 	var pontos := caminho.pontos_globais()
 	if pontos.size() < 2 :
 		_timer_passeio.start(randf_range(intervalo_passeio_min, intervalo_passeio_max))
 		return
-	if global_position.distance_to(pontos[-1]) < global_position.distance_to(pontos[0]) :
+	var origem := global_position
+	var rede := _rede()
+	var s_origem := rede.s_entrada(origem) if rede != null else -1.0
+	var na_linha := s_origem >= 0.0 and rede.projeta(pontos[0]).y < 2.0 and rede.projeta(pontos[-1]).y < 2.0
+	if na_linha :
+		if absf(rede.projeta(pontos[-1]).x - s_origem) < absf(rede.projeta(pontos[0]).x - s_origem) :
+			pontos.reverse()
+	elif origem.distance_to(pontos[-1]) < origem.distance_to(pontos[0]) :
 		pontos.reverse()
 	var volta := pontos.duplicate()
 	volta.reverse()
 	_rota = pontos + volta
+	if na_linha :
+		var s_ponta := rede.projeta(pontos[0]).x
+		_rota = rede.trecho(s_origem, s_ponta) + _rota + rede.trecho(s_ponta, s_origem)
 	if cadeira != null :
 		_rota.append(cadeira.posicao_assento())
 		cadeira.levantar()
@@ -477,8 +512,113 @@ func _anda(delta : float) -> void:
 			passo = 0.0
 	z_index = Cadeira.z_por_y(global_position.y) + 1
 	if _rota.is_empty() :
-		$CollisionShape2D.set_deferred("disabled", false)
-		_senta()
+		var acao := _ao_fim_rota
+		_ao_fim_rota = Callable()
+		if acao.is_valid() :
+			acao.call()
+		elif cadeira != null :
+			$CollisionShape2D.set_deferred("disabled", false)
+			_senta()
+		else :
+			estado = Estado.SENTADO
+
+func _rede() -> RedeCaminhos :
+	var rede := get_tree().get_first_node_in_group("rede_caminhos") as RedeCaminhos
+	return rede if rede != null and rede.tem_linha() else null
+
+# --- Banheiro ----------------------------------------------------------------
+# Levanta, vai até o corredor e entra na fila, que anda pela linha da RedeCaminhos
+# até a frente (perto das cabines). Lá espera um vaso destrancado e desentupido.
+func _vai_ao_banheiro() -> bool :
+	var rede := _rede()
+	if rede == null or rede.banheiro == null :
+		return false
+	var s := rede.s_entrada(global_position)
+	if s < 0.0 :
+		return false
+	_banheiro = rede.banheiro
+	_s_entrada = s
+	_s = s
+	_rota = PackedVector2Array([rede.ponto_em(s)])
+	_ao_fim_rota = _entra_na_fila
+	_distancia_ate_sujar = -1.0
+	if cadeira != null :
+		cadeira.levantar()
+	estado = Estado.ANDANDO
+	$CollisionShape2D.set_deferred("disabled", true)
+	print("Passageiro " + nome + " foi ao banheiro.")
+	return true
+
+func _entra_na_fila() -> void :
+	estado = Estado.NA_FILA
+	_esperando = false
+	_banheiro.fila.append(self)
+
+# Anda pela linha até ESPACO_FILA atrás de quem está na frente na fila
+# (ordem de chegada). O primeiro vai até a frente e espera um vaso livre.
+func _anda_na_fila(delta : float) -> void :
+	var rede := _rede()
+	if rede == null or not is_instance_valid(_banheiro) :
+		return
+	var fim := rede.comprimento()
+	var limite := fim
+	var posicao := _banheiro.fila.find(self)
+	if posicao > 0 :
+		limite = _banheiro.fila[posicao - 1]._s - ESPACO_FILA
+	var passo := velocidade_caminhada * delta
+	var antes := _s
+	if limite > _s :
+		_s = minf(_s + passo, limite)
+	_esperando = _s - antes < passo * 0.5
+	global_position = rede.ponto_em(_s)
+	z_index = Cadeira.z_por_y(global_position.y) + 1
+	if posicao == 0 and _s >= fim - 0.5 :
+		var vaso := _banheiro.vaso_livre()
+		if vaso != null :
+			_vai_ao_vaso(vaso)
+
+# Sai da fila e tranca a cabine já no caminho.
+func _vai_ao_vaso(vaso : Vaso) -> void :
+	_banheiro.fila.erase(self)
+	_vaso = vaso
+	vaso.ocupar(self)
+	_rota = PackedVector2Array([_banheiro.entrada_global(vaso), vaso.global_position + Vector2(0, 6)])
+	_ao_fim_rota = _usa_vaso
+	estado = Estado.ANDANDO
+
+func _usa_vaso() -> void :
+	estado = Estado.NO_VASO
+	z_index = Cadeira.z_por_y(global_position.y) + 1
+	get_tree().create_timer(randf_range(tempo_banheiro_min, tempo_banheiro_max)).timeout.connect(_sai_do_vaso)
+
+# Destranca (o vaso pode entupir) e volta pela linha até a cadeira.
+func _sai_do_vaso() -> void :
+	if estado != Estado.NO_VASO or not esta_vivo() :
+		return
+	var vaso := _vaso
+	_vaso = null
+	var rede := _rede()
+	_rota = PackedVector2Array([_banheiro.entrada_global(vaso)])
+	vaso.liberar(self)
+	if rede != null :
+		_rota.append_array(rede.trecho(rede.comprimento(), _s_entrada))
+	if cadeira != null :
+		_rota.append(cadeira.posicao_assento())
+	_banheiro = null
+	_ao_fim_rota = Callable()
+	estado = Estado.ANDANDO
+	print("Passageiro " + nome + " saiu do banheiro.")
+
+# Larga a fila e destranca o vaso (ex.: morreu).
+func _sai_do_banheiro() -> void :
+	if is_instance_valid(_banheiro) :
+		_banheiro.fila.erase(self)
+	if is_instance_valid(_vaso) :
+		_vaso.liberar(self, false)
+	_banheiro = null
+	_vaso = null
+	_ao_fim_rota = Callable()
+	estado = Estado.SENTADO
 
 # Desconta a distância andada e suja o chão ao chegar no ponto sorteado.
 func _avanca_sujeira(andado : float) -> void:
@@ -496,6 +636,8 @@ func _avanca_sujeira(andado : float) -> void:
 func _process(delta: float) -> void:
 	if estado == Estado.ANDANDO :
 		_anda(delta)
+	elif estado == Estado.NA_FILA :
+		_anda_na_fila(delta)
 	_anima_andar(delta)
 	if not esta_vivo() :
 		return

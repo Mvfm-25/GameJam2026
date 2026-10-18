@@ -64,9 +64,9 @@ const EXTERNO := Vector2i(3, 6)
 # Piso de cada classe de vagão (coordenadas no atlas).
 const PISOS := {
 	"SOCIAL": Vector2i(7, 2), # Tijolo
-	"COZINHA": Vector2i(7, 9), # Xadrez
-	"BANHEIRO": Vector2i(14, 9), # Bege com losango
-	"MAQUINAS": Vector2i(12, 9), # Cinza escuro
+	"COZINHA": Vector2i(9, 2), # Xadrez
+	"BANHEIRO": Vector2i(9, 4), # Bege com losango
+	"MAQUINAS": Vector2i(7, 4), # Cinza escuro
 	"SERVICO": Vector2i(7, 2), # Corredor do vagão de serviço: tijolo
 }
 
@@ -76,7 +76,7 @@ const LARGURA_CABINE := 3 # Tiles livres dentro de cada cabine.
 const PROFUNDIDADE_CABINE := 4 # Tiles, a partir da parede de cima.
 # Peça de parede vertical do atlas (2 tiles de altura, em px do atlas), usada nas divisórias.
 # É esticada: borda de cima, faixa do meio e a base (frente da parede).
-const DIVISORIA := Rect2(640, 256, 64, 128)
+const DIVISORIA := Rect2(1344, 192, 64, 128)
 const DIVISORIA_TOPO := 4
 const DIVISORIA_BASE := 32
 
@@ -114,8 +114,8 @@ const TILESET := preload("res://assets/tileset/tileset_v1.png")
 var _portas : Array[Porta] = []
 # Partes da passarela que não cabem no TileMap (abertura e ponte esticadas, colisão da ponte).
 var _passarela : Node2D
-# Divisórias e vasos do vagão de serviço.
-var _interior : Node2D
+# Divisórias e vasos do vagão de serviço (o nó também cuida da fila do banheiro).
+var _interior : Banheiro
 
 
 func _ready() -> void:
@@ -192,12 +192,31 @@ func _construir() -> void:
 		_colocar(paredes, x, altura_tiles, externo, false)
 
 
+# Banheiro deste vagão (só o de serviço tem), ou null.
+func banheiro() -> Banheiro:
+	return _interior if is_instance_valid(_interior) else null
+
+
+# Alturas (locais, em px) usadas pela RedeCaminhos para atravessar o vagão:
+# corredor do meio, vão da porta de cima e a ponte da passarela.
+func y_corredor() -> float:
+	return altura_tiles * TAMANHO_TILE / 2.0
+
+
+func y_porta() -> float:
+	return (_topo_portas() + 1 + _tamanho_porta() / 2.0) * TAMANHO_TILE
+
+
+func y_ponte() -> float:
+	return (_topo_portas() + _tamanho_porta() + 2) * TAMANHO_TILE
+
+
 # Vagão de serviço: na parte de cima, à esquerda, uma fileira de cabines de banheiro
 # (um vaso em cada, separadas por divisórias); o lado direito inteiro é a cozinha.
 # O resto (embaixo dos banheiros) é o corredor que liga a porta à cozinha.
 func _construir_servico(solo: TileMapLayer) -> void:
-	_interior = Node2D.new()
-	_interior.name = "Interior"
+	_interior = Banheiro.new()
+	_interior.name = "Banheiro"
 	add_child(_interior)
 
 	# Última coluna dos banheiros é a divisória que separa a última cabine da cozinha.
@@ -214,8 +233,13 @@ func _construir_servico(solo: TileMapLayer) -> void:
 		_colocar_divisoria(inicio + LARGURA_CABINE, 1, PROFUNDIDADE_CABINE)
 		var vaso := Vaso.new()
 		vaso.name = "Vaso%d" % (i + 1)
-		vaso.position = Vector2((inicio + LARGURA_CABINE / 2.0) * TAMANHO_TILE, TAMANHO_TILE + Vaso.ALTURA / 2.0 + 2)
+		# Encostado na parede de cima, no meio da cabine.
+		vaso.position = Vector2((inicio + LARGURA_CABINE / 2.0) * TAMANHO_TILE, TAMANHO_TILE + Vaso.TAMANHO / 2.0)
 		_interior.add_child(vaso)
+		_interior.vasos.append(vaso)
+	# Fila: começa no corredor, embaixo da última cabine, e cresce em direção à porta.
+	_interior.cabeca = Vector2((fim_banheiros - 0.5) * TAMANHO_TILE, y_corredor())
+	_interior.entrada_y = (PROFUNDIDADE_CABINE + 1.5) * TAMANHO_TILE
 
 
 # Parede vertical de "linhas" tiles na coluna x, começando na linha y, com colisão.
