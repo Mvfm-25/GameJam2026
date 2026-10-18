@@ -5,8 +5,15 @@ class_name Mapa
 @onready var conteudo : Control = $Conteudo
 @onready var painel : Control = $Conteudo/Painel
 
+@onready var status : Label = $Conteudo/Painel/Status
+
 var _tween : Tween
 var _aberto := false
+# Diretor (cena principal) diz onde o trem está e quanto falta.
+var _diretor : Diretor
+var _trem : IndicadorTrem
+
+const CENA_TREM := preload("res://cenas/indicador_trem.tscn")
 
 func _ready() -> void:
 	conteudo.visible = false
@@ -27,6 +34,47 @@ func _ready() -> void:
 	for e in get_tree().get_nodes_in_group("estacoes"):
 		if is_ancestor_of(e):
 			e.selecionada.connect(func(_estacao): fecha())
+
+	_diretor = get_parent() as Diretor
+	# Adicionado por último no painel: fica acima dos trilhos e das estações.
+	_trem = CENA_TREM.instantiate()
+	painel.add_child(_trem)
+	_atualiza_viagem()
+
+func _process(_delta: float) -> void:
+	if conteudo.visible:
+		_atualiza_viagem()
+
+# Move o trem pelo trilho entre origem e destino e atualiza o texto de status.
+func _atualiza_viagem() -> void:
+	# O Diretor define a estação de origem no próprio _ready, que roda depois deste.
+	if _diretor == null or _diretor.estacao_atual == null:
+		_trem.visible = false
+		status.text = ""
+		return
+	var origem := _diretor.estacao_atual
+	var destino := _diretor.estacao_selecionada
+	_trem.visible = true
+	_trem.no_tunel = _diretor.em_tunel
+
+	if destino == null:
+		_trem.position = origem.position
+		_trem.scale.x = 1.0
+		if _diretor.jogo_acabou:
+			status.text = "Viagem encerrada em " + origem.nome
+		else:
+			status.text = "Parado em " + origem.nome + "  ·  escolha o próximo destino"
+		return
+
+	_trem.position = origem.position.lerp(destino.position, _diretor.progresso_viagem())
+	# Balança um pouco para parecer que está andando.
+	_trem.position.y += sin(Time.get_ticks_msec() / 90.0) * 1.2
+	# Locomotiva virada para o lado do destino.
+	_trem.scale.x = -1.0 if destino.position.x < origem.position.x else 1.0
+	var texto := "%s → %s  ·  faltam %d s" % [origem.nome, destino.nome, ceili(_diretor.tempo_restante())]
+	if _diretor.em_tunel:
+		texto = "No túnel...  ·  " + texto
+	status.text = texto
 
 # O papel do mapa sobe de baixo da tela até o centro.
 func abre() -> void:

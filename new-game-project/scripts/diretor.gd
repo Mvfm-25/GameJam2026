@@ -75,6 +75,17 @@ var em_area_troca = false
 func em_transito() -> bool :
 	return etapa != Etapa.NA_ESTACAO
 
+# Fração da viagem atual já percorrida (0 parado na estação, 1 chegando).
+func progresso_viagem() -> float :
+	if not em_transito() or tempo_viagem_total <= 0.0 :
+		return 0.0
+	return clampf(tempo_decorrido / tempo_viagem_total, 0.0, 1.0)
+
+func tempo_restante() -> float :
+	if not em_transito() :
+		return 0.0
+	return maxf(0.0, tempo_viagem_total - tempo_decorrido)
+
 # Passando pelo tunel: sorteia um passageiro vivo para morrer.
 # Quanto maior a raiva, maior a chance de ser o escolhido.
 func aposta_morte() -> Passageiro :
