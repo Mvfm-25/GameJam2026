@@ -89,6 +89,8 @@ const PISOS := {
 const VASOS := 3
 const LARGURA_CABINE := 3 # Tiles livres dentro de cada cabine.
 const PROFUNDIDADE_CABINE := 4 # Tiles, a partir da parede de cima.
+# Passagem do corredor para a cozinha: um vão de tiles na parede entre os dois, centrado no corredor.
+const PASSAGEM_COZINHA := 3
 # Peça de parede vertical do atlas (2 tiles de altura, em px do atlas), usada nas divisórias.
 # É esticada: borda de cima, faixa do meio e a base (frente da parede).
 const DIVISORIA := Rect2(1344, 192, 64, 128)
@@ -194,6 +196,11 @@ func _construir() -> void:
 		_colocar(paredes, ultima_col, y, PAREDE_LATERAL, false)
 	_colocar_porta(paredes, 0, porta_esquerda_aberta, false)
 	_colocar_porta(paredes, ultima_col, porta_direita_aberta, true)
+	# A primeira cabine do banheiro não pode ficar aberta para o vão da porta:
+	# a parede da ponta vai até o fim da cabine.
+	if classe == "SERVICO":
+		for y in range(1, PROFUNDIDADE_CABINE + 1):
+			_colocar(paredes, 0, y, PAREDE_LATERAL, true)
 
 	# Lado com porta aberta = ligado a outro vagão: ganha a plataforma do lado de fora.
 	# O lado direito também desenha a ponte até a plataforma do próximo vagão.
@@ -280,6 +287,16 @@ func _construir_servico(solo: TileMapLayer) -> void:
 		_interior.add_child(porta)
 		porta.configurar(LARGURA_CABINE, (PROFUNDIDADE_CABINE - 1) * TAMANHO_TILE)
 		vaso.porta = porta
+	# Parede entre o corredor e a cozinha, abaixo da divisória da última cabine,
+	# com uma passagem de PASSAGEM_COZINHA tiles centrada no corredor.
+	var corredor := int(y_corredor() / TAMANHO_TILE)
+	var passagem_ini := corredor - (PASSAGEM_COZINHA - 1) / 2
+	var passagem_fim := passagem_ini + PASSAGEM_COZINHA
+	var ultima_interna := altura_tiles - 2
+	if passagem_ini > PROFUNDIDADE_CABINE + 1:
+		_colocar_divisoria(fim_banheiros, PROFUNDIDADE_CABINE + 1, passagem_ini - PROFUNDIDADE_CABINE - 1)
+	if passagem_fim <= ultima_interna:
+		_colocar_divisoria(fim_banheiros, passagem_fim, ultima_interna - passagem_fim + 1)
 	# Fila: começa no corredor, embaixo da última cabine, e cresce em direção à porta.
 	_interior.cabeca = Vector2((fim_banheiros - 0.5) * TAMANHO_TILE, y_corredor())
 	_interior.entrada_y = (PROFUNDIDADE_CABINE + 1.5) * TAMANHO_TILE
