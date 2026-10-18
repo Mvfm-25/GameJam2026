@@ -5,8 +5,13 @@
 [ext_resource type="PackedScene" uid="uid://crr8571fx8t3n" path="res://cenas/Maquinista.tscn" id="2_maq"]
 [ext_resource type="PackedScene" uid="uid://cxa1g1rqaebyx" path="res://cenas/passageiro.tscn" id="3_42xuo"]
 [ext_resource type="Script" uid="uid://cwgwam7do7f5e" path="res://scripts/passageiro.gd" id="4_0404l"]
+<<<<<<< HEAD
 [ext_resource type="Script" uid="uid://d0h8bxrfw350h" path="res://scripts/forno.gd" id="4_eewb4"]
 [ext_resource type="Script" uid="uid://bdwgqseqwqf6q" path="res://scripts/cozinha.gd" id="4_k1xmn"]
+=======
+[ext_resource type="Script" path="res://scripts/forno.gd" id="4_eewb4"]
+[ext_resource type="Script" path="res://scripts/cozinha.gd" id="4_k1xmn"]
+>>>>>>> a100d42467fe82e13c824d1c20f72a4f3e82c561
 [ext_resource type="PackedScene" uid="uid://cjq7h812stu2o" path="res://cenas/deco.tscn" id="5_ff0xt"]
 [ext_resource type="PackedScene" uid="uid://c7mapa0trem01" path="res://cenas/mapa.tscn" id="6_mapa"]
 [ext_resource type="PackedScene" uid="uid://2ke7qr5pifkm" path="res://cenas/item.tscn" id="8_djk5k"]
