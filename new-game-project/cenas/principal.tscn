@@ -24,6 +24,8 @@
 [ext_resource type="Script" uid="uid://12fl5h0183wu" path="res://scripts/objetos_chao.gd" id="objetos_script"]
 [ext_resource type="Texture2D" uid="uid://cplqucfhorgax" path="res://assets/decorations/pedras.png" id="pedras_tex"]
 [ext_resource type="Script" uid="uid://cep57ks7wxcce" path="res://scripts/trilhos.gd" id="trilhos_script"]
+[ext_resource type="Texture2D" uid="uid://b232kps4lxufu" path="res://assets/Outros/poeiras.png" id="poeiras_tex"]
+[ext_resource type="Script" path="res://scripts/poeira.gd" id="poeira_script"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fornalha"]
 atlas = ExtResource("12_fornalha")
@@ -57,6 +59,10 @@ intervalo_max = 4.0
 [node name="Pedras" type="Node2D" parent="." unique_id=761416564]
 script = ExtResource("objetos_script")
 textura = ExtResource("pedras_tex")
+
+[node name="Poeiras" type="Node2D" parent="."]
+script = ExtResource("poeira_script")
+textura = ExtResource("poeiras_tex")
 
 [node name="Vagao1" parent="." unique_id=988786515 instance=ExtResource("1_trem")]
 classe = "MAQUINAS"

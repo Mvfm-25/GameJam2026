@@ -12,7 +12,7 @@ config_version=5
 
 config/name="MURDER TREM"
 config/description="Sirva seus clientes, se não eles podem ficar MORTOS de fome.s"
-run/main_scene="res://cenas/principal.tscn"
+run/main_scene="res://cenas/menu.tscn"
 config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="uid://cbhbydw8l3jx4"
 

@@ -126,6 +126,13 @@ const VAO_PASSARELA := 5
 # Distância (em tiles) entre as janelas da parede de baixo.
 const ESPACO_JANELAS := 4
 
+# Janelas largas do tileset (3 tiles lado a lado: linha 8, colunas 1 a 3) na parede de baixo
+# dos vagões de passageiros (SOCIAL), com ESPACO_JANELAS_LARGAS tiles de parede entre uma e outra.
+# Essas células estão registradas na fonte 1 do tileset (as outras peças, na fonte 0).
+const FONTE_JANELAS := 1
+const JANELA_LARGA := [Vector2i(1, 8), Vector2i(2, 8), Vector2i(3, 8)]
+const ESPACO_JANELAS_LARGAS := 3
+
 const TILESET := preload("res://assets/tileset/tileset_v1.png")
 
 # Portas fechadas do vagão; cada uma abre com a tecla de interagir.
@@ -206,6 +213,18 @@ func _construir() -> void:
 		var distancia := posmod(x - centro, ESPACO_JANELAS)
 		_colocar(paredes, x, ultima_lin, JANELA if distancia == 0 else PAREDE_INF, false)
 		_colocar(paredes, x, altura_tiles, RODA_MEIO, false)
+	if classe == "SOCIAL":
+		_colocar_janelas_largas(paredes, ultima_col, ultima_lin)
+
+
+# Troca trechos da parede de baixo pelas janelas largas do tileset, entre as portas.
+func _colocar_janelas_largas(paredes: TileMapLayer, ultima_col: int, ultima_lin: int) -> void:
+	var largura := JANELA_LARGA.size()
+	var x := 2
+	while x + largura <= ultima_col - 1:
+		for i in largura:
+			paredes.set_cell(Vector2i(x + i, ultima_lin), FONTE_JANELAS, JANELA_LARGA[i])
+		x += largura + ESPACO_JANELAS_LARGAS
 
 
 # Banheiro deste vagão (só o de serviço tem), ou null.

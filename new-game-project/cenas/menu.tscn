@@ -1,0 +1,114 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/menu.gd" id="1_menu"]
+[ext_resource type="Texture2D" path="res://assets/logo.png" id="2_logo"]
+[ext_resource type="Texture2D" path="res://assets/Outros/botao.png" id="3_botao"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBox_normal"]
+texture = ExtResource("3_botao")
+texture_margin_left = 12.0
+texture_margin_top = 12.0
+texture_margin_right = 12.0
+texture_margin_bottom = 12.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBox_hover"]
+texture = ExtResource("3_botao")
+texture_margin_left = 12.0
+texture_margin_top = 12.0
+texture_margin_right = 12.0
+texture_margin_bottom = 12.0
+modulate_color = Color(1.25, 1.15, 1.1, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBox_pressed"]
+texture = ExtResource("3_botao")
+texture_margin_left = 12.0
+texture_margin_top = 12.0
+texture_margin_right = 12.0
+texture_margin_bottom = 12.0
+modulate_color = Color(0.8, 0.75, 0.75, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBox_desativado"]
+texture = ExtResource("3_botao")
+texture_margin_left = 12.0
+texture_margin_top = 12.0
+texture_margin_right = 12.0
+texture_margin_bottom = 12.0
+modulate_color = Color(0.55, 0.55, 0.6, 1)
+
+[node name="Menu" type="Control" unique_id=1001001]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture_filter = 1
+script = ExtResource("1_menu")
+
+[node name="Fundo" type="ColorRect" parent="." unique_id=1001002]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.11, 0.1, 0.14, 1)
+
+[node name="Margem" type="MarginContainer" parent="." unique_id=1001003]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 96
+theme_override_constants/margin_top = 64
+theme_override_constants/margin_right = 96
+theme_override_constants/margin_bottom = 64
+
+[node name="Colunas" type="HBoxContainer" parent="Margem" unique_id=1001004]
+layout_mode = 2
+theme_override_constants/separation = 64
+
+[node name="LadoLogo" type="CenterContainer" parent="Margem/Colunas" unique_id=1001005]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Logo" type="TextureRect" parent="Margem/Colunas/LadoLogo" unique_id=1001006]
+custom_minimum_size = Vector2(384, 384)
+layout_mode = 2
+texture = ExtResource("2_logo")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LadoBotoes" type="CenterContainer" parent="Margem/Colunas" unique_id=1001007]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Botoes" type="VBoxContainer" parent="Margem/Colunas/LadoBotoes" unique_id=1001008]
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="Inicio" type="Button" parent="Margem/Colunas/LadoBotoes/Botoes" unique_id=1001009]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(320, 80)
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+theme_override_styles/normal = SubResource("StyleBox_normal")
+theme_override_styles/hover = SubResource("StyleBox_hover")
+theme_override_styles/pressed = SubResource("StyleBox_pressed")
+theme_override_styles/focus = SubResource("StyleBox_hover")
+text = "Início"
+
+[node name="Creditos" type="Button" parent="Margem/Colunas/LadoBotoes/Botoes" unique_id=1001010]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(320, 80)
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+theme_override_styles/normal = SubResource("StyleBox_desativado")
+theme_override_styles/hover = SubResource("StyleBox_desativado")
+theme_override_styles/pressed = SubResource("StyleBox_desativado")
+theme_override_styles/disabled = SubResource("StyleBox_desativado")
+theme_override_styles/focus = SubResource("StyleBox_desativado")
+disabled = true
+text = "Créditos"
