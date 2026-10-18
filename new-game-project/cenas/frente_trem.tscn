@@ -30,7 +30,7 @@ texture = ExtResource("1_5cylv")
 position = Vector2(-28, -7)
 shape = SubResource("RectangleShape2D_g7ga7")
 
-[node name="Fumaca" type="CPUParticles2D" parent="." unique_id=1977508157]
+[node name="Fumaca" type="CPUParticles2D" parent="." unique_id=1977508157 groups=["fumaca_trem"]]
 position = Vector2(43, -173)
 z_index = 5
 texture_filter = 1

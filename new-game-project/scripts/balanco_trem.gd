@@ -18,9 +18,15 @@ const SOLAVANCO := 1.6
 # Velocidade com que o solavanco se dissipa.
 const AMORTECIMENTO := 14.0
 
+# O Diretor liga e desliga o balanço pelo grupo: o trem parado na estação não balança.
+const GRUPO := "balanco_trem"
+
 var _tempo := 0.0
 var _solavanco := 0.0
 var _espera := 1.0
+
+func _ready() -> void:
+	add_to_group(GRUPO)
 
 func _process(delta: float) -> void:
 	if not ativo:

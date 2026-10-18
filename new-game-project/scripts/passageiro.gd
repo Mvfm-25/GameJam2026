@@ -407,7 +407,9 @@ func _pulso_contagio(delta : float, diretor : Diretor) -> void:
 # Liga o modo sacrificial enquanto houver uma caveira à vista, e marca cada caveira
 # vista para reagir ao destino dela depois.
 func _atualiza_sacrificial(diretor : Diretor) -> void:
-	var vistas : Array[Item] = diretor.caveiras_perto(global_position, raio_caveira) if diretor != null else []
+	var vistas : Array[Item] = []
+	if diretor != null :
+		vistas = diretor.caveiras_perto(global_position, raio_caveira)
 	for c in vistas :
 		if not c.testemunhas.has(self) :
 			c.testemunhas.append(self)

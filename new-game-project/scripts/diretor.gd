@@ -94,6 +94,11 @@ var em_area_troca = false
 # Fornalha da sala de máquinas; sem combustível o trem para no caminho.
 var fornalha : Fornalha = null
 var trilhos : Trilhos = null
+const TILESET_VAGAO := "res://assets/tileset/tileset_vagao.tres"
+# Células animadas das rodas na fonte 0 do tileset (veja RODA_* em trem.gd).
+const RODAS := [Vector2i(1, 10), Vector2i(1, 12), Vector2i(1, 14)]
+const VELOCIDADE_RODA_PARADA := 0.00001
+var _rodas_girando := true
 var _avisou_fornalha_apagada := false
 
 func em_transito() -> bool :
@@ -470,6 +475,7 @@ func _textura_lanterna() -> GradientTexture2D :
 func _process(delta: float) -> void:
 	if not em_transito() :
 		tempo_parado += delta
+		_move_trem(false)
 		return
 	if _trem_parado_sem_carvao() :
 		return
@@ -495,11 +501,29 @@ func _process(delta: float) -> void:
 	elif etapa == Etapa.VIAJANDO and tempo_decorrido >= tempo_viagem_total :
 		chega_destino()
 
+# Cenário e rodas só andam com o trem em movimento: parado na estação, ou com a
+# fornalha apagada, os trilhos não correm e a animação das rodas congela.
+func _move_trem(movendo : bool) -> void :
+	if trilhos != null :
+		trilhos.ativo = movendo
+	if movendo == _rodas_girando :
+		return
+	_rodas_girando = movendo
+	# Sem a tremida da câmera e sem soltar fumaça (a que já saiu termina de subir).
+	for camera in get_tree().get_nodes_in_group("balanco_trem") :
+		camera.ativo = movendo
+	for fumaca in get_tree().get_nodes_in_group("fumaca_trem") :
+		fumaca.emitting = movendo
+	var tileset := ResourceLoader.load(TILESET_VAGAO) as TileSet
+	var fonte := tileset.get_source(0) as TileSetAtlasSource
+	for roda in RODAS :
+		# A velocidade não pode ser zero; um valor minúsculo deixa a roda parada.
+		fonte.set_tile_animation_speed(roda, 1.0 if movendo else VELOCIDADE_RODA_PARADA)
+
 # Com a fornalha apagada a viagem não avança e os trilhos param de correr.
 func _trem_parado_sem_carvao() -> bool :
 	var apagada := fornalha != null and fornalha.apagada()
-	if trilhos != null :
-		trilhos.ativo = not apagada
+	_move_trem(not apagada)
 	if apagada and not _avisou_fornalha_apagada :
 		mostra_aviso("A fornalha apagou! O trem parou. Abasteça com carvão!")
 	_avisou_fornalha_apagada = apagada
