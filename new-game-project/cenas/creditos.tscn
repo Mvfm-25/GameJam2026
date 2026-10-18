@@ -1,0 +1,108 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/creditos.gd" id="1_creditos"]
+[ext_resource type="Texture2D" path="res://assets/Outros/foto.jpeg" id="2_foto"]
+[ext_resource type="Texture2D" path="res://assets/Outros/botao.png" id="3_botao"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBox_normal"]
+texture = ExtResource("3_botao")
+texture_margin_left = 12.0
+texture_margin_top = 12.0
+texture_margin_right = 12.0
+texture_margin_bottom = 12.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBox_hover"]
+texture = ExtResource("3_botao")
+texture_margin_left = 12.0
+texture_margin_top = 12.0
+texture_margin_right = 12.0
+texture_margin_bottom = 12.0
+modulate_color = Color(1.25, 1.15, 1.1, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBox_pressed"]
+texture = ExtResource("3_botao")
+texture_margin_left = 12.0
+texture_margin_top = 12.0
+texture_margin_right = 12.0
+texture_margin_bottom = 12.0
+modulate_color = Color(0.8, 0.75, 0.75, 1)
+
+[node name="Creditos" type="Control" unique_id=1002001]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture_filter = 1
+script = ExtResource("1_creditos")
+
+[node name="Fundo" type="ColorRect" parent="." unique_id=1002002]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.11, 0.1, 0.14, 1)
+
+[node name="Margem" type="MarginContainer" parent="." unique_id=1002003]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 96
+theme_override_constants/margin_top = 64
+theme_override_constants/margin_right = 96
+theme_override_constants/margin_bottom = 64
+
+[node name="Colunas" type="HBoxContainer" parent="Margem" unique_id=1002004]
+layout_mode = 2
+theme_override_constants/separation = 64
+
+[node name="LadoTexto" type="CenterContainer" parent="Margem/Colunas" unique_id=1002005]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Textos" type="VBoxContainer" parent="Margem/Colunas/LadoTexto" unique_id=1002006]
+layout_mode = 2
+theme_override_constants/separation = 24
+
+[node name="Titulo" type="Label" parent="Margem/Colunas/LadoTexto/Textos" unique_id=1002007]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.82, 0.45, 1)
+theme_override_font_sizes/font_size = 128
+text = "GCM"
+horizontal_alignment = 1
+
+[node name="Nomes" type="Label" parent="Margem/Colunas/LadoTexto/Textos" unique_id=1002008]
+layout_mode = 2
+theme_override_font_sizes/font_size = 36
+text = "Gustavo, Cadu e Marcus"
+horizontal_alignment = 1
+
+[node name="Voltar" type="Button" parent="Margem/Colunas/LadoTexto/Textos" unique_id=1002009]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(240, 64)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 28
+theme_override_styles/normal = SubResource("StyleBox_normal")
+theme_override_styles/hover = SubResource("StyleBox_hover")
+theme_override_styles/pressed = SubResource("StyleBox_pressed")
+theme_override_styles/focus = SubResource("StyleBox_hover")
+text = "Voltar"
+
+[node name="LadoFoto" type="CenterContainer" parent="Margem/Colunas" unique_id=1002010]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Foto" type="TextureRect" parent="Margem/Colunas/LadoFoto" unique_id=1002011]
+texture_filter = 2
+custom_minimum_size = Vector2(560, 420)
+layout_mode = 2
+texture = ExtResource("2_foto")
+expand_mode = 1
+stretch_mode = 5

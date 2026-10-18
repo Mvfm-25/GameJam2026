@@ -27,14 +27,6 @@ texture_margin_right = 12.0
 texture_margin_bottom = 12.0
 modulate_color = Color(0.8, 0.75, 0.75, 1)
 
-[sub_resource type="StyleBoxTexture" id="StyleBox_desativado"]
-texture = ExtResource("3_botao")
-texture_margin_left = 12.0
-texture_margin_top = 12.0
-texture_margin_right = 12.0
-texture_margin_bottom = 12.0
-modulate_color = Color(0.55, 0.55, 0.6, 1)
-
 [node name="Menu" type="Control" unique_id=1001001]
 layout_mode = 3
 anchors_preset = 15
@@ -105,10 +97,8 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(320, 80)
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
-theme_override_styles/normal = SubResource("StyleBox_desativado")
-theme_override_styles/hover = SubResource("StyleBox_desativado")
-theme_override_styles/pressed = SubResource("StyleBox_desativado")
-theme_override_styles/disabled = SubResource("StyleBox_desativado")
-theme_override_styles/focus = SubResource("StyleBox_desativado")
-disabled = true
+theme_override_styles/normal = SubResource("StyleBox_normal")
+theme_override_styles/hover = SubResource("StyleBox_hover")
+theme_override_styles/pressed = SubResource("StyleBox_pressed")
+theme_override_styles/focus = SubResource("StyleBox_hover")
 text = "Créditos"
