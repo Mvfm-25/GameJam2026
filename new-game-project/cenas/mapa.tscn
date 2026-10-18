@@ -45,7 +45,7 @@ offset_bottom = 92.0
 grow_horizontal = 2
 mouse_filter = 2
 theme_override_colors/font_color = Color(0.13, 0.125, 0.2, 1)
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 28
 text = "MAPA"
 horizontal_alignment = 1
 
@@ -55,13 +55,34 @@ anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -90.0
-offset_bottom = -66.0
+offset_left = 160.0
+offset_top = -94.0
+offset_right = -160.0
+offset_bottom = -76.0
 grow_horizontal = 2
 grow_vertical = 0
 mouse_filter = 2
-theme_override_colors/font_color = Color(0.13, 0.125, 0.2, 1)
-text = "Clique numa estação para escolher o destino  ·  M para fechar"
+theme_override_colors/font_color = Color(0.3, 0.28, 0.35, 1)
+theme_override_font_sizes/font_size = 13
+text = "Clique numa estação vizinha para escolher o destino  ·  M para fechar"
+horizontal_alignment = 1
+
+[node name="Status" type="Label" parent="Conteudo/Painel"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 160.0
+offset_top = -122.0
+offset_right = -160.0
+offset_bottom = -98.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.55, 0.12, 0.1, 1)
+theme_override_font_sizes/font_size = 17
+text = "Parado em Central"
 horizontal_alignment = 1
 
 [node name="Trilhos" type="Line2D" parent="Conteudo/Painel"]
@@ -71,32 +92,34 @@ default_color = Color(0.45, 0.45, 0.5, 1)
 [node name="Estacoes" type="Node2D" parent="Conteudo/Painel"]
 
 [node name="Central" parent="Conteudo/Painel/Estacoes" instance=ExtResource("2_est")]
-position = Vector2(200, 300)
+position = Vector2(220, 270)
 nome = "Central"
 cor = Color(0.9, 0.25, 0.25, 1)
 tempo_viagem = 8.0
 originaria = true
 
 [node name="VilaFerrugem" parent="Conteudo/Painel/Estacoes" instance=ExtResource("2_est")]
-position = Vector2(300, 170)
+position = Vector2(310, 160)
 nome = "Vila Ferrugem"
+rotulo_acima = true
 cor = Color(0.95, 0.55, 0.15, 1)
 tempo_viagem = 10.0
 
 [node name="PortoSombrio" parent="Conteudo/Painel/Estacoes" instance=ExtResource("2_est")]
-position = Vector2(400, 300)
+position = Vector2(400, 270)
 nome = "Porto Sombrio"
 cor = Color(0.25, 0.75, 0.4, 1)
 tempo_viagem = 12.0
 
 [node name="AltoDaFumaca" parent="Conteudo/Painel/Estacoes" instance=ExtResource("2_est")]
-position = Vector2(500, 170)
+position = Vector2(490, 160)
 nome = "Alto da Fumaça"
+rotulo_acima = true
 cor = Color(0.6, 0.35, 0.85, 1)
 tempo_viagem = 14.0
 
 [node name="TerminalNorte" parent="Conteudo/Painel/Estacoes" instance=ExtResource("2_est")]
-position = Vector2(600, 300)
+position = Vector2(580, 270)
 nome = "Terminal Norte"
 cor = Color(0.95, 0.85, 0.2, 1)
 tempo_viagem = 16.0

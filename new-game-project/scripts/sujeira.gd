@@ -12,6 +12,19 @@ const LINHAS := 4
 const ESCALA := 0.5
 # Raio em que o maquinista consegue limpar.
 const RAIO_LIMPEZA := 20.0
+# Quantos tipos de sujeira comum existem; os tipos seguintes são de sangue.
+const TIPOS_COMUNS := 4
+# Sangue marca o assento de um passageiro morto, então é maior que as sujeiras comuns.
+const ESCALA_SANGUE := 0.75
+
+# Defina antes de adicionar na árvore para usar uma mancha de sangue.
+var sangue := false
+
+# Cria uma mancha de sangue (ainda fora da árvore).
+static func nova_sangue() -> Sujeira:
+	var sujeira := Sujeira.new()
+	sujeira.sangue = true
+	return sujeira
 
 # Maquinista que está perto (para destacar a sujeira que ele vai limpar).
 var _maquinista : Maquinista = null
@@ -21,7 +34,8 @@ var _linha := 0
 var _destacada := false
 
 func _ready() -> void:
-	var tipo := randi() % (SUJEIRAS_POR_LINHA * LINHAS)
+	# Tipos 0 a 3 são sujeiras comuns (gosmas, banana, bitucas); 4 a 7 são manchas de sangue.
+	var tipo := randi() % TIPOS_COMUNS + (TIPOS_COMUNS if sangue else 0)
 	_coluna = (tipo % SUJEIRAS_POR_LINHA) * COLUNAS_SUJEIRA
 	_linha = tipo / SUJEIRAS_POR_LINHA
 	_atlas = AtlasTexture.new()
@@ -29,7 +43,7 @@ func _ready() -> void:
 	_atualiza_quadro()
 	var sprite := Sprite2D.new()
 	sprite.texture = _atlas
-	sprite.scale = Vector2.ONE * ESCALA
+	sprite.scale = Vector2.ONE * (ESCALA_SANGUE if sangue else ESCALA)
 	add_child(sprite)
 
 	var forma := CircleShape2D.new()

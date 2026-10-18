@@ -24,6 +24,18 @@ signal selecionada(estacao: Estacao)
 # Marcada como ponto de origem
 @export var originaria = false
 
+# Nome desenhado acima do círculo (para estações na fileira de cima, longe dos trilhos).
+@export var rotulo_acima = false:
+	set(valor):
+		rotulo_acima = valor
+		queue_redraw()
+
+const TAMANHO_FONTE := 17
+const COR_TEXTO := Color(0.13, 0.125, 0.2)
+# Contorno da cor do papel, para o nome não se misturar com os trilhos.
+const COR_PAPEL := Color(0.95, 0.92, 0.66)
+const CONTORNO_TEXTO := 6
+
 # Estações vizinhas (ligadas por trilho no mapa). Preenchidas pelo Mapa.
 var estacoes_vizinhas : Array[Estacao] = []
 
@@ -51,7 +63,11 @@ func _draw() -> void:
 		draw_circle(Vector2.ZERO, raio + 5.0, Color.WHITE)
 	draw_circle(Vector2.ZERO, raio, cor.lightened(0.3) if hover else cor)
 	var fonte = ThemeDB.fallback_font
-	draw_string(fonte, Vector2(-raio * 4.0, raio + 20.0), nome, HORIZONTAL_ALIGNMENT_CENTER, raio * 8.0, 14, Color(0.13, 0.125, 0.2))
+	var largura = raio * 10.0
+	var y = -raio - 10.0 if rotulo_acima else raio + TAMANHO_FONTE + 6.0
+	var pos = Vector2(-largura / 2.0, y)
+	draw_string_outline(fonte, pos, nome, HORIZONTAL_ALIGNMENT_CENTER, largura, TAMANHO_FONTE, CONTORNO_TEXTO, COR_PAPEL)
+	draw_string(fonte, pos, nome, HORIZONTAL_ALIGNMENT_CENTER, largura, TAMANHO_FONTE, COR_TEXTO)
 
 func _mouse_em_cima(event: InputEvent) -> bool:
 	return make_input_local(event).position.length() <= raio
