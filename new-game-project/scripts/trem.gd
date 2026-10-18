@@ -342,6 +342,12 @@ func _colocar_porta(paredes: TileMapLayer, x: int, aberta: bool, espelhar: bool)
 		add_child(porta)
 		porta.configurar(x, inicio, tamanho, espelhar)
 		_portas.append(porta)
+	# Sem portas (ponta aberta para a passarela), o bloco de parede entre os dois vãos sai:
+	# o vão fica uma abertura só. São o bloco logo abaixo do primeiro vão e a moldura do segundo.
+	if aberta:
+		var bloco := primeira + 1 + tamanho
+		paredes.erase_cell(Vector2i(x, bloco))
+		paredes.erase_cell(Vector2i(x, bloco + 1))
 	if _portas.size() >= 2:
 		_portas[-1].parceira = _portas[-2]
 		_portas[-2].parceira = _portas[-1]
