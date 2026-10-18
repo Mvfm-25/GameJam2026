@@ -44,6 +44,8 @@ func _ready() -> void:
 	var sprite := Sprite2D.new()
 	sprite.texture = _atlas
 	sprite.scale = Vector2.ONE * (ESCALA_SANGUE if sangue else ESCALA)
+	# Metade das sujeiras nasce espelhada, para não ficarem todas iguais.
+	sprite.flip_h = randf() < 0.5
 	add_child(sprite)
 
 	var forma := CircleShape2D.new()
