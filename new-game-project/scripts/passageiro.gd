@@ -199,6 +199,27 @@ var _pose_sentado := 0
 var _pose := -1
 var _posicao_anterior := Vector2.ZERO
 
+# --- Jeito de andar -------------------------------------------------------
+# Para não andar em linha reta e constante: o ritmo varia, de vez em quando ele para
+# e olha em volta, e o corpo (só o desenho) vai ondulando de um lado para o outro
+# do caminho. A posição de verdade, que vale para a rota e a colisão, não muda.
+const VAGAR_AMPLITUDE := 9.0 # px (do passageiro), na perpendicular ao caminho
+const VAGAR_FREQUENCIA := Vector2(0.4, 0.9) # ciclos por segundo, sorteado por passageiro
+const RITMO_VARIACAO := 0.25 # o ritmo oscila em torno de 1.0 por essa fração
+const PAUSA_INTERVALO := Vector2(3.0, 8.0) # segundos andando entre uma parada e outra
+const PAUSA_DURACAO := Vector2(0.7, 1.8)
+const PAUSA_OLHAR := 0.5 # a cada quanto tempo parado ele vira o rosto para o outro lado
+const RITMO_SUAVIZACAO := 6.0
+var _fase_vagar := randf() * TAU
+var _frequencia_vagar := randf_range(VAGAR_FREQUENCIA.x, VAGAR_FREQUENCIA.y)
+var _tempo_vagar := randf() * 10.0
+var _direcao_andar := Vector2.RIGHT
+var _ritmo := 1.0
+var _pausa := 0.0
+var _proxima_pausa := randf_range(PAUSA_INTERVALO.x, PAUSA_INTERVALO.y)
+var _espera_olhar := 0.0
+var _pose_pausa := 1
+
 var corpo = "Normal"
 var tem_chapeu = false
 var cor_cabelo : Color
@@ -266,8 +287,13 @@ func _atualiza_pose() -> void:
 	var movimento := global_position - _posicao_anterior
 	_posicao_anterior = global_position
 	var nova := _pose_sentado
+	if movimento.length_squared() > 0.0001 :
+		_direcao_andar = movimento.normalized()
 	if estado in [Estado.ANDANDO, Estado.NA_FILA, Estado.PERSEGUINDO] :
-		if movimento.length_squared() > 0.0001 :
+		if estado == Estado.ANDANDO and _pausa > 0.0 :
+			# Parado no meio do caminho, olhando em volta.
+			nova = _pose_pausa
+		elif movimento.length_squared() > 0.0001 :
 			if absf(movimento.x) > absf(movimento.y) :
 				nova = 1 if movimento.x < 0.0 else 2
 			else :
@@ -290,7 +316,11 @@ func _anima_andar(delta : float) -> void:
 	var amassada := 0.0
 	var agitado := esta_vivo() and (irado or imundo)
 	var direto := false
-	if estado == Estado.ANDANDO or estado == Estado.PERSEGUINDO or (estado == Estado.NA_FILA and not _esperando) :
+	var desvio := Vector2.ZERO
+	var parado_no_caminho := estado == Estado.ANDANDO and _ritmo < 0.15
+	if parado_no_caminho :
+		pass
+	elif estado == Estado.ANDANDO or estado == Estado.PERSEGUINDO or (estado == Estado.NA_FILA and not _esperando) :
 		var balanco := IRADO_BALANCO if agitado else 1.0
 		var pulinho := IRADO_PULINHO if agitado else 1.0
 		_fase_passo += delta * BALANCO_VELOCIDADE * (IRADO_VELOCIDADE if agitado else 1.0)
@@ -298,6 +328,9 @@ func _anima_andar(delta : float) -> void:
 		var passo := absf(sin(_fase_passo))
 		pulo = -passo * PULINHO * pulinho
 		amassada = (0.5 - passo) * AMASSADA * balanco
+		if estado == Estado.ANDANDO :
+			var lateral := Vector2(-_direcao_andar.y, _direcao_andar.x)
+			desvio = lateral * sin(_tempo_vagar * TAU * _frequencia_vagar + _fase_vagar) * VAGAR_AMPLITUDE * minf(_ritmo, 1.0)
 	elif agitado :
 		var chilique := _anima_chilique(delta)
 		angulo = chilique.x
@@ -309,7 +342,7 @@ func _anima_andar(delta : float) -> void:
 	if direto :
 		peso = 1.0
 	_visual.rotation = lerp_angle(_visual.rotation, angulo, peso)
-	_visual.position = _visual.position.lerp(Vector2(0, pulo), peso)
+	_visual.position = _visual.position.lerp(Vector2(0, pulo) + desvio, peso)
 	var escala := Vector2.ONE * ESCALA_VISUAL
 	_visual.scale = _visual.scale.lerp(escala * Vector2(1.0 - amassada, 1.0 + amassada), peso)
 
@@ -632,8 +665,29 @@ func _inicia_passeio(caminho : Caminho) -> void:
 	$CollisionShape2D.set_deferred("disabled", true)
 	print("Passageiro " + nome + " levantou para dar uma volta.")
 
+# Ritmo da caminhada (1 = velocidade normal): oscila devagar e cai a zero nas paradas.
+func _atualiza_ritmo(delta : float) -> void:
+	var alvo := 1.0 + sin(_tempo_vagar * 1.7 + _fase_vagar) * RITMO_VARIACAO
+	if _pausa > 0.0 :
+		_pausa -= delta
+		_espera_olhar -= delta
+		if _espera_olhar <= 0.0 :
+			_espera_olhar = PAUSA_OLHAR
+			_pose_pausa = 1 if _pose_pausa == 2 else 2
+		alvo = 0.0
+	else :
+		_proxima_pausa -= delta
+		# Só para quando ainda tem caminho pela frente.
+		if _proxima_pausa <= 0.0 and _rota.size() > 1 :
+			_pausa = randf_range(PAUSA_DURACAO.x, PAUSA_DURACAO.y)
+			_proxima_pausa = randf_range(PAUSA_INTERVALO.x, PAUSA_INTERVALO.y)
+			_espera_olhar = 0.0
+			_pose_pausa = 1 if randf() < 0.5 else 2
+	_ritmo = lerpf(_ritmo, alvo, 1.0 - exp(-RITMO_SUAVIZACAO * delta))
+
 func _anda(delta : float) -> void:
-	var passo := velocidade_caminhada * delta
+	_atualiza_ritmo(delta)
+	var passo := velocidade_caminhada * delta * _ritmo
 	_avanca_sujeira(passo)
 	while passo > 0.0 and not _rota.is_empty() :
 		var alvo := _rota[0]
@@ -823,6 +877,7 @@ func _process(delta: float) -> void:
 		_anda_na_fila(delta)
 	elif estado == Estado.PERSEGUINDO :
 		_persegue(delta)
+	_tempo_vagar += delta
 	_atualiza_pose()
 	_anima_andar(delta)
 	if not esta_vivo() :
