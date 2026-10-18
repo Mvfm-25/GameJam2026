@@ -121,6 +121,10 @@ max_distance = 648.0
 
 [node name="Item" parent="." unique_id=1412582290 instance=ExtResource("8_djk5k")]
 position = Vector2(398.00003, 230.00002)
+nome = "Prato"
+classe = "Alimento"
 
 [node name="Item2" parent="." unique_id=1447504206 instance=ExtResource("8_djk5k")]
 position = Vector2(350, 230)
+nome = "Prato"
+classe = "Alimento"

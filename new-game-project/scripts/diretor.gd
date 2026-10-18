@@ -30,6 +30,9 @@ var estacao_atual : Estacao = null
 # Por quantas estações o jogador passou
 var quantidade_visitas = 0
 
+# Sujeiras spawnadas no mapa
+@export var sujeiras = [] 
+
 # Trilho atual & se o trem está numa área onde é possível trocar de trilho.
 var trilho_atual = 0
 var em_area_troca = false
