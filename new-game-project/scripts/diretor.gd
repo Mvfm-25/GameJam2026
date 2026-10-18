@@ -17,6 +17,12 @@ const TRANSICAO_TUNEL = 0.6
 const COR_TUNEL = Color(0.08, 0.08, 0.12)
 # Mesmo os passageiros calmos têm alguma chance de morrer.
 const PESO_BASE_MORTE = 0.2
+# Caveira deixada em cima da poça de sangue de quem morreu.
+const CENA_CAVEIRA := preload("res://cenas/caveira.tscn")
+# Quem morre sentado deixa a poça no chão ao lado esquerdo da cadeira (no corredor),
+# fora do desenho dela; senão a cadeira cobriria a poça e a caveira.
+# A cadeira desenhada vai de x -25 a +24 do centro; a poça tem ~24 px de cada lado.
+const DESLOCAMENTO_POCA_CADEIRA := Vector2(-50, -6)
 
 const SOM_TUNEL := preload("res://audios/suspence2.wav")
 const SOM_SEGUINTE := preload("res://audios/suspence1.wav")
@@ -122,13 +128,25 @@ func aposta_morte() -> Passageiro :
 		if sorteio <= 0.0 :
 			vitima = vivos[i]
 			break
+	# Guarda a cadeira antes de morrer, porque morre() a libera.
+	var cadeira : Cadeira = vitima.cadeira if vitima.cadeira != null and vitima.cadeira.ocupada else null
 	vitima.morre()
-	marca_assento(vitima)
+	marca_morte(vitima, cadeira)
 	return vitima
 
-# Deixa uma mancha de sangue onde o passageiro estava sentado.
-func marca_assento(p : Passageiro) :
-	coloca_sujeira(Sujeira.nova_sangue(), p.global_position)
+# Deixa uma poça de sangue com a caveira por cima onde o passageiro morreu.
+# Se estava sentado, a poça vai para o lado da cadeira para não ficar escondida.
+func marca_morte(p : Passageiro, cadeira : Cadeira = null) :
+	var pos := p.global_position
+	if cadeira != null :
+		pos = cadeira.global_position + DESLOCAMENTO_POCA_CADEIRA
+	coloca_sujeira(Sujeira.nova_sangue(), pos)
+	var caveira : Item = CENA_CAVEIRA.instantiate()
+	add_child(caveira)
+	# Por cima da poça (que acabou de entrar antes do maquinista) e abaixo do maquinista.
+	if maquinista != null :
+		move_child(caveira, maquinista.get_index())
+	caveira.global_position = pos
 
 # Cria uma sujeira comum no chão (os passageiros sujam o trem).
 func cria_sujeira(pos : Vector2) -> void :

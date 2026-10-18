@@ -171,7 +171,15 @@ var _fase_passo := 0.0
 var _sprite_posicao := Vector2.ZERO
 var _sprite_escala := Vector2.ONE
 
+# Itens sem sprite próprio do maquinista (ex.: caveira) aparecem nas mãos dele.
+const ITEM_NA_MAO_POSICAO := Vector2(0, 6)
+var _item_na_mao := Sprite2D.new()
+
 func _ready() -> void:
+	_item_na_mao.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_item_na_mao.position = ITEM_NA_MAO_POSICAO
+	_item_na_mao.visible = false
+	add_child(_item_na_mao)
 	_timer_piscada.wait_time = randf_range(5.0, 8.0)
 	_sprite_posicao = _sprite.position
 	_sprite_escala = _sprite.scale
@@ -219,14 +227,22 @@ func _atualiza_direcao(direcao: Vector2) -> void:
 		_atualiza_sprite()
 
 func _atualiza_sprite() -> void:
+	_atualiza_item_na_mao()
 	# De costas não há quadros piscando nem com a tábua.
 	if _direcao_sprite == "de_costas" :
 		_sprite.play("de_costas")
 	# Não há quadros piscando com a tábua, então carregando ignora a piscada.
-	elif carregando :
+	elif carregando and itemAtual.eh_tabua() :
 		_sprite.play(_direcao_sprite + "_tabua")
 	else :
 		_sprite.play(_direcao_sprite + ("_piscando" if _piscando else ""))
+
+# Mostra o item carregado na frente do corpo; de costas ele fica escondido atrás.
+func _atualiza_item_na_mao() -> void:
+	var mostra := carregando and itemAtual != null and not itemAtual.eh_tabua()
+	_item_na_mao.visible = mostra and _direcao_sprite != "de_costas"
+	if mostra :
+		_item_na_mao.texture = itemAtual.textura_atual()
 
 # A cada 5 a 8 s fecha os olhos por um instante
 func _ao_piscar() -> void:

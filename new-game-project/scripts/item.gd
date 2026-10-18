@@ -4,6 +4,8 @@ class_name Item
 # Classes de comida: a tábua vazia vai para a cozinha e volta como comida preparada.
 const CLASSE_TABUA_VAZIA := "Comida"
 const CLASSE_COMIDA_PREPARADA := "ComidaP"
+# Caveira que fica na poça de sangue de um passageiro morto; vira combustível na fornalha.
+const CLASSE_CAVEIRA := "Caveira"
 
 @export var nome = ""
 
@@ -13,6 +15,10 @@ const CLASSE_COMIDA_PREPARADA := "ComidaP"
 # Se a tábua volta vazia para a posição inicial depois de consumida.
 # Tábuas criadas pelo respawn não voltam, simplesmente somem.
 @export var volta_para_origem := true
+
+# Se o item bloqueia a passagem quando está no chão. A caveira não bloqueia,
+# senão atrapalharia quem anda pelo corredor ao lado das cadeiras.
+@export var solido := true
 
 # Se o item está nas mãos do maquinista (some do chão).
 var carregado := false
@@ -42,6 +48,14 @@ func eh_tabua_vazia() -> bool:
 func eh_comida_preparada() -> bool:
 	return classe == CLASSE_COMIDA_PREPARADA
 
+# Tábuas (vazias ou com comida) usam o sprite do maquinista segurando a tábua.
+func eh_tabua() -> bool:
+	return eh_tabua_vazia() or eh_comida_preparada()
+
+# Quadro atual do sprite, para o maquinista mostrar o item na mão.
+func textura_atual() -> Texture2D:
+	return _sprite.sprite_frames.get_frame_texture(_sprite.animation, _sprite.frame)
+
 # Maquinista chegou perto, pode pegar este item
 func _ao_entrar_area(body: Node2D) -> void:
 	if body is Maquinista and not body.itens_proximos.has(self):
@@ -51,7 +65,7 @@ func _ao_sair_area(body: Node2D) -> void:
 	if body is Maquinista:
 		body.itens_proximos.erase(self)
 		# Só volta a ser sólido depois que o jogador se afastou de onde o soltou.
-		if not carregado:
+		if not carregado and solido:
 			_colisao.set_deferred("disabled", false)
 
 # Some do chão enquanto está sendo carregado
@@ -96,7 +110,7 @@ func consumir() -> void:
 	rotation = 0.0
 	global_position = _posicao_origem
 	visible = true
-	_colisao.set_deferred("disabled", false)
+	_colisao.set_deferred("disabled", not solido)
 	_atualiza_sprite()
 
 # Mostra a tábua vazia ou a comida preparada conforme a classe.

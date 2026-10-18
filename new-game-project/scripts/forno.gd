@@ -3,7 +3,8 @@ class_name Fornalha
 
 # Fornalha da sala das máquinas: é o que move o trem. O combustível dura cerca
 # de 5 minutos e só queima enquanto o trem viaja; o jogador reabastece com a
-# pilha de carvão ao lado (PilhaCarvao) ou soltando carvão e cadáveres na frente dela.
+# pilha de carvão ao lado (PilhaCarvao) ou soltando carvão, cadáveres e as caveiras
+# dos passageiros mortos na frente dela.
 # Sem combustível o trem para no meio do caminho até alguém reabastecer.
 
 const GRUPO := "fornalha"
@@ -13,7 +14,8 @@ const COMBUSTIVEL_MAXIMO := 300.0
 # Abaixo desta fração a barra fica vermelha.
 const FRACAO_ALERTA := 0.2
 # Quanto cada item solto na frente da fornalha rende, em segundos.
-const RENDIMENTO := {"Carvao": 60.0, "Cadaver": 30.0}
+# A caveira rende o dobro do carvão.
+const RENDIMENTO := {"Carvao": 60.0, "Cadaver": 30.0, "Caveira": 120.0}
 
 # Barra de combustível desenhada acima da fornalha.
 const BARRA_TAMANHO := Vector2(44, 5)
@@ -22,7 +24,7 @@ const COR_FUNDO := Color(0.1, 0.1, 0.12, 0.85)
 const COR_CHEIO := Color(1.0, 0.6, 0.15)
 const COR_ALERTA := Color(0.9, 0.2, 0.15)
 
-@export var classes_aceitas: Array[String] = ["Carvao", "Cadaver"]
+@export var classes_aceitas: Array[String] = ["Carvao", "Cadaver", "Caveira"]
 
 var combustivel := COMBUSTIVEL_MAXIMO
 
