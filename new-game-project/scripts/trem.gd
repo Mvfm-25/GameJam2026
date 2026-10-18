@@ -1,11 +1,15 @@
 @tool
 extends Node2D
 
-# Diferenciar entre "SOCIAL", "MAQUINAS", 'COZINHA
+# Tipo do vagão; define o piso (ver PISOS).
 # SOCIAL carrega os passageiros, tendo os decos como cadeiras.
 # MAQUINAS é onde o jogador deve re-abastecer o 'forno' do trem com carvão encontrado no trem ou ganho das estações.
 # COZINHA é onde o jogador guarda as comidas recompensadas da estação para futura entrega para os passageiros.
-@export var classe = ""
+# BANHEIRO é o banheiro dos passageiros.
+@export_enum("SOCIAL", "COZINHA", "BANHEIRO", "MAQUINAS") var classe := "SOCIAL":
+	set(valor):
+		classe = valor
+		_construir()
 
 @export var porta_esquerda_aberta := false:
 	set(valor):
@@ -55,7 +59,13 @@ const JANELA := Vector2i(3, 5)
 const EXTERNO_CANTO := Vector2i(1, 6)
 const EXTERNO_ENFEITES := [Vector2i(2, 6), Vector2i(4, 6)]
 const EXTERNO := Vector2i(3, 6)
-const PISO := Vector2i(7, 2)
+# Piso de cada classe de vagão (coordenadas no atlas).
+const PISOS := {
+	"SOCIAL": Vector2i(7, 2), # Tijolo
+	"COZINHA": Vector2i(7, 9), # Xadrez
+	"BANHEIRO": Vector2i(14, 9), # Bege com losango
+	"MAQUINAS": Vector2i(12, 9), # Cinza escuro
+}
 
 # Passarela entre vagões (bloco cinza do tileset, colunas 12 a 16, linhas 1 a 6).
 # Colunas 12-13: plataforma presa ao lado direito de um vagão (13 é a borda externa).
@@ -122,9 +132,10 @@ func _construir() -> void:
 	var ultima_lin := altura_tiles - 1
 
 	# Chão
+	var piso : Vector2i = PISOS.get(classe, PISOS["SOCIAL"])
 	for x in largura_tiles:
 		for y in altura_tiles:
-			solo.set_cell(Vector2i(x, y), FONTE, PISO)
+			solo.set_cell(Vector2i(x, y), FONTE, piso)
 
 	# Parede de cima
 	_colocar(paredes, 0, 0, CANTO_SUP, false)
