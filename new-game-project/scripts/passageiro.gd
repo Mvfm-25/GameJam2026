@@ -15,8 +15,51 @@ var timer = Timer.new()
 var nivel_raiva = 0.0
 var quantidade_fome = 0.0
 
-# Com fome, convivendo em ambiente sujo, ou ambos.
+# Necessidade sorteada ao embarcar (FAMINTO ou DESACONCHEGADO).
 var necessidades = []
+
+# --- Raiva -----------------------------------------------------------------
+# A raiva sobe pela soma das fontes abaixo (valores por segundo).
+# Tédio: sobe devagar mesmo sem motivo. Cada passageiro tem seu ritmo.
+var taxa_raiva_base = randf_range(0.003, 0.005)
+@export var raiva_fome := 0.015
+# Por sujeira próxima (sangue conta como duas), até sujeiras_max_raiva.
+@export var raiva_por_sujeira := 0.008
+@export var sujeiras_max_raiva := 3.0
+@export var raio_sujeira := 120.0
+# IMUNDO multiplica a taxa total.
+@export var multiplicador_imundo := 1.5
+# Fome cresce até mostrar o balão (0.6) em ~12 s.
+@export var taxa_fome := 0.05
+# Comer acalma.
+@export var alivio_comida := 0.3
+
+# Acima disso vira IRADO e passa a contagiar; acima de LIMIAR_PUTO mostra o balão.
+const LIMIAR_IRADO := 0.9
+const LIMIAR_PUTO := 0.5
+
+# --- Imundo ----------------------------------------------------------------
+# Exposição à sujeira acumula (peso das sujeiras próximas * taxa); em 1.0 vira IMUNDO.
+# Só o maquinista limpando por perto tira o IMUNDO.
+@export var taxa_exposicao := 0.1
+var exposicao := 0.0
+var imundo := false
+# Imundo suja mais nos passeios.
+@export_range(0.0, 1.0) var chance_sujeira_imundo := 0.5
+const COR_IMUNDO := Color(0.72, 0.6, 0.45)
+
+# --- Contágio --------------------------------------------------------------
+# Um IRADO "explode" a cada intervalo_contagio, podendo irritar quem está perto.
+var irado := false
+@export var intervalo_contagio := 3.0
+@export var raio_contagio := 135.0
+@export_range(0.0, 1.0) var chance_contagio := 0.35
+@export var raiva_contagio := 0.15
+# Depois de ser contagiado, fica um tempo sem ser atingido de novo.
+@export var recarga_contagio := 5.0
+var _tempo_pulso := 0.0
+var _recarga := 0.0
+var _tween_flash : Tween
 
 # --- Cadeira & passeio ---------------------------------------------------
 # Cadeira onde o passageiro senta. Se ficar vazio, pega a cadeira livre
@@ -156,8 +199,10 @@ func _anima_andar(delta : float) -> void:
 	var escala := Vector2.ONE * ESCALA_VISUAL
 	_visual.scale = _visual.scale.lerp(escala * Vector2(1.0 - amassada, 1.0 + amassada), peso)
 
+# IRADO e IMUNDO não são mais sorteados: surgem da raiva e da sujeira.
+# Mantém 1 em 4 com fome, como antes.
 func aposta_necessidade() :
-	var sorteado = ["FAMINTO", "IMUNDO", "DESACONCHEGADO", "IRADO"].pick_random()
+	var sorteado = "FAMINTO" if randf() < 0.25 else "DESACONCHEGADO"
 	necessidades.append(sorteado)
 	print("Passageiro " + nome + " está : " + sorteado)
 	timer.start()
@@ -166,20 +211,105 @@ func aposta_nome():
 	nome = ["Durandal", "Tycho", "Leela", "Dynamo", "Abrams", "Casius Cleiton", "Misha"].pick_random()
 	print("Nome escolhido : %s" % nome)
 	
-func enfurece():
-	# Multiplica raiva pela quantidade de fome desde que foi adicionada.
-	nivel_raiva = nivel_raiva * quantidade_fome
-	
-# Raiva sobe com o tempo, igual em qualquer FPS.
-# Cada passageiro tem seu próprio ritmo: leva de ~35 s a ~100 s para chegar ao máximo.
-var taxa_raiva = randf_range(0.01, 0.03)
+# Soma as fontes de raiva do momento (por segundo).
+func taxa_raiva(diretor : Diretor) -> float:
+	var taxa = taxa_raiva_base
+	if necessidades.has("FAMINTO") :
+		taxa += raiva_fome
+	if diretor != null :
+		var sujeira := minf(diretor.peso_sujeiras_perto(global_position, raio_sujeira), sujeiras_max_raiva)
+		taxa += raiva_por_sujeira * sujeira
+	if imundo :
+		taxa *= multiplicador_imundo
+	return taxa
 
-func atualiza_raiva(delta : float) :
-	nivel_raiva = minf(1.0, nivel_raiva + taxa_raiva * delta)
+func atualiza_raiva(delta : float, diretor : Diretor) :
+	nivel_raiva = minf(1.0, nivel_raiva + taxa_raiva(diretor) * delta)
 
-func atualiza_fome():
-	quantidade_fome = (quantidade_fome + 0.02) * nivel_raiva
-	
+func atualiza_fome(delta : float):
+	quantidade_fome = minf(1.0, quantidade_fome + taxa_fome * delta)
+
+# Sujeira por perto vai deixando o passageiro IMUNDO.
+func atualiza_exposicao(delta : float, diretor : Diretor) -> void:
+	if imundo or diretor == null :
+		return
+	exposicao += diretor.peso_sujeiras_perto(global_position, raio_sujeira) * taxa_exposicao * delta
+	if exposicao >= 1.0 :
+		imundo = true
+		print("Passageiro " + nome + " ficou IMUNDO!")
+		_atualiza_contente()
+		_aplica_cor()
+
+# O maquinista limpou por perto.
+func limpa_imundo() -> void:
+	exposicao = 0.0
+	if not imundo :
+		return
+	imundo = false
+	print("Passageiro " + nome + " não está mais imundo.")
+	_atualiza_contente()
+	_aplica_cor()
+
+# Baixa a raiva (comida, limpeza).
+func acalma(valor : float) -> void:
+	if not esta_vivo() :
+		return
+	nivel_raiva = maxf(0.0, nivel_raiva - valor)
+	_atualiza_irado()
+
+# Recebe a fúria de um vizinho IRADO.
+func contagia(valor : float) -> bool:
+	if not esta_vivo() or irado or _recarga > 0.0 :
+		return false
+	_recarga = recarga_contagio
+	nivel_raiva = minf(1.0, nivel_raiva + valor)
+	_flash_raiva()
+	return true
+
+func _atualiza_irado() -> void:
+	var agora : bool = nivel_raiva >= LIMIAR_IRADO
+	if agora == irado :
+		return
+	irado = agora
+	_tempo_pulso = 0.0
+	print("Passageiro " + nome + (" ficou IRADO!" if irado else " se acalmou."))
+	_atualiza_contente()
+
+# IRADO espalha a fúria para quem está perto, de tempos em tempos.
+func _pulso_contagio(delta : float, diretor : Diretor) -> void:
+	if not irado or diretor == null :
+		return
+	_tempo_pulso += delta
+	if _tempo_pulso < intervalo_contagio :
+		return
+	_tempo_pulso = 0.0
+	for p in diretor.passageiros_perto(global_position, raio_contagio) :
+		if p != self and randf() < chance_contagio and p.contagia(raiva_contagio) :
+			print(nome + " contagiou " + p.nome + " com sua fúria!")
+
+# Contente = sem necessidades e nem bravo nem sujo.
+func _atualiza_contente() -> void:
+	contente = necessidades.is_empty() and not imundo and not irado
+
+func _aplica_cor() -> void:
+	if _visual != null :
+		_visual.modulate = COR_IMUNDO if imundo else Color.WHITE
+
+# Pisca vermelho ao ser contagiado.
+func _flash_raiva() -> void:
+	if _tween_flash :
+		_tween_flash.kill()
+	modulate = Color(1.6, 0.5, 0.5)
+	_tween_flash = create_tween()
+	_tween_flash.tween_property(self, "modulate", Color.WHITE, 0.6)
+
+# Um balão por vez: irado > fome > puto.
+func _atualiza_baloes() -> void:
+	var com_fome = necessidades.has("FAMINTO") and quantidade_fome >= 0.6
+	$muito_puto.visible = irado
+	$fome.visible = not irado and com_fome
+	$puto.visible = not irado and not com_fome and nivel_raiva >= LIMIAR_PUTO
+
 func esta_vivo() -> bool:
 	return status != "MORTO"
 
@@ -187,6 +317,8 @@ func esta_vivo() -> bool:
 func morre() -> void:
 	status = "MORTO"
 	contente = false
+	irado = false
+	imundo = false
 	necessidades.clear()
 	timer.stop()
 	set_process(false)
@@ -210,11 +342,11 @@ func esta_faminto() -> bool:
 func alimenta(item : Item) -> void:
 	necessidades.erase("FAMINTO")
 	quantidade_fome = 0.0
-	contente = necessidades.is_empty()
+	_atualiza_contente()
+	acalma(alivio_comida)
 	# A tábua volta vazia para a geladeira.
 	item.consumir()
 	print("Passageiro " + nome + " deixou de estar com fome!")
-	$fome.visible = false
 
 # Maquinista entra/sai da área de interação do passageiro
 func _on_body_entered(body : Node2D) -> void:
@@ -315,7 +447,7 @@ func _inicia_passeio(caminho : Caminho) -> void:
 		_rota.append(cadeira.posicao_assento())
 		cadeira.levantar()
 	_distancia_ate_sujar = -1.0
-	if randf() < chance_sujeira_passeio :
+	if randf() < (chance_sujeira_imundo if imundo else chance_sujeira_passeio) :
 		var comprimento := 0.0
 		var anterior := global_position
 		for ponto in _rota :
@@ -362,18 +494,15 @@ func _process(delta: float) -> void:
 	if estado == Estado.ANDANDO :
 		_anda(delta)
 	_anima_andar(delta)
+	if not esta_vivo() :
+		return
 
+	var diretor := get_tree().current_scene as Diretor
 	if necessidades.has("FAMINTO") :
-		atualiza_fome()
-		
-	atualiza_raiva(delta)
-	
-	if(quantidade_fome >= 0.6) :
-		$fome.visible = true
-		
-	if(nivel_raiva >= 0.9) :
-		$puto.visible = false
-		$muito_puto.visible = true
-	elif(nivel_raiva >= 0.5) :
-		$puto.visible = true
-	pass
+		atualiza_fome(delta)
+	_recarga = maxf(0.0, _recarga - delta)
+	atualiza_exposicao(delta, diretor)
+	atualiza_raiva(delta, diretor)
+	_atualiza_irado()
+	_pulso_contagio(delta, diretor)
+	_atualiza_baloes()

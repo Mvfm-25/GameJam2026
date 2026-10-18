@@ -122,6 +122,35 @@ func coloca_sujeira(sujeira : Sujeira, pos : Vector2) -> void :
 		move_child(sujeira, maquinista.get_index())
 	sujeira.global_position = pos  # define depois de entrar na árvore
 
+# Limpar uma sujeira acalma quem está perto (forte) e o resto do trem (fraco),
+# e tira o IMUNDO de quem está perto.
+const RAIO_ALIVIO_LIMPEZA = 160.0
+const ALIVIO_LIMPEZA_PERTO = 0.2
+const ALIVIO_LIMPEZA_GERAL = 0.05
+
+# Passageiros vivos a até 'raio' de 'pos'.
+func passageiros_perto(pos : Vector2, raio : float) -> Array :
+	return lista_passageiros.filter(func(p): return p.esta_vivo() and p.global_position.distance_to(pos) <= raio)
+
+# Quanto de sujeira há perto de 'pos' (sangue pesa 2).
+func peso_sujeiras_perto(pos : Vector2, raio : float) -> float :
+	var peso := 0.0
+	for s in sujeiras :
+		if is_instance_valid(s) and s.global_position.distance_to(pos) <= raio :
+			peso += 2.0 if s.sangue else 1.0
+	return peso
+
+# Chamado pela sujeira quando o maquinista termina de limpá-la.
+func alivio_limpeza(pos : Vector2) -> void :
+	for p in lista_passageiros :
+		if not p.esta_vivo() :
+			continue
+		if p.global_position.distance_to(pos) <= RAIO_ALIVIO_LIMPEZA :
+			p.acalma(ALIVIO_LIMPEZA_PERTO)
+			p.limpa_imundo()
+		else :
+			p.acalma(ALIVIO_LIMPEZA_GERAL)
+
 # Verifica se todos passageiros estão mortos
 func verifica_morte_geral() -> bool :
 	if lista_passageiros.is_empty() :
