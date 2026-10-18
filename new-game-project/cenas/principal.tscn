@@ -21,7 +21,7 @@ size = Vector2(115, 33)
 
 [sub_resource type="Curve2D" id="Curve2D_vagao2"]
 _data = {
-"points": PackedVector2Array(0, 0, 0, 0, 992, 208, 0, 0, 0, 0, 1536, 208)
+"points": PackedVector2Array(0, 0, 0, 0, 992, 208, 0, 0, 0, 0, 1648, 208)
 }
 point_count = 2
 
@@ -75,11 +75,11 @@ position = Vector2(1020, 66)
 com_passageiro = true
 
 [node name="Cadeira8" parent="Decos" unique_id=1353119738 instance=ExtResource("5_ff0xt")]
-position = Vector2(1216, 66)
+position = Vector2(1260, 66)
 com_passageiro = true
 
 [node name="Cadeira9" parent="Decos" unique_id=184745437 instance=ExtResource("5_ff0xt")]
-position = Vector2(1412, 66)
+position = Vector2(1500, 66)
 com_passageiro = true
 
 [node name="Cadeira10" parent="Decos" unique_id=1125771919 instance=ExtResource("5_ff0xt")]
@@ -87,11 +87,11 @@ position = Vector2(1020, 114)
 com_passageiro = true
 
 [node name="Cadeira11" parent="Decos" unique_id=1157560268 instance=ExtResource("5_ff0xt")]
-position = Vector2(1216, 114)
+position = Vector2(1260, 114)
 com_passageiro = true
 
 [node name="Cadeira12" parent="Decos" unique_id=1547259148 instance=ExtResource("5_ff0xt")]
-position = Vector2(1412, 114)
+position = Vector2(1500, 114)
 com_passageiro = true
 
 [node name="Cadeira13" parent="Decos" unique_id=610015455 instance=ExtResource("5_ff0xt")]
@@ -99,11 +99,11 @@ position = Vector2(1020, 302)
 com_passageiro = true
 
 [node name="Cadeira14" parent="Decos" unique_id=556970072 instance=ExtResource("5_ff0xt")]
-position = Vector2(1216, 302)
+position = Vector2(1260, 302)
 com_passageiro = true
 
 [node name="Cadeira15" parent="Decos" unique_id=287995817 instance=ExtResource("5_ff0xt")]
-position = Vector2(1412, 302)
+position = Vector2(1500, 302)
 com_passageiro = true
 
 [node name="Cadeira16" parent="Decos" unique_id=197593038 instance=ExtResource("5_ff0xt")]
@@ -111,59 +111,43 @@ position = Vector2(1020, 350)
 com_passageiro = true
 
 [node name="Cadeira17" parent="Decos" unique_id=993044588 instance=ExtResource("5_ff0xt")]
-position = Vector2(1216, 350)
+position = Vector2(1260, 350)
 com_passageiro = true
 
 [node name="Cadeira18" parent="Decos" unique_id=434434252 instance=ExtResource("5_ff0xt")]
-position = Vector2(1412, 350)
+position = Vector2(1500, 350)
 com_passageiro = true
 
 [node name="Cadeira19" parent="Decos" unique_id=1457419214 instance=ExtResource("5_ff0xt")]
-position = Vector2(1118, 66)
+position = Vector2(1140, 66)
 com_passageiro = true
 
 [node name="Cadeira20" parent="Decos" unique_id=747352978 instance=ExtResource("5_ff0xt")]
-position = Vector2(1314, 66)
-com_passageiro = true
-
-[node name="Cadeira21" parent="Decos" unique_id=371108946 instance=ExtResource("5_ff0xt")]
-position = Vector2(1510, 66)
+position = Vector2(1380, 66)
 com_passageiro = true
 
 [node name="Cadeira22" parent="Decos" unique_id=541260497 instance=ExtResource("5_ff0xt")]
-position = Vector2(1118, 114)
+position = Vector2(1140, 114)
 com_passageiro = true
 
 [node name="Cadeira23" parent="Decos" unique_id=161585152 instance=ExtResource("5_ff0xt")]
-position = Vector2(1314, 114)
-com_passageiro = true
-
-[node name="Cadeira24" parent="Decos" unique_id=622861567 instance=ExtResource("5_ff0xt")]
-position = Vector2(1510, 114)
+position = Vector2(1380, 114)
 com_passageiro = true
 
 [node name="Cadeira25" parent="Decos" unique_id=1468081539 instance=ExtResource("5_ff0xt")]
-position = Vector2(1118, 302)
+position = Vector2(1140, 302)
 com_passageiro = true
 
 [node name="Cadeira26" parent="Decos" unique_id=615848568 instance=ExtResource("5_ff0xt")]
-position = Vector2(1314, 302)
-com_passageiro = true
-
-[node name="Cadeira27" parent="Decos" unique_id=1747591791 instance=ExtResource("5_ff0xt")]
-position = Vector2(1510, 302)
+position = Vector2(1380, 302)
 com_passageiro = true
 
 [node name="Cadeira28" parent="Decos" unique_id=698449961 instance=ExtResource("5_ff0xt")]
-position = Vector2(1118, 350)
+position = Vector2(1140, 350)
 com_passageiro = true
 
 [node name="Cadeira29" parent="Decos" unique_id=1077258605 instance=ExtResource("5_ff0xt")]
-position = Vector2(1314, 350)
-com_passageiro = true
-
-[node name="Cadeira30" parent="Decos" unique_id=365353203 instance=ExtResource("5_ff0xt")]
-position = Vector2(1510, 350)
+position = Vector2(1380, 350)
 com_passageiro = true
 
 [node name="Cadeira31" parent="Decos" unique_id=1767330768 instance=ExtResource("5_ff0xt")]
@@ -171,11 +155,11 @@ position = Vector2(1920, 63)
 com_passageiro = true
 
 [node name="Cadeira32" parent="Decos" unique_id=1943880418 instance=ExtResource("5_ff0xt")]
-position = Vector2(2116, 63)
+position = Vector2(2160, 63)
 com_passageiro = true
 
 [node name="Cadeira33" parent="Decos" unique_id=1260976195 instance=ExtResource("5_ff0xt")]
-position = Vector2(2312, 63)
+position = Vector2(2400, 63)
 com_passageiro = true
 
 [node name="Cadeira34" parent="Decos" unique_id=1877682485 instance=ExtResource("5_ff0xt")]
@@ -183,11 +167,11 @@ position = Vector2(1920, 111)
 com_passageiro = true
 
 [node name="Cadeira35" parent="Decos" unique_id=659708727 instance=ExtResource("5_ff0xt")]
-position = Vector2(2116, 111)
+position = Vector2(2160, 111)
 com_passageiro = true
 
 [node name="Cadeira36" parent="Decos" unique_id=249375150 instance=ExtResource("5_ff0xt")]
-position = Vector2(2312, 111)
+position = Vector2(2400, 111)
 com_passageiro = true
 
 [node name="Cadeira37" parent="Decos" unique_id=296622482 instance=ExtResource("5_ff0xt")]
@@ -195,11 +179,11 @@ position = Vector2(1920, 299)
 com_passageiro = true
 
 [node name="Cadeira38" parent="Decos" unique_id=1325762568 instance=ExtResource("5_ff0xt")]
-position = Vector2(2116, 299)
+position = Vector2(2160, 299)
 com_passageiro = true
 
 [node name="Cadeira39" parent="Decos" unique_id=1406754785 instance=ExtResource("5_ff0xt")]
-position = Vector2(2312, 299)
+position = Vector2(2400, 299)
 com_passageiro = true
 
 [node name="Cadeira40" parent="Decos" unique_id=831118870 instance=ExtResource("5_ff0xt")]
@@ -207,59 +191,43 @@ position = Vector2(1920, 347)
 com_passageiro = true
 
 [node name="Cadeira41" parent="Decos" unique_id=978413647 instance=ExtResource("5_ff0xt")]
-position = Vector2(2116, 347)
+position = Vector2(2160, 347)
 com_passageiro = true
 
 [node name="Cadeira42" parent="Decos" unique_id=1505833441 instance=ExtResource("5_ff0xt")]
-position = Vector2(2312, 347)
+position = Vector2(2400, 347)
 com_passageiro = true
 
 [node name="Cadeira43" parent="Decos" unique_id=2147375061 instance=ExtResource("5_ff0xt")]
-position = Vector2(2018, 63)
+position = Vector2(2040, 63)
 com_passageiro = true
 
 [node name="Cadeira44" parent="Decos" unique_id=755220646 instance=ExtResource("5_ff0xt")]
-position = Vector2(2214, 63)
-com_passageiro = true
-
-[node name="Cadeira45" parent="Decos" unique_id=1532498976 instance=ExtResource("5_ff0xt")]
-position = Vector2(2410, 63)
+position = Vector2(2280, 63)
 com_passageiro = true
 
 [node name="Cadeira46" parent="Decos" unique_id=1836742407 instance=ExtResource("5_ff0xt")]
-position = Vector2(2018, 111)
+position = Vector2(2040, 111)
 com_passageiro = true
 
 [node name="Cadeira47" parent="Decos" unique_id=1389169285 instance=ExtResource("5_ff0xt")]
-position = Vector2(2214, 111)
-com_passageiro = true
-
-[node name="Cadeira48" parent="Decos" unique_id=515938792 instance=ExtResource("5_ff0xt")]
-position = Vector2(2410, 111)
+position = Vector2(2280, 111)
 com_passageiro = true
 
 [node name="Cadeira49" parent="Decos" unique_id=500780908 instance=ExtResource("5_ff0xt")]
-position = Vector2(2018, 299)
+position = Vector2(2040, 299)
 com_passageiro = true
 
 [node name="Cadeira50" parent="Decos" unique_id=403880062 instance=ExtResource("5_ff0xt")]
-position = Vector2(2214, 299)
-com_passageiro = true
-
-[node name="Cadeira51" parent="Decos" unique_id=1261591904 instance=ExtResource("5_ff0xt")]
-position = Vector2(2410, 299)
+position = Vector2(2280, 299)
 com_passageiro = true
 
 [node name="Cadeira52" parent="Decos" unique_id=775514977 instance=ExtResource("5_ff0xt")]
-position = Vector2(2018, 347)
+position = Vector2(2040, 347)
 com_passageiro = true
 
 [node name="Cadeira53" parent="Decos" unique_id=1217179716 instance=ExtResource("5_ff0xt")]
-position = Vector2(2214, 347)
-com_passageiro = true
-
-[node name="Cadeira54" parent="Decos" unique_id=1016171580 instance=ExtResource("5_ff0xt")]
-position = Vector2(2410, 347)
+position = Vector2(2280, 347)
 com_passageiro = true
 
 [node name="Caminhos" type="Node2D" parent="." unique_id=1384920571]
