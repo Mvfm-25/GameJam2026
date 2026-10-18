@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://cippwo3lca06n" path="res://scripts/maquinista.gd" id="1_maq"]
 [ext_resource type="Texture2D" uid="uid://e3sjsjjm6ifb" path="res://assets/characters/Maquinista_basev3.png" id="2_tex"]
 [ext_resource type="Texture2D" uid="uid://ca6cuu2cwno7e" path="res://assets/Outros/Vassoura_ani.png" id="3_vas"]
+[ext_resource type="Script" path="res://scripts/balanco_trem.gd" id="balanco_trem"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_0404l"]
 
@@ -202,6 +203,7 @@ scale = Vector2(1.795, 1.795)
 shape = SubResource("CircleShape2D_0404l")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=757508176]
+script = ExtResource("balanco_trem")
 position_smoothing_enabled = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=2051209907]

@@ -38,6 +38,20 @@ var estado = Estado.SENTADO
 # Pontos (globais) que faltam percorrer no passeio atual.
 var _rota := PackedVector2Array()
 var _timer_passeio := Timer.new()
+# Corpos disponíveis (animações do AnimatedSprite2D) e a escala de cada um.
+# Forte e Fraco foram desenhados com o dobro da resolução do Base,
+# então são reduzidos pela metade para ficarem do mesmo tamanho do passageiro padrão.
+const CORPOS = {
+	"Base": 1.0,
+	"Forte": 0.5,
+	"Fraco": 0.5,
+}
+var corpo = "Base"
+
+func aposta_corpo() :
+	corpo = CORPOS.keys().pick_random()
+	$AnimatedSprite2D.animation = corpo
+	$AnimatedSprite2D.scale = Vector2.ONE * CORPOS[corpo]
 
 func aposta_necessidade() :
 	var sorteado = ["FAMINTO", "IMUNDO", "DESACONCHEGADO", "IRADO"].pick_random()
@@ -112,6 +126,7 @@ func _ready() -> void:
 	add_child(timer)
 	$Area2D.body_entered.connect(_on_body_entered)
 	$Area2D.body_exited.connect(_on_body_exited)
+	aposta_corpo()
 	aposta_nome()
 	aposta_necessidade()
 
