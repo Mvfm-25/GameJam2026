@@ -72,10 +72,7 @@ const PISOS := {
 	"COZINHA": Vector2i(9, 2), # Xadrez
 	"BANHEIRO": Vector2i(9, 4), # Bege com losango
 	"MAQUINAS": Vector2i(7, 4), # Cinza escuro
-<<<<<<< HEAD
-=======
 	"SERVICO": Vector2i(7, 2), # Corredor do vagão de serviço: tijolo
->>>>>>> 29cda7da70a0f42103d113641ad7ac829092325a
 }
 
 # Vagão de serviço (ver _construir_servico).
