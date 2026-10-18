@@ -1,0 +1,31 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/pilha_pratos.gd" id="1_pilha"]
+[ext_resource type="Texture2D" uid="uid://bp7os2kugwjjy" path="res://assets/decorations/pilhaPratos.png" id="2_pratos"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_corpo"]
+size = Vector2(26, 12)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_alcance"]
+radius = 32.0
+
+[node name="PilhaPratos" type="Node2D"]
+script = ExtResource("1_pilha")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+scale = Vector2(2, 2)
+texture = ExtResource("2_pratos")
+offset = Vector2(0, -16)
+
+[node name="Corpo" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Corpo"]
+position = Vector2(0, -6)
+shape = SubResource("RectangleShape2D_corpo")
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(0, -12)
+shape = SubResource("CircleShape2D_alcance")

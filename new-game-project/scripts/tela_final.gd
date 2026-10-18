@@ -11,12 +11,12 @@ const TAMANHO_CELULA := 96
 const ESCALA_ARTE := 3.0
 
 const TITULOS := {
-	Tipo.FELIZ: "FINAL FELIZ",
-	Tipo.TRISTE: "FINAL TRISTE",
+	Tipo.FELIZ: "FIM DA LINHA",
+	Tipo.TRISTE: "PASSAGEM SÓ DE IDA",
 }
 const TEXTOS := {
-	Tipo.FELIZ: "Você atirou as caveiras nos trilhos e recusou o banquete do trem.\nSem almas para queimar, a fornalha esfriou e a fome dele se apagou.\nOs passageiros que restaram desceram vivos, e a grama voltou a crescer onde os ossos caíram.",
-	Tipo.TRISTE: "Você deu as caveiras de comer à fornalha, e o trem gostou.\nAs chamas agora ardem por conta própria, e os túneis nunca mais acabam.\nVocê é o maquinista dele para sempre — e ele sempre vai querer mais.",
+	Tipo.FELIZ: "Você recusou o banquete.\nO trem esfriou, os túneis acabaram, e o sol entrou pelas janelas.\nÀs vezes, ser maquinista é saber quando parar.",
+	Tipo.TRISTE: "O fogo comeu os ossos e pediu mais.\nVocê atendeu, como um bom maquinista atende os passageiros.\nO trem segue viagem para sempre, e o cardápio é você.",
 }
 const CORES := {
 	Tipo.FELIZ: Color(0.55, 0.9, 0.45),
