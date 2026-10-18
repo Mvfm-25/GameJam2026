@@ -8,11 +8,12 @@
 [ext_resource type="PackedScene" uid="uid://cjq7h812stu2o" path="res://cenas/deco.tscn" id="5_ff0xt"]
 [ext_resource type="PackedScene" uid="uid://c7mapa0trem01" path="res://cenas/mapa.tscn" id="6_mapa"]
 [ext_resource type="PackedScene" uid="uid://2ke7qr5pifkm" path="res://cenas/item.tscn" id="8_djk5k"]
-[ext_resource type="PackedScene" path="res://cenas/pilha_tabuas.tscn" id="9_pilha"]
 [ext_resource type="AudioStream" uid="uid://boqts0js6cve4" path="res://audios/trilhos cortado1.mp3" id="8_sflf3"]
+[ext_resource type="PackedScene" path="res://cenas/pilha_tabuas.tscn" id="9_pilha"]
 [ext_resource type="AudioStream" uid="uid://cyghqmwexq3hn" path="res://audios/271382__rudicangiotti__synthetic-steam-engine.wav" id="9_wgbst"]
 [ext_resource type="Script" uid="uid://f24i0wstodfo" path="res://scripts/caminho.gd" id="10_cam"]
 [ext_resource type="Script" uid="uid://c8367ehdu5pe8" path="res://scripts/spawner_passageiros.gd" id="11_spawn"]
+[ext_resource type="Script" uid="uid://jn4dux3fqudl" path="res://scripts/chao.gd" id="chao_script"]
 [ext_resource type="Script" uid="uid://cep57ks7wxcce" path="res://scripts/trilhos.gd" id="trilhos_script"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_l0vsm"]
@@ -36,6 +37,11 @@ script = ExtResource("1_0cijk")
 [node name="Trilhos" type="Node2D" parent="." unique_id=1848332910]
 position = Vector2(-1312, 32)
 script = ExtResource("trilhos_script")
+velocidade = 250.0
+
+[node name="Chao" type="Node2D" parent="Trilhos" unique_id=69780145]
+script = ExtResource("chao_script")
+linhas_acima = null
 
 [node name="Vagao1" parent="." unique_id=988786515 instance=ExtResource("1_trem")]
 classe = "COZINHA"
@@ -249,6 +255,7 @@ script = ExtResource("10_cam")
 metadata/_custom_type_script = "uid://f24i0wstodfo"
 
 [node name="Mapa" parent="." unique_id=1290344715 instance=ExtResource("6_mapa")]
+visible = false
 
 [node name="271382RudicangiottiSyntheticSteamEngine" type="AudioStreamPlayer2D" parent="." unique_id=1361654464]
 position = Vector2(121, 201)
@@ -267,12 +274,12 @@ position = Vector2(510, 358)
 nome = "comida2"
 classe = "Comida"
 
-[node name="comida3" parent="." instance=ExtResource("8_djk5k")]
+[node name="comida3" parent="." unique_id=1678906267 instance=ExtResource("8_djk5k")]
 position = Vector2(558, 358)
 nome = "comida3"
 classe = "Comida"
 
-[node name="comida4" parent="." instance=ExtResource("8_djk5k")]
+[node name="comida4" parent="." unique_id=332438717 instance=ExtResource("8_djk5k")]
 position = Vector2(606, 358)
 nome = "comida4"
 classe = "Comida"

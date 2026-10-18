@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bvl2sii7ch2m8"
-path="res://.godot/imported/trilhoInferior.png-a20f174aadae8080abce1e8af502a3d4.ctex"
+path="res://.godot/imported/trilhoInferior.png-4cb12943423d5312995486e652068840.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/Outros/trilhoInferior.png"
-dest_files=["res://.godot/imported/trilhoInferior.png-a20f174aadae8080abce1e8af502a3d4.ctex"]
+source_file="res://assets/tileset/trilhoInferior.png"
+dest_files=["res://.godot/imported/trilhoInferior.png-4cb12943423d5312995486e652068840.ctex"]
 
 [params]
 

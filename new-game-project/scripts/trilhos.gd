@@ -6,9 +6,9 @@ class_name Trilhos
 # Têm a altura do trem: trilhoSuperior (trilho de cima), trilho (dormentes) repetido
 # no meio e trilhoInferior (trilho de baixo). Ficam atrás dos vagões.
 
-const SUPERIOR := preload("res://assets/Outros/trilhoSuperior.png")
-const MEIO := preload("res://assets/Outros/trilho.png")
-const INFERIOR := preload("res://assets/Outros/trilhoInferior.png")
+const SUPERIOR := preload("res://assets/tileset/trilhoSuperior.png")
+const MEIO := preload("res://assets/tileset/trilho.png")
+const INFERIOR := preload("res://assets/tileset/trilhoInferior.png")
 const TAMANHO_TILE := 32
 const TAMANHO_TILE_ATLAS := 64
 
@@ -38,8 +38,10 @@ func _process(delta: float) -> void:
 
 
 func _construir() -> void:
+	# Só as faixas dos trilhos (o chão, filho Chao, se reconstrói sozinho).
 	for filho in get_children():
-		filho.queue_free()
+		if filho is Sprite2D:
+			filho.queue_free()
 	var vagoes := _vagoes()
 	if vagoes.is_empty():
 		return
@@ -63,6 +65,11 @@ func _construir() -> void:
 	_camada(SUPERIOR, 0, 1, colunas)
 	_camada(MEIO, 1, linhas - 2, colunas)
 	_camada(INFERIOR, linhas - 1, 1, colunas)
+
+	# O chão fica atrás dos trilhos, do topo da tela até abaixo deles, e anda junto com eles.
+	var chao := get_node_or_null("Chao") as Chao
+	if chao != null:
+		chao.construir(colunas * TAMANHO_TILE, linhas * TAMANHO_TILE)
 
 
 # Uma faixa de `linhas` tiles de altura, repetindo a imagem pela largura toda.
