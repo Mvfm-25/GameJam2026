@@ -47,6 +47,18 @@ region = Rect2(768, 0, 192, 192)
 atlas = ExtResource("2_tex")
 region = Rect2(0, 384, 192, 192)
 
+[sub_resource type="AtlasTexture" id="Atlas_frente_caveira"]
+atlas = ExtResource("2_tex")
+region = Rect2(384, 192, 192, 192)
+
+[sub_resource type="AtlasTexture" id="Atlas_esquerda_caveira"]
+atlas = ExtResource("2_tex")
+region = Rect2(576, 192, 192, 192)
+
+[sub_resource type="AtlasTexture" id="Atlas_direita_caveira"]
+atlas = ExtResource("2_tex")
+region = Rect2(768, 192, 192, 192)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_2r7n2"]
 animations = [{
 "frames": [{
@@ -127,6 +139,30 @@ animations = [{
 }],
 "loop": 1,
 "name": &"frente_tabua",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("Atlas_frente_caveira")
+}],
+"loop": 1,
+"name": &"frente_caveira",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("Atlas_esquerda_caveira")
+}],
+"loop": 1,
+"name": &"esquerda_caveira",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("Atlas_direita_caveira")
+}],
+"loop": 1,
+"name": &"direita_caveira",
 "speed": 5.0
 }]
 

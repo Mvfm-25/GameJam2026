@@ -175,7 +175,25 @@ var _sprite_escala := Vector2.ONE
 const ITEM_NA_MAO_POSICAO := Vector2(0, 6)
 var _item_na_mao := Sprite2D.new()
 
+# Segurando a caveira, uma seta ao redor do maquinista aponta para a fornalha.
+# A seta da arte aponta para baixo (arte em 2x, exibida com escala 0.5).
+const SETA := preload("res://assets/Outros/Seta.png")
+const SETA_DISTANCIA := 44.0
+const SETA_ESCALA := 0.5
+# Perto da fornalha a seta some: o jogador já chegou.
+const SETA_DISTANCIA_MINIMA := 90.0
+const SETA_BALANCO := 3.0
+const SETA_VELOCIDADE := 6.0
+var _seta := Sprite2D.new()
+var _tempo_seta := 0.0
+
 func _ready() -> void:
+	_seta.texture = SETA
+	_seta.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_seta.scale = Vector2.ONE * SETA_ESCALA
+	_seta.z_index = 100
+	_seta.visible = false
+	add_child(_seta)
 	_item_na_mao.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	_item_na_mao.position = ITEM_NA_MAO_POSICAO
 	_item_na_mao.visible = false
@@ -194,6 +212,7 @@ func _physics_process(delta: float) -> void:
 
 	_atualiza_direcao(direcao)
 	_anima_andar(direcao, delta)
+	_atualiza_seta(delta)
 
 # Inclina o corpo enquanto anda; ao parar, volta suavemente à posição normal.
 func _anima_andar(direcao: Vector2, delta: float) -> void:
@@ -234,8 +253,28 @@ func _atualiza_sprite() -> void:
 	# Não há quadros piscando com a tábua, então carregando ignora a piscada.
 	elif carregando and itemAtual.eh_tabua() :
 		_sprite.play(_direcao_sprite + "_tabua")
+	# Com a caveira ele faz outra cara (também sem piscar).
+	elif carregando and itemAtual.classe == Item.CLASSE_CAVEIRA :
+		_sprite.play(_direcao_sprite + "_caveira")
 	else :
 		_sprite.play(_direcao_sprite + ("_piscando" if _piscando else ""))
+
+# Aponta para a fornalha enquanto carrega a caveira, balançando para chamar atenção.
+func _atualiza_seta(delta: float) -> void:
+	var fornalha := get_tree().get_first_node_in_group(Fornalha.GRUPO) as Node2D
+	var aponta := carregando and itemAtual != null and itemAtual.classe == Item.CLASSE_CAVEIRA and fornalha != null
+	var para_fornalha := Vector2.ZERO
+	if aponta :
+		para_fornalha = fornalha.global_position - global_position
+		aponta = para_fornalha.length() > SETA_DISTANCIA_MINIMA
+	_seta.visible = aponta
+	if not aponta :
+		return
+	_tempo_seta += delta
+	var direcao := para_fornalha.normalized()
+	_seta.global_position = global_position + direcao * (SETA_DISTANCIA + sin(_tempo_seta * SETA_VELOCIDADE) * SETA_BALANCO)
+	# A seta da arte aponta para baixo.
+	_seta.global_rotation = direcao.angle() - PI / 2.0
 
 # Mostra o item carregado na frente do corpo; de costas ele fica escondido atrás.
 func _atualiza_item_na_mao() -> void:
