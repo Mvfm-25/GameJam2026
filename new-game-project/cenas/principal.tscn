@@ -16,13 +16,13 @@
 [ext_resource type="Texture2D" uid="uid://ne8jwthsj1wm" path="res://assets/decorations/fornalha.png" id="12_fornalha"]
 [ext_resource type="Script" uid="uid://mics2wjbtbnn" path="res://scripts/som_trem.gd" id="12_somtrem"]
 [ext_resource type="AudioStream" uid="uid://jsbt5unj8xpt" path="res://audios/743697__michaelydian__elevator-music.wav" id="18_auskn"]
-[ext_resource type="Script" uid="uid://jn4dux3fqudl" path="res://scripts/chao.gd" id="chao_script"]
-[ext_resource type="Script" path="res://scripts/objetos_chao.gd" id="objetos_script"]
-[ext_resource type="Texture2D" path="res://assets/decorations/pedras.png" id="pedras_tex"]
-[ext_resource type="Texture2D" path="res://assets/decorations/gramas.png" id="gramas_tex"]
-[ext_resource type="Script" uid="uid://cep57ks7wxcce" path="res://scripts/trilhos.gd" id="trilhos_script"]
 [ext_resource type="PackedScene" path="res://cenas/pilha_carvao.tscn" id="20_pilha_carvao"]
 [ext_resource type="PackedScene" path="res://cenas/apito.tscn" id="21_apito"]
+[ext_resource type="Script" uid="uid://jn4dux3fqudl" path="res://scripts/chao.gd" id="chao_script"]
+[ext_resource type="Texture2D" uid="uid://c4kyxtpt7o1ud" path="res://assets/decorations/gramas.png" id="gramas_tex"]
+[ext_resource type="Script" uid="uid://12fl5h0183wu" path="res://scripts/objetos_chao.gd" id="objetos_script"]
+[ext_resource type="Texture2D" uid="uid://cplqucfhorgax" path="res://assets/decorations/pedras.png" id="pedras_tex"]
+[ext_resource type="Script" uid="uid://cep57ks7wxcce" path="res://scripts/trilhos.gd" id="trilhos_script"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fornalha"]
 atlas = ExtResource("12_fornalha")
@@ -45,15 +45,14 @@ velocidade = 250.0
 [node name="Chao" type="Node2D" parent="Trilhos" unique_id=69780145]
 script = ExtResource("chao_script")
 
-[node name="Gramas" type="Node2D" parent="."]
+[node name="Gramas" type="Node2D" parent="." unique_id=1016039830]
 script = ExtResource("objetos_script")
 textura = ExtResource("gramas_tex")
 largura_arte = 128
-altura_arte = 128
 intervalo_min = 1.0
 intervalo_max = 4.0
 
-[node name="Pedras" type="Node2D" parent="."]
+[node name="Pedras" type="Node2D" parent="." unique_id=761416564]
 script = ExtResource("objetos_script")
 textura = ExtResource("pedras_tex")
 
@@ -314,12 +313,9 @@ classe = "Carvao"
 [node name="SomTrem" type="Node" parent="." unique_id=1907316254]
 script = ExtResource("12_somtrem")
 
-[node name="Motor" type="AudioStreamPlayer" parent="SomTrem" unique_id=1907316255]
-stream = ExtResource("9_wgbst")
-volume_db = 8.0
-
 [node name="Trilhos" type="AudioStreamPlayer" parent="SomTrem" unique_id=1907316256]
 stream = ExtResource("8_sflf3")
+volume_db = 7.754
 
 [node name="743697MichaelydianElevatorMusic" type="AudioStreamPlayer2D" parent="." unique_id=216993022]
 position = Vector2(885, 214)
@@ -341,3 +337,10 @@ stream = ExtResource("18_auskn")
 volume_db = 3.0
 autoplay = true
 max_distance = 235.0
+
+[node name="271382RudicangiottiSyntheticSteamEngine" type="AudioStreamPlayer2D" parent="." unique_id=1266332279]
+position = Vector2(115, 80)
+stream = ExtResource("9_wgbst")
+volume_db = 13.0
+autoplay = true
+max_distance = 884.0
