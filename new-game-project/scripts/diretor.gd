@@ -169,8 +169,37 @@ func marca_morte(p : Passageiro, cadeira : Cadeira = null) :
 		pos = cadeira.global_position + DESLOCAMENTO_POCA_CADEIRA
 	deixa_restos(pos)
 
-# Poça de sangue com uma caveira por cima, em 'pos'.
+# Meia-largura da área ocupada por uma cadeira (o colisor tem ~64 px) mais uma folga
+# para a caveira e a poça não aparecerem sob o desenho da cadeira.
+const METADE_CADEIRA := 32.0
+const FOLGA_CADEIRA := 18.0
+
+# Se 'pos' cai em cima de alguma cadeira, empurra para o lado livre mais próximo.
+# Repete porque o empurrão pode cair em cima de uma cadeira vizinha.
+func fora_das_cadeiras(pos : Vector2) -> Vector2 :
+	var limite := METADE_CADEIRA + FOLGA_CADEIRA
+	var cadeiras := get_tree().get_nodes_in_group("cadeiras")
+	for _tentativa in 6 :
+		var mexeu := false
+		for c in cadeiras :
+			var d : Vector2 = pos - c.global_position
+			if absf(d.x) >= limite or absf(d.y) >= limite :
+				continue
+			# Sai pelo eixo em que falta menos para sair da cadeira.
+			var sai_x := limite - absf(d.x)
+			var sai_y := limite - absf(d.y)
+			if sai_x <= sai_y :
+				pos.x = c.global_position.x + limite * (1.0 if d.x >= 0.0 else -1.0)
+			else :
+				pos.y = c.global_position.y + limite * (1.0 if d.y >= 0.0 else -1.0)
+			mexeu = true
+		if not mexeu :
+			break
+	return pos
+
+# Poça de sangue com uma caveira por cima, em 'pos' (sempre fora das cadeiras).
 func deixa_restos(pos : Vector2) -> void :
+	pos = fora_das_cadeiras(pos)
 	coloca_sujeira(Sujeira.nova_sangue(), pos)
 	var caveira : Item = CENA_CAVEIRA.instantiate()
 	caveira.add_to_group(Item.GRUPO_CAVEIRAS)

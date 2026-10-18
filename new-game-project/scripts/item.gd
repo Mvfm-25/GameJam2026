@@ -91,6 +91,11 @@ func ser_pego() -> void:
 
 # Volta para o chão na posição indicada
 func ser_solto(posicao: Vector2) -> void:
+	# A caveira solta junto de uma cadeira não pode ficar sob o desenho dela.
+	if eh_caveira():
+		var diretor := get_tree().current_scene as Diretor
+		if diretor != null:
+			posicao = diretor.fora_das_cadeiras(posicao)
 	global_position = posicao
 	carregado = false
 	visible = true
