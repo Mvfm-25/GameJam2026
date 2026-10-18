@@ -21,16 +21,16 @@ var necessidades = []
 # --- Raiva -----------------------------------------------------------------
 # A raiva sobe pela soma das fontes abaixo (valores por segundo).
 # Tédio: sobe devagar mesmo sem motivo. Cada passageiro tem seu ritmo.
-var taxa_raiva_base = randf_range(0.003, 0.005)
-@export var raiva_fome := 0.015
+var taxa_raiva_base = randf_range(0.0015, 0.0025)
+@export var raiva_fome := 0.008
 # Por sujeira próxima (sangue conta como duas), até sujeiras_max_raiva.
-@export var raiva_por_sujeira := 0.008
+@export var raiva_por_sujeira := 0.005
 @export var sujeiras_max_raiva := 3.0
 @export var raio_sujeira := 120.0
 # IMUNDO multiplica a taxa total.
 @export var multiplicador_imundo := 1.5
-# Fome cresce até mostrar o balão (0.6) em ~12 s.
-@export var taxa_fome := 0.05
+# Fome cresce até mostrar o balão (0.6) em ~30 s.
+@export var taxa_fome := 0.02
 # Comer acalma.
 @export var alivio_comida := 0.3
 
@@ -46,7 +46,6 @@ var exposicao := 0.0
 var imundo := false
 # Imundo suja mais nos passeios.
 @export_range(0.0, 1.0) var chance_sujeira_imundo := 0.5
-const COR_IMUNDO := Color(0.72, 0.6, 0.45)
 
 # --- Contágio --------------------------------------------------------------
 # Um IRADO "explode" a cada intervalo_contagio, podendo irritar quem está perto.
@@ -59,7 +58,6 @@ var irado := false
 @export var recarga_contagio := 5.0
 var _tempo_pulso := 0.0
 var _recarga := 0.0
-var _tween_flash : Tween
 
 # --- Cadeira & passeio ---------------------------------------------------
 # Cadeira onde o passageiro senta. Se ficar vazio, pega a cadeira livre
@@ -92,10 +90,10 @@ var _timer_passeio := Timer.new()
 # --- Banheiro ------------------------------------------------------------
 # Quando pensa em levantar, chance de ir ao banheiro (antes de pensar em passear).
 @export_range(0.0, 1.0) var chance_banheiro := 0.04
-@export var tempo_banheiro_min := 4.0
-@export var tempo_banheiro_max := 7.0
+@export var tempo_banheiro_min := 7.0
+@export var tempo_banheiro_max := 11.0
 # Raiva por segundo parado na fila.
-@export var raiva_fila := 0.01
+@export var raiva_fila := 0.006
 # Distância entre quem está na fila.
 const ESPACO_FILA := 30.0
 var _banheiro : Banheiro = null
@@ -150,6 +148,20 @@ const BALANCO_VELOCIDADE := 22.0
 const PULINHO := 1.5 # pixels
 const AMASSADA := 0.04
 const SUAVIZACAO := 18.0
+# IRADO anda mais agitado: balança, pula e amassa mais, com passos mais rápidos.
+const IRADO_BALANCO := 2.2
+const IRADO_PULINHO := 3.0
+const IRADO_VELOCIDADE := 1.4
+# Parado, o passageiro agitado (IRADO ou IMUNDO) tem chiliques de tempos em tempos:
+# treme o corpo rápido e dá pulinhos por um instante.
+const CHILIQUE_INTERVALO_MIN := 1.5
+const CHILIQUE_INTERVALO_MAX := 3.5
+const CHILIQUE_DURACAO := 0.45
+const CHILIQUE_ANGULO := 0.16 # radianos (~9 graus)
+const CHILIQUE_VELOCIDADE := 55.0
+const CHILIQUE_PULINHO := 3.0
+var _espera_chilique := 0.0
+var _tempo_chilique := 0.0
 var _visual : Node2D
 var _fase_passo := 0.0
 
@@ -208,17 +220,47 @@ func _anima_andar(delta : float) -> void:
 	var angulo := 0.0
 	var pulo := 0.0
 	var amassada := 0.0
+	var agitado := esta_vivo() and (irado or imundo)
+	var direto := false
 	if estado == Estado.ANDANDO or (estado == Estado.NA_FILA and not _esperando) :
-		_fase_passo += delta * BALANCO_VELOCIDADE
-		angulo = sin(_fase_passo) * BALANCO_ANGULO
+		var balanco := IRADO_BALANCO if agitado else 1.0
+		var pulinho := IRADO_PULINHO if agitado else 1.0
+		_fase_passo += delta * BALANCO_VELOCIDADE * (IRADO_VELOCIDADE if agitado else 1.0)
+		angulo = sin(_fase_passo) * BALANCO_ANGULO * balanco
 		var passo := absf(sin(_fase_passo))
-		pulo = -passo * PULINHO
-		amassada = (0.5 - passo) * AMASSADA
+		pulo = -passo * PULINHO * pulinho
+		amassada = (0.5 - passo) * AMASSADA * balanco
+	elif agitado :
+		var chilique := _anima_chilique(delta)
+		angulo = chilique.x
+		direto = _tempo_chilique > 0.0
+		pulo = chilique.y
+		amassada = -chilique.y / CHILIQUE_PULINHO * AMASSADA * IRADO_BALANCO
 	var peso := 1.0 - exp(-SUAVIZACAO * delta)
+	# O chilique é rápido demais para a suavização: aplica direto.
+	if direto :
+		peso = 1.0
 	_visual.rotation = lerp_angle(_visual.rotation, angulo, peso)
 	_visual.position = _visual.position.lerp(Vector2(0, pulo), peso)
 	var escala := Vector2.ONE * ESCALA_VISUAL
 	_visual.scale = _visual.scale.lerp(escala * Vector2(1.0 - amassada, 1.0 + amassada), peso)
+
+# Chilique do passageiro agitado parado: espera um tempo e treme por CHILIQUE_DURACAO.
+# Retorna (ângulo, pulo) do momento.
+func _anima_chilique(delta : float) -> Vector2:
+	if _tempo_chilique <= 0.0 :
+		_espera_chilique -= delta
+		if _espera_chilique > 0.0 :
+			return Vector2.ZERO
+		_tempo_chilique = CHILIQUE_DURACAO
+		_espera_chilique = randf_range(CHILIQUE_INTERVALO_MIN, CHILIQUE_INTERVALO_MAX)
+	_tempo_chilique -= delta
+	var t := CHILIQUE_DURACAO - _tempo_chilique
+	# Treme forte no começo e vai parando.
+	var forca := clampf(_tempo_chilique / CHILIQUE_DURACAO, 0.0, 1.0)
+	var angulo := sin(t * CHILIQUE_VELOCIDADE) * CHILIQUE_ANGULO * forca
+	var pulo := -absf(sin(t * CHILIQUE_VELOCIDADE * 0.5)) * CHILIQUE_PULINHO * forca
+	return Vector2(angulo, pulo)
 
 # IRADO e IMUNDO não são mais sorteados: surgem da raiva e da sujeira.
 # Mantém 1 em 4 com fome, como antes.
@@ -261,7 +303,6 @@ func atualiza_exposicao(delta : float, diretor : Diretor) -> void:
 		imundo = true
 		print("Passageiro " + nome + " ficou IMUNDO!")
 		_atualiza_contente()
-		_aplica_cor()
 
 # O maquinista limpou por perto.
 func limpa_imundo() -> void:
@@ -271,7 +312,6 @@ func limpa_imundo() -> void:
 	imundo = false
 	print("Passageiro " + nome + " não está mais imundo.")
 	_atualiza_contente()
-	_aplica_cor()
 
 # Baixa a raiva (comida, limpeza).
 func acalma(valor : float) -> void:
@@ -286,7 +326,6 @@ func contagia(valor : float) -> bool:
 		return false
 	_recarga = recarga_contagio
 	nivel_raiva = minf(1.0, nivel_raiva + valor)
-	_flash_raiva()
 	return true
 
 func _atualiza_irado() -> void:
@@ -314,24 +353,12 @@ func _pulso_contagio(delta : float, diretor : Diretor) -> void:
 func _atualiza_contente() -> void:
 	contente = necessidades.is_empty() and not imundo and not irado
 
-func _aplica_cor() -> void:
-	if _visual != null :
-		_visual.modulate = COR_IMUNDO if imundo else Color.WHITE
-
-# Pisca vermelho ao ser contagiado.
-func _flash_raiva() -> void:
-	if _tween_flash :
-		_tween_flash.kill()
-	modulate = Color(1.6, 0.5, 0.5)
-	_tween_flash = create_tween()
-	_tween_flash.tween_property(self, "modulate", Color.WHITE, 0.6)
-
-# Um balão por vez: irado > fome > puto.
+# Um balão por vez: irado > fome > puto (raiva alta ou desconforto por estar imundo).
 func _atualiza_baloes() -> void:
 	var com_fome = necessidades.has("FAMINTO") and quantidade_fome >= 0.6
 	$muito_puto.visible = irado
 	$fome.visible = not irado and com_fome
-	$puto.visible = not irado and not com_fome and nivel_raiva >= LIMIAR_PUTO
+	$puto.visible = not irado and not com_fome and (nivel_raiva >= LIMIAR_PUTO or imundo)
 
 func esta_vivo() -> bool:
 	return status != "MORTO"
@@ -589,6 +616,8 @@ func _vai_ao_vaso(vaso : Vaso) -> void :
 func _usa_vaso() -> void :
 	estado = Estado.NO_VASO
 	z_index = Cadeira.z_por_y(global_position.y) + 1
+	if is_instance_valid(_vaso) :
+		_vaso.entrar(self)
 	get_tree().create_timer(randf_range(tempo_banheiro_min, tempo_banheiro_max)).timeout.connect(_sai_do_vaso)
 
 # Destranca (o vaso pode entupir) e volta pela linha até a cadeira.
@@ -643,11 +672,14 @@ func _process(delta: float) -> void:
 		return
 
 	var diretor := get_tree().current_scene as Diretor
-	if necessidades.has("FAMINTO") :
-		atualiza_fome(delta)
 	_recarga = maxf(0.0, _recarga - delta)
 	atualiza_exposicao(delta, diretor)
-	atualiza_raiva(delta, diretor)
+	# Parado na estação (dentro da paciência), ninguém fica com fome, bravo
+	# nem espalha a fúria.
+	if diretor == null or diretor.passageiros_impacientes() :
+		if necessidades.has("FAMINTO") :
+			atualiza_fome(delta)
+		atualiza_raiva(delta, diretor)
+		_pulso_contagio(delta, diretor)
 	_atualiza_irado()
-	_pulso_contagio(delta, diretor)
 	_atualiza_baloes()

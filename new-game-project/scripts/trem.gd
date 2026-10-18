@@ -215,7 +215,8 @@ func y_ponte() -> float:
 
 
 # Vagão de serviço: na parte de cima, à esquerda, uma fileira de cabines de banheiro
-# (um vaso em cada, separadas por divisórias); o lado direito inteiro é a cozinha.
+# (um vaso em cada, separadas por divisórias e com uma porta na frente que fecha
+# enquanto alguém usa); o lado direito inteiro é a cozinha.
 # O resto (embaixo dos banheiros) é o corredor que liga a porta à cozinha.
 func _construir_servico(solo: TileMapLayer) -> void:
 	_interior = Banheiro.new()
@@ -240,6 +241,13 @@ func _construir_servico(solo: TileMapLayer) -> void:
 		vaso.position = Vector2((inicio + LARGURA_CABINE / 2.0) * TAMANHO_TILE, TAMANHO_TILE + Vaso.TAMANHO / 2.0)
 		_interior.add_child(vaso)
 		_interior.vasos.append(vaso)
+		# Porta na frente da cabine, na última linha dela (alinhada à base das divisórias).
+		var porta := PortaCabine.new()
+		porta.name = "Porta%d" % (i + 1)
+		porta.position = Vector2(inicio, PROFUNDIDADE_CABINE) * TAMANHO_TILE
+		_interior.add_child(porta)
+		porta.configurar(LARGURA_CABINE, (PROFUNDIDADE_CABINE - 1) * TAMANHO_TILE)
+		vaso.porta = porta
 	# Fila: começa no corredor, embaixo da última cabine, e cresce em direção à porta.
 	_interior.cabeca = Vector2((fim_banheiros - 0.5) * TAMANHO_TILE, y_corredor())
 	_interior.entrada_y = (PROFUNDIDADE_CABINE + 1.5) * TAMANHO_TILE

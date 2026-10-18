@@ -1,7 +1,7 @@
 extends CharacterBody2D
 class_name Maquinista
 
-@export var velocidade := 200.0
+@export var velocidade := 400.0
 @export var pontos_acumulados = 10.0
 
 # Item atualmente carregado pelo jogador, um único item.
@@ -19,6 +19,8 @@ var passageiros_proximos : Array[Passageiro] = []
 
 # Portas cuja área de interação o jogador está dentro (elas se registram aqui).
 var portas_proximas : Array[Porta] = []
+# Objetos fixos ao alcance, como a pilha de carvão e o apito (eles se registram aqui).
+var interativos_proximos : Array[Interativo] = []
 
 # Se o jogador está parado varrendo uma sujeira.
 var limpando := false
@@ -66,7 +68,7 @@ func alimenta(item : Item) -> bool:
 	return true
 
 # Começa a varrer a sujeira (ou desentupir o vaso) mais próximo. O jogador fica parado
-# com a vassoura até o TimerLimpeza acabar (5 s).
+# com a vassoura até o TimerLimpeza acabar (2 s).
 func limpa():
 	if limpando :
 		return
@@ -91,7 +93,7 @@ func limpa():
 	_vassoura.play("varrer")
 	_timer_limpeza.start()
 
-# Fim dos 5 s: remove a sujeira e libera o jogador.
+# Fim da limpeza: remove a sujeira (ou desentope o vaso) e libera o jogador.
 func _ao_terminar_limpeza() -> void:
 	limpando = false
 	_vassoura.stop()
@@ -122,19 +124,28 @@ func _porta_mais_proxima() -> Porta :
 			melhor = porta
 	return melhor
 
+# Porta fechada ou objeto fixo (pilha de carvão, apito) mais próximo do jogador
+func _alvo_interacao() -> Node2D :
+	var melhor : Node2D = _porta_mais_proxima()
+	for alvo in interativos_proximos :
+		if melhor == null or global_position.distance_to(alvo.global_position) < global_position.distance_to(melhor.global_position) :
+			melhor = alvo
+	return melhor
+
 # Tecla de interagir pega o item mais próximo ou solta o que está carregando
 func _unhandled_input(event: InputEvent) -> void:
 	# Enquanto varre, o jogador não faz mais nada.
 	if limpando :
 		return
 	if event.is_action_pressed("interagir"):
-		var porta := _porta_mais_proxima()
-		if porta != null and not carregando and _item_mais_proximo() == null :
-			porta.interage()
-		elif carregando :
+		if carregando :
 			solta_item()
-		else :
+		elif _item_mais_proximo() != null :
 			pega_item(_item_mais_proximo())
+		else :
+			var alvo := _alvo_interacao()
+			if alvo != null :
+				alvo.interage()
 	elif event.is_action_pressed("limpar"):
 		limpa()
 

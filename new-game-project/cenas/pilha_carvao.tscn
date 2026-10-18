@@ -1,0 +1,31 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/pilha_carvao.gd" id="1_pilha"]
+[ext_resource type="Texture2D" path="res://assets/decorations/carvão.png" id="2_carvao"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_corpo"]
+size = Vector2(30, 40)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_alcance"]
+radius = 40.0
+
+[node name="PilhaCarvao" type="Node2D"]
+script = ExtResource("1_pilha")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2_carvao")
+region_enabled = true
+region_rect = Rect2(0, 0, 192, 192)
+
+[node name="Corpo" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Corpo"]
+position = Vector2(0, -2)
+shape = SubResource("RectangleShape2D_corpo")
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("CircleShape2D_alcance")

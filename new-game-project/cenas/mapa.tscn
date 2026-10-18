@@ -91,7 +91,7 @@ default_color = Color(0.45, 0.45, 0.5, 1)
 position = Vector2(220, 270)
 nome = "Central"
 cor = Color(0.9, 0.25, 0.25, 1)
-tempo_viagem = 8.0
+tempo_viagem = 120.0
 
 [node name="VilaFerrugem" parent="Conteudo/Painel/Estacoes" unique_id=53596634 instance=ExtResource("2_est")]
 position = Vector2(310, 160)
@@ -103,18 +103,18 @@ rotulo_acima = true
 position = Vector2(400, 270)
 nome = "Porto Sombrio"
 cor = Color(0.25, 0.75, 0.4, 1)
-tempo_viagem = 12.0
+tempo_viagem = 120.0
 
 [node name="AltoDaFumaca" parent="Conteudo/Painel/Estacoes" unique_id=1685897426 instance=ExtResource("2_est")]
 position = Vector2(490, 160)
 nome = "Alto da Fumaça"
 cor = Color(0.6, 0.35, 0.85, 1)
-tempo_viagem = 14.0
+tempo_viagem = 120.0
 rotulo_acima = true
 
 [node name="TerminalNorte" parent="Conteudo/Painel/Estacoes" unique_id=1651430957 instance=ExtResource("2_est")]
 position = Vector2(580, 270)
 nome = "Terminal Norte"
 cor = Color(0.95, 0.85, 0.2, 1)
-tempo_viagem = 16.0
+tempo_viagem = 120.0
 originaria = true

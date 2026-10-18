@@ -22,6 +22,9 @@ const SOM_TUNEL := preload("res://audios/suspence2.wav")
 const SOM_SEGUINTE := preload("res://audios/suspence1.wav")
 # Duração do fade-out da música de suspense ao chegar na estação.
 const DURACAO_FADE_MUSICA = 2.0
+# Quanto tempo o jogador pode ficar parado na estação sem escolher destino
+# antes dos passageiros começarem a ficar impacientes (fome e raiva).
+const PACIENCIA_ESTACAO = 30.0
 # Etapas do loop: parado na estação -> viajando -> túnel -> viajando -> chega na estação.
 enum Etapa { NA_ESTACAO, VIAJANDO, TUNEL }
 var etapa = Etapa.NA_ESTACAO
@@ -43,6 +46,8 @@ var timer_aviso = Timer.new()
 # Tempo total e tempo já percorrido da viagem atual.
 var tempo_viagem_total = 0.0
 var tempo_decorrido = 0.0
+# Quanto tempo o trem está parado na estação atual.
+var tempo_parado = 0.0
 # Quando o túnel começa e termina, em segundos desde a partida.
 var inicio_tunel = 0.0
 var fim_tunel = 0.0
@@ -74,6 +79,11 @@ var quantidade_visitas = 0
 var trilho_atual = 0
 var em_area_troca = false
 
+# Fornalha da sala de máquinas; sem combustível o trem para no caminho.
+var fornalha : Fornalha = null
+var trilhos : Trilhos = null
+var _avisou_fornalha_apagada := false
+
 func em_transito() -> bool :
 	return etapa != Etapa.NA_ESTACAO
 
@@ -82,6 +92,13 @@ func progresso_viagem() -> float :
 	if not em_transito() or tempo_viagem_total <= 0.0 :
 		return 0.0
 	return clampf(tempo_decorrido / tempo_viagem_total, 0.0, 1.0)
+
+# Passageiros só sentem fome/raiva com o trem andando,
+# ou se o jogador demorar demais para escolher o próximo destino.
+func passageiros_impacientes() -> bool :
+	if jogo_acabou :
+		return false
+	return em_transito() or tempo_parado >= PACIENCIA_ESTACAO
 
 func tempo_restante() -> float :
 	if not em_transito() :
@@ -254,6 +271,7 @@ func chega_destino() :
 	if estacao_selecionada == null :
 		return
 	etapa = Etapa.NA_ESTACAO
+	tempo_parado = 0.0
 	quantidade_visitas += 1
 	_fade_out_musica()
 
@@ -296,6 +314,7 @@ func troca_destino(estacao : Estacao) :
 # Parte da estação e sorteia em que momento o trem passa pelo túnel.
 func inicia_viagem(duracao : float) :
 	etapa = Etapa.VIAJANDO
+	tempo_parado = 0.0
 	tempo_viagem_total = duracao
 	tempo_decorrido = 0.0
 	passou_tunel = false
@@ -344,6 +363,9 @@ func _ready() -> void:
 
 	_cria_efeitos_tunel()
 
+	fornalha = get_tree().get_first_node_in_group(Fornalha.GRUPO)
+	trilhos = get_node_or_null("Trilhos")
+
 
 func _cria_efeitos_tunel() :
 	escuridao = CanvasModulate.new()
@@ -378,6 +400,9 @@ func _textura_lanterna() -> GradientTexture2D :
 
 func _process(delta: float) -> void:
 	if not em_transito() :
+		tempo_parado += delta
+		return
+	if _trem_parado_sem_carvao() :
 		return
 	tempo_decorrido += delta
 
@@ -394,6 +419,16 @@ func _process(delta: float) -> void:
 			sai_tunel()
 	elif etapa == Etapa.VIAJANDO and tempo_decorrido >= tempo_viagem_total :
 		chega_destino()
+
+# Com a fornalha apagada a viagem não avança e os trilhos param de correr.
+func _trem_parado_sem_carvao() -> bool :
+	var apagada := fornalha != null and fornalha.apagada()
+	if trilhos != null :
+		trilhos.ativo = not apagada
+	if apagada and not _avisou_fornalha_apagada :
+		mostra_aviso("A fornalha apagou! O trem parou. Abasteça com carvão!")
+	_avisou_fornalha_apagada = apagada
+	return apagada
 
 # Esc fecha o jogo
 func _unhandled_input(event: InputEvent) -> void:

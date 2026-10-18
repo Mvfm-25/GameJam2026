@@ -35,9 +35,11 @@ godot -s caminho/teste.gd           # roda um script de teste que `extends Scene
 - `Trilhos`/`Chao` são `Sprite2D`s com região repetida (não TileMap) que rolam para a direita em loop; o deslocamento é módulo de um tile, então o `Chao` precisa de `escala` que divida 32.
 - `BalancoTrem` é o script da `Camera2D` do `Maquinista`: balança a câmera, então tudo que aparece na tela (menos o `Mapa`) balança junto.
 
+**Fornalha.** `Fornalha` (`scripts/forno.gd`, nó `Vagao1/forno`, grupo `fornalha`) tem combustível para ~5 min (`COMBUSTIVEL_MAXIMO`) que só queima em viagem; as `PilhaCarvao` ao lado e itens Carvao/Cadaver reabastecem. Sem combustível o `Diretor` congela `tempo_decorrido` e para os `Trilhos`.
+
 **Passageiros.** `SpawnerPassageiros` (no nó `Passageiros`) cria um `Passageiro` em cada `Cadeira` marcada. O passageiro é montado em camadas por código (corpo, cabeça com shader de cor de cabelo, olhos, boca, chapéu); as folhas ficam em `assets/characters/` e o código de montagem em `passageiro.gd` (tabela `CORPOS`, contadores `ESTILOS_*`). Ele tem necessidades, raiva, vai ao banheiro e levanta para andar pelos `Caminho`s (Path2D). `RedeCaminhos` gera esses caminhos a partir dos vagões ligados por portas abertas e a fila do `Banheiro`.
 
-**Interações do jogador.** `Maquinista` mantém listas de coisas ao alcance (`itens_proximos`, `sujeiras_proximas`, `passageiros_proximos`, `portas_proximas`) que cada objeto preenche pelos sinais `body_entered/exited` da sua `Area2D`. As teclas (`interagir`, `limpar`, `abrir_mapa`) agem sobre o mais próximo. Itens têm `classe` ("Comida" = tábua vazia → cozinha, "ComidaP" = comida preparada → passageiro, "Carvao"/"Cadaver" → `forno`); constantes em `item.gd`.
+**Interações do jogador.** `Maquinista` mantém listas de coisas ao alcance (`itens_proximos`, `sujeiras_proximas`, `passageiros_proximos`, `portas_proximas`) que cada objeto preenche pelos sinais `body_entered/exited` da sua `Area2D`. As teclas (`interagir`, `limpar`, `abrir_mapa`) agem sobre o mais próximo. Objetos fixos (pilha de carvão, apito) estendem `Interativo` (`scripts/interativo.gd`): se registram em `interativos_proximos`, trocam para a célula com contorno da folha (2 células de 192 px) e sobrescrevem `interage()`. Prioridade do `interagir`: soltar o que carrega → pegar item → porta/interativo mais próximo. Itens têm `classe` ("Comida" = tábua vazia → cozinha, "ComidaP" = comida preparada → passageiro, "Carvao"/"Cadaver" → `forno`); constantes em `item.gd`.
 
 ## Convenções e armadilhas
 
