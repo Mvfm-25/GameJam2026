@@ -19,7 +19,7 @@ signal selecionada(estacao: Estacao)
 		raio = valor
 		queue_redraw()
 # Quanto tempo (segundos) o trem leva para chegar nesta estação após escolhida.
-@export var tempo_viagem = 500.0
+@export var tempo_viagem = 120.0
 
 # Marcada como ponto de origem
 @export var originaria = false

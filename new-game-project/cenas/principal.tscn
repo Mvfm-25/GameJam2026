@@ -13,10 +13,10 @@
 [ext_resource type="AudioStream" uid="uid://cyghqmwexq3hn" path="res://audios/271382__rudicangiotti__synthetic-steam-engine.wav" id="9_wgbst"]
 [ext_resource type="Script" uid="uid://b8bycn0jw7bug" path="res://scripts/rede_caminhos.gd" id="10_rede"]
 [ext_resource type="Script" uid="uid://c8367ehdu5pe8" path="res://scripts/spawner_passageiros.gd" id="11_spawn"]
-[ext_resource type="Script" uid="uid://jn4dux3fqudl" path="res://scripts/chao.gd" id="chao_script"]
 [ext_resource type="Texture2D" uid="uid://ne8jwthsj1wm" path="res://assets/decorations/fornalha.png" id="12_fornalha"]
+[ext_resource type="Script" uid="uid://mics2wjbtbnn" path="res://scripts/som_trem.gd" id="12_somtrem"]
+[ext_resource type="Script" uid="uid://jn4dux3fqudl" path="res://scripts/chao.gd" id="chao_script"]
 [ext_resource type="Script" uid="uid://cep57ks7wxcce" path="res://scripts/trilhos.gd" id="trilhos_script"]
-[ext_resource type="Script" path="res://scripts/som_trem.gd" id="12_somtrem"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fornalha"]
 atlas = ExtResource("12_fornalha")
@@ -38,7 +38,6 @@ velocidade = 250.0
 
 [node name="Chao" type="Node2D" parent="Trilhos" unique_id=69780145]
 script = ExtResource("chao_script")
-linhas_acima = null
 
 [node name="Vagao1" parent="." unique_id=988786515 instance=ExtResource("1_trem")]
 classe = "MAQUINAS"
@@ -259,7 +258,6 @@ com_passageiro = true
 script = ExtResource("10_rede")
 
 [node name="Mapa" parent="." unique_id=1290344715 instance=ExtResource("6_mapa")]
-visible = false
 
 [node name="comida1" parent="." unique_id=1412582290 instance=ExtResource("8_djk5k")]
 position = Vector2(2800, 358)

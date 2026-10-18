@@ -1,7 +1,7 @@
 extends CharacterBody2D
 class_name Maquinista
 
-@export var velocidade := 200.0
+@export var velocidade := 400.0
 @export var pontos_acumulados = 10.0
 
 # Item atualmente carregado pelo jogador, um único item.
@@ -66,7 +66,7 @@ func alimenta(item : Item) -> bool:
 	return true
 
 # Começa a varrer a sujeira (ou desentupir o vaso) mais próximo. O jogador fica parado
-# com a vassoura até o TimerLimpeza acabar (5 s).
+# com a vassoura até o TimerLimpeza acabar (2 s).
 func limpa():
 	if limpando :
 		return
@@ -91,7 +91,7 @@ func limpa():
 	_vassoura.play("varrer")
 	_timer_limpeza.start()
 
-# Fim dos 5 s: remove a sujeira e libera o jogador.
+# Fim da limpeza: remove a sujeira (ou desentope o vaso) e libera o jogador.
 func _ao_terminar_limpeza() -> void:
 	limpando = false
 	_vassoura.stop()

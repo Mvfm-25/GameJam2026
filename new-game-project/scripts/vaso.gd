@@ -5,7 +5,8 @@ class_name Vaso
 # Vaso sanitário das cabines do banheiro (vagão de serviço).
 # sanitarios.png tem 5 quadros de 64 px: vaso limpo, (vazio), entupido, (vazio)
 # e entupido com contorno branco, mostrado quando o maquinista pode desentupir.
-# Enquanto um passageiro usa o vaso a cabine fica trancada (plaquinha vermelha).
+# Enquanto um passageiro usa o vaso a cabine fica trancada (plaquinha vermelha)
+# e, com ele lá dentro, a porta da cabine (PortaCabine) fica fechada.
 # Ao sair, ele pode deixar o vaso entupido; entupido ninguém usa até o maquinista
 # desentupir (tecla de limpar, perto do vaso).
 
@@ -28,6 +29,8 @@ const COR_TRANCADO := Color("d33a3a")
 # Passageiro usando o vaso (ou a caminho dele). Com ocupante, a cabine está trancada.
 var ocupante : Node2D = null
 var entupido := false
+# Porta da frente da cabine (criada pelo trem.gd).
+var porta : PortaCabine = null
 
 var _atlas : AtlasTexture
 var _maquinista : Maquinista = null
@@ -77,11 +80,19 @@ func ocupar(passageiro : Node2D) -> void:
 	_atualiza()
 
 
-# Passageiro destranca a cabine; pode deixar o vaso entupido.
+# Passageiro chegou ao vaso: fecha a porta da cabine.
+func entrar(passageiro : Node2D) -> void:
+	if ocupante == passageiro and is_instance_valid(porta):
+		porta.fechar()
+
+
+# Passageiro destranca a cabine (a porta abre); pode deixar o vaso entupido.
 func liberar(passageiro : Node2D, pode_entupir := true) -> void:
 	if ocupante != passageiro:
 		return
 	ocupante = null
+	if is_instance_valid(porta):
+		porta.abrir()
 	if pode_entupir and randf() < chance_entupir:
 		entupido = true
 		print("Um vaso entupiu!")

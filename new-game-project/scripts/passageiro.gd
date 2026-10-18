@@ -21,16 +21,16 @@ var necessidades = []
 # --- Raiva -----------------------------------------------------------------
 # A raiva sobe pela soma das fontes abaixo (valores por segundo).
 # Tédio: sobe devagar mesmo sem motivo. Cada passageiro tem seu ritmo.
-var taxa_raiva_base = randf_range(0.003, 0.005)
-@export var raiva_fome := 0.015
+var taxa_raiva_base = randf_range(0.0015, 0.0025)
+@export var raiva_fome := 0.008
 # Por sujeira próxima (sangue conta como duas), até sujeiras_max_raiva.
-@export var raiva_por_sujeira := 0.008
+@export var raiva_por_sujeira := 0.005
 @export var sujeiras_max_raiva := 3.0
 @export var raio_sujeira := 120.0
 # IMUNDO multiplica a taxa total.
 @export var multiplicador_imundo := 1.5
-# Fome cresce até mostrar o balão (0.6) em ~12 s.
-@export var taxa_fome := 0.05
+# Fome cresce até mostrar o balão (0.6) em ~30 s.
+@export var taxa_fome := 0.02
 # Comer acalma.
 @export var alivio_comida := 0.3
 
@@ -92,10 +92,10 @@ var _timer_passeio := Timer.new()
 # --- Banheiro ------------------------------------------------------------
 # Quando pensa em levantar, chance de ir ao banheiro (antes de pensar em passear).
 @export_range(0.0, 1.0) var chance_banheiro := 0.04
-@export var tempo_banheiro_min := 4.0
-@export var tempo_banheiro_max := 7.0
+@export var tempo_banheiro_min := 7.0
+@export var tempo_banheiro_max := 11.0
 # Raiva por segundo parado na fila.
-@export var raiva_fila := 0.01
+@export var raiva_fila := 0.006
 # Distância entre quem está na fila.
 const ESPACO_FILA := 30.0
 var _banheiro : Banheiro = null
@@ -589,6 +589,8 @@ func _vai_ao_vaso(vaso : Vaso) -> void :
 func _usa_vaso() -> void :
 	estado = Estado.NO_VASO
 	z_index = Cadeira.z_por_y(global_position.y) + 1
+	if is_instance_valid(_vaso) :
+		_vaso.entrar(self)
 	get_tree().create_timer(randf_range(tempo_banheiro_min, tempo_banheiro_max)).timeout.connect(_sai_do_vaso)
 
 # Destranca (o vaso pode entupir) e volta pela linha até a cadeira.
@@ -643,11 +645,14 @@ func _process(delta: float) -> void:
 		return
 
 	var diretor := get_tree().current_scene as Diretor
-	if necessidades.has("FAMINTO") :
-		atualiza_fome(delta)
 	_recarga = maxf(0.0, _recarga - delta)
 	atualiza_exposicao(delta, diretor)
-	atualiza_raiva(delta, diretor)
+	# Parado na estação (dentro da paciência), ninguém fica com fome, bravo
+	# nem espalha a fúria.
+	if diretor == null or diretor.passageiros_impacientes() :
+		if necessidades.has("FAMINTO") :
+			atualiza_fome(delta)
+		atualiza_raiva(delta, diretor)
+		_pulso_contagio(delta, diretor)
 	_atualiza_irado()
-	_pulso_contagio(delta, diretor)
 	_atualiza_baloes()

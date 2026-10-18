@@ -4,4 +4,4 @@
 
 [node name="Estação" type="Node2D" unique_id=1239344]
 script = ExtResource("1_anqgy")
-tempo_viagem = 10.0
+tempo_viagem = 120.0
