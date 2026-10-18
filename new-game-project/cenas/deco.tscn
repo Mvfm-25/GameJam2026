@@ -1,10 +1,19 @@
 [gd_scene format=3 uid="uid://cjq7h812stu2o"]
 
 [ext_resource type="Texture2D" uid="uid://2ngxggnc41of" path="res://assets/decorations/Cadeira.png" id="1_h7jit"]
+[ext_resource type="Script" path="res://scripts/cadeira.gd" id="2_cad"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_h7jit"]
 atlas = ExtResource("1_h7jit")
 region = Rect2(0, 0, 256, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_corpo"]
+atlas = ExtResource("1_h7jit")
+region = Rect2(256, 0, 256, 256)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_braco"]
+atlas = ExtResource("1_h7jit")
+region = Rect2(512, 0, 256, 256)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_g7ga7"]
 animations = [{
@@ -15,16 +24,33 @@ animations = [{
 "loop": 1,
 "name": &"Vazia",
 "speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_corpo")
+}],
+"loop": 1,
+"name": &"Ocupada",
+"speed": 5.0
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bv3fq"]
 
 [node name="Deco" type="StaticBody2D" unique_id=1767330768]
 scale = Vector2(0.455, 0.455)
+script = ExtResource("2_cad")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=772854171]
 sprite_frames = SubResource("SpriteFrames_g7ga7")
 animation = &"Vazia"
+
+[node name="Braco" type="Sprite2D" parent="." unique_id=1093847261]
+visible = false
+z_index = 2
+texture = SubResource("AtlasTexture_braco")
+
+[node name="Assento" type="Marker2D" parent="." unique_id=1520394817]
+position = Vector2(-20, -30)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=396298864]
 scale = Vector2(7.02, 7.02)
