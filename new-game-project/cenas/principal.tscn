@@ -36,6 +36,7 @@ size = Vector2(56, 56)
 size = Vector2(96, 48)
 
 [node name="Principal" type="Node2D" unique_id=1716720350]
+physics_interpolation_mode = 2
 script = ExtResource("1_0cijk")
 
 [node name="Trilhos" type="Node2D" parent="." unique_id=1848332910]
@@ -117,6 +118,7 @@ position = Vector2(608, 60)
 position = Vector2(448, 358)
 
 [node name="Maquinista" parent="." unique_id=1473250640 instance=ExtResource("2_maq")]
+physics_interpolation_mode = 1
 light_mask = 4
 visibility_layer = 4
 z_index = 5
