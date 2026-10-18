@@ -13,7 +13,11 @@
 [ext_resource type="AudioStream" uid="uid://cyghqmwexq3hn" path="res://audios/271382__rudicangiotti__synthetic-steam-engine.wav" id="9_wgbst"]
 [ext_resource type="Script" uid="uid://b8bycn0jw7bug" path="res://scripts/rede_caminhos.gd" id="10_rede"]
 [ext_resource type="Script" uid="uid://c8367ehdu5pe8" path="res://scripts/spawner_passageiros.gd" id="11_spawn"]
+<<<<<<< HEAD
+[ext_resource type="Script" uid="uid://jn4dux3fqudl" path="res://scripts/chao.gd" id="chao_script"]
+=======
 [ext_resource type="Texture2D" uid="uid://ne8jwthsj1wm" path="res://assets/decorations/fornalha.png" id="12_fornalha"]
+>>>>>>> 29cda7da70a0f42103d113641ad7ac829092325a
 [ext_resource type="Script" uid="uid://cep57ks7wxcce" path="res://scripts/trilhos.gd" id="trilhos_script"]
 [ext_resource type="Script" path="res://scripts/som_trem.gd" id="12_somtrem"]
 
@@ -33,6 +37,11 @@ script = ExtResource("1_0cijk")
 [node name="Trilhos" type="Node2D" parent="." unique_id=1848332910]
 position = Vector2(-1312, 32)
 script = ExtResource("trilhos_script")
+velocidade = 250.0
+
+[node name="Chao" type="Node2D" parent="Trilhos" unique_id=69780145]
+script = ExtResource("chao_script")
+linhas_acima = null
 
 [node name="Vagao1" parent="." unique_id=988786515 instance=ExtResource("1_trem")]
 classe = "MAQUINAS"
@@ -265,6 +274,15 @@ position = Vector2(2848, 358)
 nome = "comida2"
 classe = "Comida"
 
+<<<<<<< HEAD
+[node name="comida3" parent="." unique_id=1678906267 instance=ExtResource("8_djk5k")]
+position = Vector2(558, 358)
+nome = "comida3"
+classe = "Comida"
+
+[node name="comida4" parent="." unique_id=332438717 instance=ExtResource("8_djk5k")]
+position = Vector2(606, 358)
+=======
 [node name="comida3" parent="." unique_id=606625853 instance=ExtResource("8_djk5k")]
 position = Vector2(2896, 358)
 nome = "comida3"
@@ -272,6 +290,7 @@ classe = "Comida"
 
 [node name="comida4" parent="." unique_id=1972563961 instance=ExtResource("8_djk5k")]
 position = Vector2(2944, 358)
+>>>>>>> 29cda7da70a0f42103d113641ad7ac829092325a
 nome = "comida4"
 classe = "Comida"
 

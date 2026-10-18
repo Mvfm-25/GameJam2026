@@ -59,7 +59,12 @@ const CANTO_INF := Vector2i(1, 5)
 const PAREDE_INF := Vector2i(2, 5)
 const JANELA := Vector2i(3, 5)
 const EXTERNO_CANTO := Vector2i(1, 6)
-const EXTERNO_ENFEITES := [Vector2i(2, 6), Vector2i(4, 6)]
+# Rodas: cada tile tem 4 quadros de animação lado a lado na imagem (colunas 1 a 4),
+# configurados no tileset. A base do vagão usa RODA_MEIO no meio, RODA_ESQ no fim
+# esquerdo e RODA_DIR no fim direito.
+const RODA_MEIO := Vector2i(1, 10)
+const RODA_ESQ := Vector2i(1, 12)
+const RODA_DIR := Vector2i(1, 14)
 const EXTERNO := Vector2i(3, 6)
 # Piso de cada classe de vagão (coordenadas no atlas).
 const PISOS := {
@@ -67,7 +72,10 @@ const PISOS := {
 	"COZINHA": Vector2i(9, 2), # Xadrez
 	"BANHEIRO": Vector2i(9, 4), # Bege com losango
 	"MAQUINAS": Vector2i(7, 4), # Cinza escuro
+<<<<<<< HEAD
+=======
 	"SERVICO": Vector2i(7, 2), # Corredor do vagão de serviço: tijolo
+>>>>>>> 29cda7da70a0f42103d113641ad7ac829092325a
 }
 
 # Vagão de serviço (ver _construir_servico).
@@ -181,15 +189,13 @@ func _construir() -> void:
 	var centro := largura_tiles / 2
 	_colocar(paredes, 0, ultima_lin, CANTO_INF, false)
 	_colocar(paredes, ultima_col, ultima_lin, CANTO_INF, true)
-	_colocar(paredes, 0, altura_tiles, EXTERNO_CANTO, false)
-	_colocar(paredes, ultima_col, altura_tiles, EXTERNO_CANTO, true)
+	# A base inteira do vagão são as rodas: fim esquerdo, meio e fim direito.
+	_colocar(paredes, 0, altura_tiles, RODA_ESQ, false)
+	_colocar(paredes, ultima_col, altura_tiles, RODA_DIR, false)
 	for x in range(1, ultima_col):
 		var distancia := posmod(x - centro, ESPACO_JANELAS)
 		_colocar(paredes, x, ultima_lin, JANELA if distancia == 0 else PAREDE_INF, false)
-		var externo := EXTERNO
-		if distancia == ESPACO_JANELAS / 2:
-			externo = EXTERNO_ENFEITES[posmod(x / ESPACO_JANELAS, EXTERNO_ENFEITES.size())]
-		_colocar(paredes, x, altura_tiles, externo, false)
+		_colocar(paredes, x, altura_tiles, RODA_MEIO, false)
 
 
 # Banheiro deste vagão (só o de serviço tem), ou null.

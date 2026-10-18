@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cttn2bq6erkna"
-path="res://.godot/imported/trilhoSuperior.png-c3cdc5a39614b60f9b63685e944bcaee.ctex"
+uid="uid://ba18dmsnbtvtr"
+path="res://.godot/imported/chao.png-7f44569b20d1a4abeec2677746af8f83.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/Outros/trilhoSuperior.png"
-dest_files=["res://.godot/imported/trilhoSuperior.png-c3cdc5a39614b60f9b63685e944bcaee.ctex"]
+source_file="res://assets/tileset/chao.png"
+dest_files=["res://.godot/imported/chao.png-7f44569b20d1a4abeec2677746af8f83.ctex"]
 
 [params]
 
