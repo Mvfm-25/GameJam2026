@@ -52,6 +52,8 @@ script = ExtResource("chao_script")
 script = ExtResource("objetos_script")
 textura = ExtResource("gramas_tex")
 largura_arte = 128
+linhas = 2
+chance_embaixo = 0.35
 intervalo_min = 1.0
 intervalo_max = 4.0
 
