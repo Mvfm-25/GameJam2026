@@ -285,15 +285,26 @@ func tocar_musica_morte() -> void:
 # Chegou na estação: a música de suspense (túnel ou morte) some aos poucos.
 func _fade_out_musica() -> void:
 	musica_morte_ativa = false
-	if not som_tunel.playing :
+
+	if not is_instance_valid(som_tunel):
 		return
-	if _tween_musica :
+
+	if _tween_musica and _tween_musica.is_running():
 		_tween_musica.kill()
+
+	if not som_tunel.playing:
+		return
+
 	_tween_musica = create_tween()
-	_tween_musica.tween_property(som_tunel, "volume_db", -40.0, DURACAO_FADE_MUSICA)
+	_tween_musica.tween_property(
+		som_tunel,
+		"volume_db",
+		-40.0,
+		DURACAO_FADE_MUSICA
+	)
 	_tween_musica.tween_callback(som_tunel.stop)
 	_tween_musica.tween_property(som_tunel, "volume_db", 0.0, 0.0)
-
+	
 func sai_tunel():
 	
 	etapa = Etapa.VIAJANDO
@@ -326,10 +337,12 @@ func _anima_tunel(cor : Color, energia_lanterna : float) :
 func chega_destino() :
 	if estacao_selecionada == null :
 		return
+
+	_fade_out_musica()
+
 	etapa = Etapa.NA_ESTACAO
 	tempo_parado = 0.0
 	quantidade_visitas += 1
-	_fade_out_musica()
 
 	var pontos = estacao_selecionada.pontos_por_chegada
 	for p in lista_passageiros :
