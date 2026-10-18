@@ -17,6 +17,9 @@
 [ext_resource type="Script" uid="uid://mics2wjbtbnn" path="res://scripts/som_trem.gd" id="12_somtrem"]
 [ext_resource type="AudioStream" uid="uid://jsbt5unj8xpt" path="res://audios/743697__michaelydian__elevator-music.wav" id="18_auskn"]
 [ext_resource type="Script" uid="uid://jn4dux3fqudl" path="res://scripts/chao.gd" id="chao_script"]
+[ext_resource type="Script" path="res://scripts/objetos_chao.gd" id="objetos_script"]
+[ext_resource type="Texture2D" path="res://assets/decorations/pedras.png" id="pedras_tex"]
+[ext_resource type="Texture2D" path="res://assets/decorations/gramas.png" id="gramas_tex"]
 [ext_resource type="Script" uid="uid://cep57ks7wxcce" path="res://scripts/trilhos.gd" id="trilhos_script"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fornalha"]
@@ -39,6 +42,18 @@ velocidade = 250.0
 
 [node name="Chao" type="Node2D" parent="Trilhos" unique_id=69780145]
 script = ExtResource("chao_script")
+
+[node name="Gramas" type="Node2D" parent="."]
+script = ExtResource("objetos_script")
+textura = ExtResource("gramas_tex")
+largura_arte = 128
+altura_arte = 128
+intervalo_min = 1.0
+intervalo_max = 4.0
+
+[node name="Pedras" type="Node2D" parent="."]
+script = ExtResource("objetos_script")
+textura = ExtResource("pedras_tex")
 
 [node name="Vagao1" parent="." unique_id=988786515 instance=ExtResource("1_trem")]
 classe = "MAQUINAS"
