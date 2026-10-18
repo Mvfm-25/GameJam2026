@@ -1,0 +1,61 @@
+[gd_scene format=3 uid="uid://odw0ajrgdkuk"]
+
+[ext_resource type="Script" uid="uid://bdwgqseqwqf6q" path="res://scripts/cozinha.gd" id="1_coz"]
+[ext_resource type="Texture2D" uid="uid://ne8jwthsj1wm" path="res://assets/decorations/fornalha.png" id="2_forno"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_forno0"]
+atlas = ExtResource("2_forno")
+region = Rect2(0, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_forno1"]
+atlas = ExtResource("2_forno")
+region = Rect2(192, 0, 192, 192)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_forno"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_forno0")
+}],
+"loop": true,
+"name": &"parado",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_forno0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_forno1")
+}],
+"loop": true,
+"name": &"preparando",
+"speed": 4.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_corpo"]
+size = Vector2(28, 56)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_preparo"]
+size = Vector2(72, 48)
+
+[node name="FornoCozinha" type="StaticBody2D"]
+script = ExtResource("1_coz")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+show_behind_parent = true
+scale = Vector2(0.45, 0.45)
+sprite_frames = SubResource("SpriteFrames_forno")
+animation = &"parado"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_corpo")
+
+[node name="AreaPreparo" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AreaPreparo"]
+position = Vector2(0, 52)
+shape = SubResource("RectangleShape2D_preparo")
+
+[node name="Saida" type="Marker2D" parent="."]
+position = Vector2(0, 46)

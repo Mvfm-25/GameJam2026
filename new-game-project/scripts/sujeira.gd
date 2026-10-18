@@ -100,6 +100,7 @@ func limpar() -> void:
 	var diretor := get_tree().current_scene as Diretor
 	if diretor != null :
 		diretor.sujeiras.erase(self)
+		diretor.alivio_limpeza(global_position)
 	for body in get_overlapping_bodies() :
 		if body is Maquinista :
 			body.sujeiras_proximas.erase(self)

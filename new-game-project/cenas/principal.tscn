@@ -4,10 +4,11 @@
 [ext_resource type="PackedScene" uid="uid://biwta2ryc83b4" path="res://cenas/vagao.tscn" id="1_trem"]
 [ext_resource type="PackedScene" uid="uid://crr8571fx8t3n" path="res://cenas/Maquinista.tscn" id="2_maq"]
 [ext_resource type="Script" uid="uid://d0h8bxrfw350h" path="res://scripts/forno.gd" id="4_eewb4"]
-[ext_resource type="Script" uid="uid://bdwgqseqwqf6q" path="res://scripts/cozinha.gd" id="4_k1xmn"]
+[ext_resource type="PackedScene" uid="uid://odw0ajrgdkuk" path="res://cenas/forno_cozinha.tscn" id="4_k1xmn"]
 [ext_resource type="PackedScene" uid="uid://cjq7h812stu2o" path="res://cenas/deco.tscn" id="5_ff0xt"]
 [ext_resource type="PackedScene" uid="uid://c7mapa0trem01" path="res://cenas/mapa.tscn" id="6_mapa"]
 [ext_resource type="PackedScene" uid="uid://2ke7qr5pifkm" path="res://cenas/item.tscn" id="8_djk5k"]
+[ext_resource type="PackedScene" path="res://cenas/pilha_tabuas.tscn" id="9_pilha"]
 [ext_resource type="AudioStream" uid="uid://boqts0js6cve4" path="res://audios/trilhos cortado1.mp3" id="8_sflf3"]
 [ext_resource type="AudioStream" uid="uid://cyghqmwexq3hn" path="res://audios/271382__rudicangiotti__synthetic-steam-engine.wav" id="9_wgbst"]
 [ext_resource type="Script" uid="uid://f24i0wstodfo" path="res://scripts/caminho.gd" id="10_cam"]
@@ -16,9 +17,6 @@
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_l0vsm"]
 size = Vector2(48, 166)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_f3m2v"]
-size = Vector2(115, 33)
 
 [sub_resource type="Curve2D" id="Curve2D_vagao2"]
 _data = {
@@ -36,7 +34,7 @@ point_count = 1
 script = ExtResource("1_0cijk")
 
 [node name="Trilhos" type="Node2D" parent="." unique_id=1848332910]
-position = Vector2(-1312, 0)
+position = Vector2(-1312, 32)
 script = ExtResource("trilhos_script")
 
 [node name="Vagao1" parent="." unique_id=988786515 instance=ExtResource("1_trem")]
@@ -52,18 +50,14 @@ script = ExtResource("4_eewb4")
 position = Vector2(13, -35)
 shape = SubResource("RectangleShape2D_l0vsm")
 
-[node name="cozinha" type="Area2D" parent="Vagao1" unique_id=715590054]
-script = ExtResource("4_k1xmn")
+[node name="FornoCozinha" parent="Vagao1" unique_id=715590054 instance=ExtResource("4_k1xmn")]
+position = Vector2(455, 60)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Vagao1/cozinha" unique_id=1980927349]
-position = Vector2(455.5, 47.5)
-shape = SubResource("RectangleShape2D_f3m2v")
+[node name="geladeira" parent="Vagao1" unique_id=190965248 instance=ExtResource("9_pilha")]
+position = Vector2(414, 358)
 
-[node name="geladeira" type="Node2D" parent="Vagao1" unique_id=190965248]
-position = Vector2(413, 358)
-
-[node name="preparado" type="Node2D" parent="Vagao1" unique_id=41486205]
-position = Vector2(454, 48)
+[node name="FornoCozinha2" parent="Vagao1" unique_id=1233175405 instance=ExtResource("4_k1xmn")]
+position = Vector2(536, 60)
 
 [node name="Vagao2" parent="." unique_id=1731480753 instance=ExtResource("1_trem")]
 position = Vector2(896, 0)
@@ -256,11 +250,6 @@ metadata/_custom_type_script = "uid://f24i0wstodfo"
 
 [node name="Mapa" parent="." unique_id=1290344715 instance=ExtResource("6_mapa")]
 
-[node name="TrilhosCortado1" type="AudioStreamPlayer" parent="." unique_id=2102914520]
-stream = ExtResource("8_sflf3")
-volume_db = 2.0
-autoplay = true
-
 [node name="271382RudicangiottiSyntheticSteamEngine" type="AudioStreamPlayer2D" parent="." unique_id=1361654464]
 position = Vector2(121, 201)
 stream = ExtResource("9_wgbst")
@@ -274,11 +263,35 @@ nome = "comida1"
 classe = "Comida"
 
 [node name="comida2" parent="." unique_id=1447504206 instance=ExtResource("8_djk5k")]
-position = Vector2(414, 358)
+position = Vector2(510, 358)
 nome = "comida2"
+classe = "Comida"
+
+[node name="comida3" parent="." instance=ExtResource("8_djk5k")]
+position = Vector2(558, 358)
+nome = "comida3"
+classe = "Comida"
+
+[node name="comida4" parent="." instance=ExtResource("8_djk5k")]
+position = Vector2(606, 358)
+nome = "comida4"
 classe = "Comida"
 
 [node name="carvao" parent="." unique_id=1542137560 instance=ExtResource("8_djk5k")]
 position = Vector2(254, 43)
 nome = "carvao"
 classe = "Carvao"
+
+[node name="TrilhosCortado1" type="AudioStreamPlayer2D" parent="." unique_id=61423319]
+position = Vector2(822, 230)
+stream = ExtResource("8_sflf3")
+volume_db = 7.0
+autoplay = true
+max_distance = 280.0
+
+[node name="TrilhosCortado2" type="AudioStreamPlayer2D" parent="." unique_id=1464492626]
+position = Vector2(1719, 227)
+stream = ExtResource("8_sflf3")
+volume_db = 7.0
+autoplay = true
+max_distance = 280.0

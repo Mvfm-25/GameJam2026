@@ -10,6 +10,10 @@ const CLASSE_COMIDA_PREPARADA := "ComidaP"
 # Diferenciar entre comidas, ferramentas por enquanto.
 @export var classe = ""
 
+# Se a tábua volta vazia para a posição inicial depois de consumida.
+# Tábuas criadas pelo respawn não voltam, simplesmente somem.
+@export var volta_para_origem := true
+
 # Se o item está nas mãos do maquinista (some do chão).
 var carregado := false
 # Se o item está sendo preparado na cozinha (não pode ser pego).
@@ -63,25 +67,27 @@ func ser_solto(posicao: Vector2) -> void:
 	visible = true
 	# Colisão continua desligada até o jogador sair da área, senão ele fica preso.
 
-# A cozinha coloca a tábua vazia na bancada e começa a preparar.
-func iniciar_preparo(posicao: Vector2) -> void:
-	global_position = posicao
+# A tábua vazia entra no forno: some enquanto a comida é preparada.
+func iniciar_preparo() -> void:
 	em_preparo = true
 	carregado = false
-	visible = true
+	visible = false
 	_colisao.set_deferred("disabled", true)
 
-# A comida ficou pronta: vira comida preparada e pode ser pega.
-func terminar_preparo() -> void:
+# A comida ficou pronta: sai do forno na posição indicada e pode ser pega.
+func terminar_preparo(posicao: Vector2) -> void:
+	global_position = posicao
 	em_preparo = false
+	visible = true
 	rotation = 0.0
 	classe = CLASSE_COMIDA_PREPARADA
 	_atualiza_sprite()
+	# Colisão continua desligada até o jogador sair da área, senão ele fica preso.
 
 # Passageiro comeu: a tábua vazia volta para onde começou (geladeira).
 # Itens que não são tábua simplesmente somem.
 func consumir() -> void:
-	if not eh_comida_preparada():
+	if not eh_comida_preparada() or not volta_para_origem:
 		queue_free()
 		return
 	classe = CLASSE_TABUA_VAZIA

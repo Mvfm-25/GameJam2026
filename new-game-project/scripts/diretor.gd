@@ -18,17 +18,17 @@ const COR_TUNEL = Color(0.08, 0.08, 0.12)
 # Mesmo os passageiros calmos têm alguma chance de morrer.
 const PESO_BASE_MORTE = 0.2
 
-const SOM_TUNEL := preload("res://audios/suspence.wav")
-
+const SOM_TUNEL := preload("res://audios/suspence2.wav")
+const SOM_SEGUINTE := preload("res://audios/suspence1.wav")
 # Etapas do loop: parado na estação -> viajando -> túnel -> viajando -> chega na estação.
 enum Etapa { NA_ESTACAO, VIAJANDO, TUNEL }
 var etapa = Etapa.NA_ESTACAO
-
+var loop_tunel_ativo := false
 # Quem são os passageiros sendo transportados.
 var lista_passageiros = []
 # Jogador, recebe os pontos.
 var maquinista : Maquinista = null
-
+var musica_morte_ativa := false
 # Status de transito
 var em_tunel = false
 # Fim de jogo (venceu ou perdeu): não aceita novos destinos.
@@ -88,24 +88,25 @@ func tempo_restante() -> float :
 
 # Passando pelo tunel: sorteia um passageiro vivo para morrer.
 # Quanto maior a raiva, maior a chance de ser o escolhido.
-func aposta_morte() -> Passageiro :
-	var vivos = lista_passageiros.filter(func(p): return p.esta_vivo())
-	if vivos.is_empty() :
-		return null
-	var pesos = vivos.map(func(p): return PESO_BASE_MORTE + p.nivel_raiva)
-	var total = 0.0
-	for peso in pesos :
-		total += peso
-	var sorteio = randf() * total
-	var vitima : Passageiro = vivos.back()
-	for i in vivos.size() :
-		sorteio -= pesos[i]
-		if sorteio <= 0.0 :
-			vitima = vivos[i]
-			break
-	vitima.morre()
-	marca_assento(vitima)
-	return vitima
+#func aposta_morte() -> Passageiro :
+#	var vivos = lista_passageiros.filter(func(p): return p.esta_vivo())
+#	if vivos.is_empty() :
+#		return null
+#	#var pesos = vivos.map(func(p): return PESO_BASE_MORTE + p.nivel_raiva)
+#	var pesos = 0
+#	var total = 0.0
+#	for peso in pesos :
+#		total += peso
+#	var sorteio = randf() * total
+#	var vitima : Passageiro = vivos.back()
+#	for i in vivos.size() :
+#		sorteio -= pesos[i]
+#		if sorteio <= 0.0 :
+#			vitima = vivos[i]
+#			break
+#	vitima.morre()
+#	marca_assento(vitima)
+#s	return vitima
 
 # Deixa uma mancha de sangue onde o passageiro estava sentado.
 func marca_assento(p : Passageiro) :
@@ -121,6 +122,35 @@ func coloca_sujeira(sujeira : Sujeira, pos : Vector2) -> void :
 	if maquinista != null :
 		move_child(sujeira, maquinista.get_index())
 	sujeira.global_position = pos  # define depois de entrar na árvore
+
+# Limpar uma sujeira acalma quem está perto (forte) e o resto do trem (fraco),
+# e tira o IMUNDO de quem está perto.
+const RAIO_ALIVIO_LIMPEZA = 160.0
+const ALIVIO_LIMPEZA_PERTO = 0.2
+const ALIVIO_LIMPEZA_GERAL = 0.05
+
+# Passageiros vivos a até 'raio' de 'pos'.
+func passageiros_perto(pos : Vector2, raio : float) -> Array :
+	return lista_passageiros.filter(func(p): return p.esta_vivo() and p.global_position.distance_to(pos) <= raio)
+
+# Quanto de sujeira há perto de 'pos' (sangue pesa 2).
+func peso_sujeiras_perto(pos : Vector2, raio : float) -> float :
+	var peso := 0.0
+	for s in sujeiras :
+		if is_instance_valid(s) and s.global_position.distance_to(pos) <= raio :
+			peso += 2.0 if s.sangue else 1.0
+	return peso
+
+# Chamado pela sujeira quando o maquinista termina de limpá-la.
+func alivio_limpeza(pos : Vector2) -> void :
+	for p in lista_passageiros :
+		if not p.esta_vivo() :
+			continue
+		if p.global_position.distance_to(pos) <= RAIO_ALIVIO_LIMPEZA :
+			p.acalma(ALIVIO_LIMPEZA_PERTO)
+			p.limpa_imundo()
+		else :
+			p.acalma(ALIVIO_LIMPEZA_GERAL)
 
 # Verifica se todos passageiros estão mortos
 func verifica_morte_geral() -> bool :
@@ -145,24 +175,57 @@ func mostra_aviso(texto : String) :
 	timer_aviso.start(DURACAO_AVISO)
 
 # Escurece o vagão e acende a lanterna do maquinista.
-func entra_tunel() :
+func entra_tunel():
 	etapa = Etapa.TUNEL
 	em_tunel = true
 	passou_tunel = true
+	loop_tunel_ativo = false
+
 	print("Entrando no túnel!")
+
+	som_tunel.stream = SOM_TUNEL
 	som_tunel.play()
+
 	_anima_tunel(COR_TUNEL, 1.0)
 
-# A luz volta e a morte (se houve) é revelada.
-func sai_tunel() :
+
+func _ao_som_tunel_terminar() -> void:
+	var existe_morto = lista_passageiros.any(
+		func(p): return not p.esta_vivo()
+	)
+
+	if not existe_morto:
+		return
+
+	if not loop_tunel_ativo:
+		loop_tunel_ativo = true
+		som_tunel.stream = SOM_SEGUINTE
+
+	som_tunel.play()
+	
+func tocar_musica_morte() -> void:
+	if not em_tunel:
+		return
+
+	musica_morte_ativa = true
+	som_tunel.stream = SOM_SEGUINTE
+	som_tunel.play()
+
+func sai_tunel():
+	
 	etapa = Etapa.VIAJANDO
 	em_tunel = false
+
+	#som_tunel.stop()
+
 	print("Saindo do túnel!")
 	_anima_tunel(Color.WHITE, 0.0)
-	if vitima_tunel != null :
+
+	if vitima_tunel != null:
 		mostra_aviso("%s foi encontrado morto!" % vitima_tunel.nome)
 		vitima_tunel = null
-	if verifica_morte_geral() :
+
+	if verifica_morte_geral():
 		game_over()
 
 func _anima_tunel(cor : Color, energia_lanterna : float) :
@@ -267,6 +330,7 @@ func _ready() -> void:
 
 	_cria_efeitos_tunel()
 
+
 func _cria_efeitos_tunel() :
 	escuridao = CanvasModulate.new()
 	escuridao.color = Color.WHITE
@@ -282,6 +346,8 @@ func _cria_efeitos_tunel() :
 	som_tunel = AudioStreamPlayer.new()
 	som_tunel.stream = SOM_TUNEL
 	add_child(som_tunel)
+
+	som_tunel.finished.connect(_ao_som_tunel_terminar)
 
 # Círculo que vai do branco ao transparente, usado como luz da lanterna.
 func _textura_lanterna() -> GradientTexture2D :
@@ -307,7 +373,7 @@ func _process(delta: float) -> void:
 		# Morte acontece no meio do túnel, com tudo já escuro.
 		if not morte_sorteada and tempo_decorrido >= (inicio_tunel + fim_tunel) / 2.0 :
 			morte_sorteada = true
-			vitima_tunel = aposta_morte()
+			#vitima_tunel = aposta_morte()
 		if tempo_decorrido >= fim_tunel :
 			sai_tunel()
 	elif etapa == Etapa.VIAJANDO and tempo_decorrido >= tempo_viagem_total :
