@@ -281,7 +281,7 @@ func _atualiza_sprite() -> void:
 		_sprite.play("de_costas")
 	# Não há quadros piscando com a tábua, então carregando ignora a piscada.
 	elif carregando and itemAtual.eh_tabua() :
-		_sprite.play(_direcao_sprite + "_tabua")
+		_sprite.play(_direcao_sprite + ("_tabua_cheia" if itemAtual.eh_comida_preparada() else "_tabua"))
 	# Com a caveira ele faz outra cara (também sem piscar).
 	elif carregando and itemAtual.classe == Item.CLASSE_CAVEIRA :
 		_sprite.play(_direcao_sprite + "_caveira")
