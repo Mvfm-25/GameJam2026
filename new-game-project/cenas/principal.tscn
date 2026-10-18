@@ -152,13 +152,8 @@ max_distance = 648.0
 
 [node name="comida1" parent="." unique_id=1412582290 instance=ExtResource("8_djk5k")]
 position = Vector2(398.00003, 230.00002)
-<<<<<<< HEAD
 nome = "comida1"
 classe = "Comida"
-=======
-nome = "Prato"
-classe = "Alimento"
->>>>>>> 131b543b6f282bbf2d3322373adcf5b91802ce7e
 
 [node name="comidaPreparada" parent="." unique_id=2047840127 instance=ExtResource("8_djk5k")]
 position = Vector2(398.00003, 230.00002)
@@ -167,7 +162,6 @@ classe = "ComidaP"
 
 [node name="comida2" parent="." unique_id=1447504206 instance=ExtResource("8_djk5k")]
 position = Vector2(350, 230)
-<<<<<<< HEAD
 nome = "comida2"
 classe = "Comida"
 
@@ -175,7 +169,3 @@ classe = "Comida"
 position = Vector2(254, 43)
 nome = "carvao"
 classe = "Carvao"
-=======
-nome = "Prato"
-classe = "Alimento"
->>>>>>> 131b543b6f282bbf2d3322373adcf5b91802ce7e

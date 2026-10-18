@@ -38,7 +38,7 @@ func solta_item():
 	carregando = false
 	_atualiza_sprite()
 
-	if item.classe == "Alimento" and alimenta(item) :
+	if (item.classe == "Alimento" or item.classe == "ComidaP") and alimenta(item) :
 		return
 	print("Deixando de carregar " + item.nome + "!")
 	item.ser_solto(global_position)
