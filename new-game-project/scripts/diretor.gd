@@ -79,6 +79,11 @@ var quantidade_visitas = 0
 var trilho_atual = 0
 var em_area_troca = false
 
+# Fornalha da sala de máquinas; sem combustível o trem para no caminho.
+var fornalha : Fornalha = null
+var trilhos : Trilhos = null
+var _avisou_fornalha_apagada := false
+
 func em_transito() -> bool :
 	return etapa != Etapa.NA_ESTACAO
 
@@ -358,6 +363,9 @@ func _ready() -> void:
 
 	_cria_efeitos_tunel()
 
+	fornalha = get_tree().get_first_node_in_group(Fornalha.GRUPO)
+	trilhos = get_node_or_null("Trilhos")
+
 
 func _cria_efeitos_tunel() :
 	escuridao = CanvasModulate.new()
@@ -394,6 +402,8 @@ func _process(delta: float) -> void:
 	if not em_transito() :
 		tempo_parado += delta
 		return
+	if _trem_parado_sem_carvao() :
+		return
 	tempo_decorrido += delta
 
 	if etapa == Etapa.VIAJANDO and not passou_tunel and tempo_decorrido >= inicio_tunel :
@@ -409,6 +419,16 @@ func _process(delta: float) -> void:
 			sai_tunel()
 	elif etapa == Etapa.VIAJANDO and tempo_decorrido >= tempo_viagem_total :
 		chega_destino()
+
+# Com a fornalha apagada a viagem não avança e os trilhos param de correr.
+func _trem_parado_sem_carvao() -> bool :
+	var apagada := fornalha != null and fornalha.apagada()
+	if trilhos != null :
+		trilhos.ativo = not apagada
+	if apagada and not _avisou_fornalha_apagada :
+		mostra_aviso("A fornalha apagou! O trem parou. Abasteça com carvão!")
+	_avisou_fornalha_apagada = apagada
+	return apagada
 
 # Esc fecha o jogo
 func _unhandled_input(event: InputEvent) -> void:

@@ -1,0 +1,28 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/apito.gd" id="1_apito"]
+[ext_resource type="Texture2D" path="res://assets/decorations/Apito.png" id="2_apito"]
+[ext_resource type="AudioStream" path="res://audios/apito_choo_choo.wav" id="3_som"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_alcance"]
+radius = 36.0
+
+[node name="Apito" type="Node2D"]
+script = ExtResource("1_apito")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2_apito")
+region_enabled = true
+region_rect = Rect2(0, 0, 192, 192)
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(0, 16)
+shape = SubResource("CircleShape2D_alcance")
+
+[node name="Som" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_som")
+volume_db = -4.0

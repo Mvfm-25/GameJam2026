@@ -46,7 +46,6 @@ var exposicao := 0.0
 var imundo := false
 # Imundo suja mais nos passeios.
 @export_range(0.0, 1.0) var chance_sujeira_imundo := 0.5
-const COR_IMUNDO := Color(0.72, 0.6, 0.45)
 
 # --- Contágio --------------------------------------------------------------
 # Um IRADO "explode" a cada intervalo_contagio, podendo irritar quem está perto.
@@ -153,6 +152,16 @@ const SUAVIZACAO := 18.0
 const IRADO_BALANCO := 2.2
 const IRADO_PULINHO := 3.0
 const IRADO_VELOCIDADE := 1.4
+# Parado, o passageiro agitado (IRADO ou IMUNDO) tem chiliques de tempos em tempos:
+# treme o corpo rápido e dá pulinhos por um instante.
+const CHILIQUE_INTERVALO_MIN := 1.5
+const CHILIQUE_INTERVALO_MAX := 3.5
+const CHILIQUE_DURACAO := 0.45
+const CHILIQUE_ANGULO := 0.16 # radianos (~9 graus)
+const CHILIQUE_VELOCIDADE := 55.0
+const CHILIQUE_PULINHO := 3.0
+var _espera_chilique := 0.0
+var _tempo_chilique := 0.0
 var _visual : Node2D
 var _fase_passo := 0.0
 
@@ -211,19 +220,47 @@ func _anima_andar(delta : float) -> void:
 	var angulo := 0.0
 	var pulo := 0.0
 	var amassada := 0.0
+	var agitado := esta_vivo() and (irado or imundo)
+	var direto := false
 	if estado == Estado.ANDANDO or (estado == Estado.NA_FILA and not _esperando) :
-		var balanco := IRADO_BALANCO if irado else 1.0
-		var pulinho := IRADO_PULINHO if irado else 1.0
-		_fase_passo += delta * BALANCO_VELOCIDADE * (IRADO_VELOCIDADE if irado else 1.0)
+		var balanco := IRADO_BALANCO if agitado else 1.0
+		var pulinho := IRADO_PULINHO if agitado else 1.0
+		_fase_passo += delta * BALANCO_VELOCIDADE * (IRADO_VELOCIDADE if agitado else 1.0)
 		angulo = sin(_fase_passo) * BALANCO_ANGULO * balanco
 		var passo := absf(sin(_fase_passo))
 		pulo = -passo * PULINHO * pulinho
 		amassada = (0.5 - passo) * AMASSADA * balanco
+	elif agitado :
+		var chilique := _anima_chilique(delta)
+		angulo = chilique.x
+		direto = _tempo_chilique > 0.0
+		pulo = chilique.y
+		amassada = -chilique.y / CHILIQUE_PULINHO * AMASSADA * IRADO_BALANCO
 	var peso := 1.0 - exp(-SUAVIZACAO * delta)
+	# O chilique é rápido demais para a suavização: aplica direto.
+	if direto :
+		peso = 1.0
 	_visual.rotation = lerp_angle(_visual.rotation, angulo, peso)
 	_visual.position = _visual.position.lerp(Vector2(0, pulo), peso)
 	var escala := Vector2.ONE * ESCALA_VISUAL
 	_visual.scale = _visual.scale.lerp(escala * Vector2(1.0 - amassada, 1.0 + amassada), peso)
+
+# Chilique do passageiro agitado parado: espera um tempo e treme por CHILIQUE_DURACAO.
+# Retorna (ângulo, pulo) do momento.
+func _anima_chilique(delta : float) -> Vector2:
+	if _tempo_chilique <= 0.0 :
+		_espera_chilique -= delta
+		if _espera_chilique > 0.0 :
+			return Vector2.ZERO
+		_tempo_chilique = CHILIQUE_DURACAO
+		_espera_chilique = randf_range(CHILIQUE_INTERVALO_MIN, CHILIQUE_INTERVALO_MAX)
+	_tempo_chilique -= delta
+	var t := CHILIQUE_DURACAO - _tempo_chilique
+	# Treme forte no começo e vai parando.
+	var forca := clampf(_tempo_chilique / CHILIQUE_DURACAO, 0.0, 1.0)
+	var angulo := sin(t * CHILIQUE_VELOCIDADE) * CHILIQUE_ANGULO * forca
+	var pulo := -absf(sin(t * CHILIQUE_VELOCIDADE * 0.5)) * CHILIQUE_PULINHO * forca
+	return Vector2(angulo, pulo)
 
 # IRADO e IMUNDO não são mais sorteados: surgem da raiva e da sujeira.
 # Mantém 1 em 4 com fome, como antes.
@@ -266,7 +303,6 @@ func atualiza_exposicao(delta : float, diretor : Diretor) -> void:
 		imundo = true
 		print("Passageiro " + nome + " ficou IMUNDO!")
 		_atualiza_contente()
-		_aplica_cor()
 
 # O maquinista limpou por perto.
 func limpa_imundo() -> void:
@@ -276,7 +312,6 @@ func limpa_imundo() -> void:
 	imundo = false
 	print("Passageiro " + nome + " não está mais imundo.")
 	_atualiza_contente()
-	_aplica_cor()
 
 # Baixa a raiva (comida, limpeza).
 func acalma(valor : float) -> void:
@@ -318,16 +353,12 @@ func _pulso_contagio(delta : float, diretor : Diretor) -> void:
 func _atualiza_contente() -> void:
 	contente = necessidades.is_empty() and not imundo and not irado
 
-func _aplica_cor() -> void:
-	if _visual != null :
-		_visual.modulate = COR_IMUNDO if imundo else Color.WHITE
-
-# Um balão por vez: irado > fome > puto.
+# Um balão por vez: irado > fome > puto (raiva alta ou desconforto por estar imundo).
 func _atualiza_baloes() -> void:
 	var com_fome = necessidades.has("FAMINTO") and quantidade_fome >= 0.6
 	$muito_puto.visible = irado
 	$fome.visible = not irado and com_fome
-	$puto.visible = not irado and not com_fome and nivel_raiva >= LIMIAR_PUTO
+	$puto.visible = not irado and not com_fome and (nivel_raiva >= LIMIAR_PUTO or imundo)
 
 func esta_vivo() -> bool:
 	return status != "MORTO"

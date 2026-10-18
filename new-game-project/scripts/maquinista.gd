@@ -19,6 +19,8 @@ var passageiros_proximos : Array[Passageiro] = []
 
 # Portas cuja área de interação o jogador está dentro (elas se registram aqui).
 var portas_proximas : Array[Porta] = []
+# Objetos fixos ao alcance, como a pilha de carvão e o apito (eles se registram aqui).
+var interativos_proximos : Array[Interativo] = []
 
 # Se o jogador está parado varrendo uma sujeira.
 var limpando := false
@@ -122,19 +124,28 @@ func _porta_mais_proxima() -> Porta :
 			melhor = porta
 	return melhor
 
+# Porta fechada ou objeto fixo (pilha de carvão, apito) mais próximo do jogador
+func _alvo_interacao() -> Node2D :
+	var melhor : Node2D = _porta_mais_proxima()
+	for alvo in interativos_proximos :
+		if melhor == null or global_position.distance_to(alvo.global_position) < global_position.distance_to(melhor.global_position) :
+			melhor = alvo
+	return melhor
+
 # Tecla de interagir pega o item mais próximo ou solta o que está carregando
 func _unhandled_input(event: InputEvent) -> void:
 	# Enquanto varre, o jogador não faz mais nada.
 	if limpando :
 		return
 	if event.is_action_pressed("interagir"):
-		var porta := _porta_mais_proxima()
-		if porta != null and not carregando and _item_mais_proximo() == null :
-			porta.interage()
-		elif carregando :
+		if carregando :
 			solta_item()
-		else :
+		elif _item_mais_proximo() != null :
 			pega_item(_item_mais_proximo())
+		else :
+			var alvo := _alvo_interacao()
+			if alvo != null :
+				alvo.interage()
 	elif event.is_action_pressed("limpar"):
 		limpa()
 
