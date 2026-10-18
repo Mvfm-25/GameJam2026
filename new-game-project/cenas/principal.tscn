@@ -318,7 +318,7 @@ script = ExtResource("12_somtrem")
 
 [node name="Trilhos" type="AudioStreamPlayer" parent="SomTrem" unique_id=1907316256]
 stream = ExtResource("8_sflf3")
-volume_db = 7.754
+volume_db = 5.0
 
 [node name="743697MichaelydianElevatorMusic" type="AudioStreamPlayer2D" parent="." unique_id=216993022]
 position = Vector2(885, 214)
@@ -344,6 +344,6 @@ max_distance = 235.0
 [node name="271382RudicangiottiSyntheticSteamEngine" type="AudioStreamPlayer2D" parent="." unique_id=1266332279]
 position = Vector2(115, 80)
 stream = ExtResource("9_wgbst")
-volume_db = 13.0
+volume_db = 5.0
 autoplay = true
 max_distance = 884.0
