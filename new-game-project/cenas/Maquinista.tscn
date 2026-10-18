@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://cippwo3lca06n" path="res://scripts/maquinista.gd" id="1_maq"]
 [ext_resource type="Texture2D" uid="uid://e3sjsjjm6ifb" path="res://assets/characters/Maquinista_basev3.png" id="2_tex"]
 [ext_resource type="Texture2D" uid="uid://ca6cuu2cwno7e" path="res://assets/Outros/Vassoura_ani.png" id="3_vas"]
-[ext_resource type="Script" path="res://scripts/balanco_trem.gd" id="balanco_trem"]
+[ext_resource type="Script" uid="uid://3xnemkc30mm6" path="res://scripts/balanco_trem.gd" id="balanco_trem"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_0404l"]
 
@@ -23,6 +23,10 @@ region = Rect2(192, 192, 192, 192)
 atlas = ExtResource("2_tex")
 region = Rect2(384, 384, 192, 192)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_1l7nd"]
+atlas = ExtResource("2_tex")
+region = Rect2(0, 576, 192, 192)
+
 [sub_resource type="AtlasTexture" id="Atlas_esquerda"]
 atlas = ExtResource("2_tex")
 region = Rect2(384, 0, 192, 192)
@@ -35,6 +39,10 @@ region = Rect2(0, 192, 192, 192)
 atlas = ExtResource("2_tex")
 region = Rect2(192, 384, 192, 192)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_bidgo"]
+atlas = ExtResource("2_tex")
+region = Rect2(768, 384, 192, 192)
+
 [sub_resource type="AtlasTexture" id="Atlas_frente"]
 atlas = ExtResource("2_tex")
 region = Rect2(0, 0, 192, 192)
@@ -46,6 +54,10 @@ region = Rect2(768, 0, 192, 192)
 [sub_resource type="AtlasTexture" id="Atlas_frente_tabua"]
 atlas = ExtResource("2_tex")
 region = Rect2(0, 384, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wtvym"]
+atlas = ExtResource("2_tex")
+region = Rect2(576, 384, 192, 192)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_2r7n2"]
 animations = [{
@@ -83,6 +95,14 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_1l7nd")
+}],
+"loop": 1,
+"name": &"direita_tabua_cheia",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("Atlas_esquerda")
 }],
 "loop": 1,
@@ -107,6 +127,14 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_bidgo")
+}],
+"loop": 1,
+"name": &"esquerda_tabua_cheia",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("Atlas_frente")
 }],
 "loop": 1,
@@ -127,6 +155,14 @@ animations = [{
 }],
 "loop": 1,
 "name": &"frente_tabua",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wtvym")
+}],
+"loop": 1,
+"name": &"frente_tabua_cheia",
 "speed": 5.0
 }]
 
@@ -189,7 +225,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("Atlas_vassoura_7")
 }],
-"loop": true,
+"loop": 1,
 "name": &"varrer",
 "speed": 10.0
 }]
@@ -203,23 +239,23 @@ scale = Vector2(1.795, 1.795)
 shape = SubResource("CircleShape2D_0404l")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=757508176]
-script = ExtResource("balanco_trem")
 position_smoothing_enabled = true
+script = ExtResource("balanco_trem")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=2051209907]
 position = Vector2(-1, -2)
 scale = Vector2(0.355, 0.355)
 sprite_frames = SubResource("SpriteFrames_2r7n2")
-animation = &"de_costas"
+animation = &"direita_tabua_cheia"
 
-[node name="Vassoura" type="AnimatedSprite2D" parent="."]
+[node name="Vassoura" type="AnimatedSprite2D" parent="." unique_id=648612751]
 visible = false
 position = Vector2(14, 6)
 scale = Vector2(0.355, 0.355)
 sprite_frames = SubResource("SpriteFrames_vassoura")
 animation = &"varrer"
 
-[node name="TimerLimpeza" type="Timer" parent="."]
+[node name="TimerLimpeza" type="Timer" parent="." unique_id=1335435641]
 wait_time = 2.0
 one_shot = true
 
@@ -231,6 +267,6 @@ autostart = true
 wait_time = 0.15
 one_shot = true
 
+[connection signal="timeout" from="TimerLimpeza" to="." method="_ao_terminar_limpeza"]
 [connection signal="timeout" from="TimerPiscada" to="." method="_ao_piscar"]
 [connection signal="timeout" from="TimerOlhoFechado" to="." method="_ao_abrir_olhos"]
-[connection signal="timeout" from="TimerLimpeza" to="." method="_ao_terminar_limpeza"]
