@@ -21,12 +21,26 @@ signal selecionada(estacao: Estacao)
 # Quanto tempo (segundos) o trem leva para chegar nesta estação após escolhida.
 @export var tempo_viagem = 500.0
 
+# Marcada como ponto de origem
+@export var originaria = false
+
+# Estações vizinhas (ligadas por trilho no mapa). Preenchidas pelo Mapa.
+var estacoes_vizinhas : Array[Estacao] = []
+
 var selecionado = false
 # Mouse em cima do círculo.
 var hover = false
 
 # Recompensa jogador quantidade pequena de pontos ao chegar na estação.
 var pontos_por_chegada = 10.0
+
+# Só é possível viajar para estações vizinhas.
+func viagem_possivel(destino : Estacao) -> bool:
+	if not estacoes_vizinhas.has(destino) :
+		print("Viajar para estações não vizinhas não é possível!")
+		return false
+	print("Viagem possível!")
+	return true
 
 func _ready() -> void:
 	if not Engine.is_editor_hint():

@@ -79,6 +79,7 @@ position = Vector2(100, 240)
 nome = "Central"
 cor = Color(0.9, 0.25, 0.25, 1)
 tempo_viagem = 8.0
+originaria = true
 
 [node name="VilaFerrugem" parent="Conteudo/Painel/Estacoes" instance=ExtResource("2_est")]
 position = Vector2(250, 140)

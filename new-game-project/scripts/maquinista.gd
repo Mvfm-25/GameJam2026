@@ -74,7 +74,23 @@ func _physics_process(_delta: float) -> void:
 	var direcao := Input.get_vector("mover_esquerda", "mover_direita", "mover_cima", "mover_baixo")
 	velocity = direcao * velocidade
 	move_and_slide()
+	
+	# Chance pequena (~0,5% por quadro, uma sujeira a cada ~3 s em média)
+	if randf() < 0.001 :
+		inicializa_sujeira(global_position)
+
 	_atualiza_direcao(direcao)
+
+const TEXTURA_SUJEIRA := preload("res://icon.svg")
+
+# Cria uma sujeira no chão na posição dada.
+func inicializa_sujeira(pos : Vector2) -> void :
+	var sujeira := Sprite2D.new()
+	sujeira.texture = TEXTURA_SUJEIRA
+	# Entra na cena logo antes do Maquinista: fica acima dos vagões e abaixo do jogador.
+	get_parent().add_child(sujeira)
+	get_parent().move_child(sujeira, get_index())
+	sujeira.global_position = pos  # define depois de entrar na árvore
 
 func _atualiza_direcao(direcao: Vector2) -> void:
 	var nova := _direcao_sprite

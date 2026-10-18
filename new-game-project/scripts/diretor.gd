@@ -24,6 +24,8 @@ var timer_aviso = Timer.new()
 var tempo_estacao = 0.0
 # Estação de destino selecionada
 var estacao_selecionada : Estacao = null
+# Estação onde o trem está (ou de onde partiu). Só pode ir para vizinhas dela.
+var estacao_atual : Estacao = null
 
 # Por quantas estações o jogador passou
 var quantidade_visitas = 0
@@ -95,12 +97,16 @@ func chega_destino() :
 		mostra_aviso("Chegou em %s! +%d pontos" % [estacao_selecionada.nome, pontos])
 
 	estacao_selecionada.define_selecionado(false)
+	estacao_atual = estacao_selecionada
 	estacao_selecionada = null
 
 # Troca de estação de destino
 # Jogador abre mapa & escolhe nodo da estação por ali
 func troca_destino(estacao : Estacao) :
 	if estacao == estacao_selecionada :
+		return
+	if estacao_atual != null and not estacao_atual.viagem_possivel(estacao) :
+		mostra_aviso("Destino inválido! Escolha uma estação vizinha a " + estacao_atual.nome + ".")
 		return
 	if estacao_selecionada != null :
 		estacao_selecionada.define_selecionado(false)
@@ -129,8 +135,11 @@ func _ready() -> void:
 		lista_passageiros = passageiros.get_children()
 
 	# Estações se registram no grupo "estacoes" no próprio _ready.
+	# A estação marcada como originária é o ponto de partida.
 	for e in get_tree().get_nodes_in_group("estacoes") :
 		e.selecionada.connect(troca_destino)
+		if e.originaria :
+			estacao_atual = e
 
 	# Aviso na tela, numa camada acima do jogo.
 	var camada = CanvasLayer.new()

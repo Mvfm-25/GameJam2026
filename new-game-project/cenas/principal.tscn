@@ -106,7 +106,6 @@ position = Vector2(1253, 61)
 position = Vector2(1340.0001, 61)
 
 [node name="Mapa" parent="." unique_id=1290344715 instance=ExtResource("6_mapa")]
-visible = false
 
 [node name="TrilhosCortado1" type="AudioStreamPlayer" parent="." unique_id=2102914520]
 stream = ExtResource("8_sflf3")
