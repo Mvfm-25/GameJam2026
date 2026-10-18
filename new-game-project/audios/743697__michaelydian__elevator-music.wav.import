@@ -2,7 +2,7 @@
 
 importer="wav"
 type="AudioStreamWAV"
-uid="uid://jsbt5unj8xpt"
+uid="uid://c6qbooru13p70"
 path="res://.godot/imported/743697__michaelydian__elevator-music.wav-dc550489b9ac92f53f0108888ec55944.sample"
 
 [deps]
@@ -18,7 +18,7 @@ force/max_rate=false
 force/max_rate_hz=44100
 edit/trim=false
 edit/normalize=false
-edit/loop_mode=2
+edit/loop_mode=0
 edit/loop_begin=0
 edit/loop_end=-1
 compress/mode=2
