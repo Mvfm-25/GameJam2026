@@ -111,10 +111,24 @@ var _piscando := false
 @onready var _timer_piscada: Timer = $TimerPiscada
 @onready var _timer_olho_fechado: Timer = $TimerOlhoFechado
 
+# Animação de andar, feita por código: o corpo inclina para um lado e para o outro
+# bem rápido, com um pulinho a cada passo e uma leve amassada ao pisar.
+const BALANCO_ANGULO := 0.09 # radianos (~5 graus)
+const BALANCO_VELOCIDADE := 22.0 # passos por segundo, em radianos
+const PULINHO := 1.5 # pixels
+const AMASSADA := 0.04 # variação da escala
+const SUAVIZACAO := 18.0
+
+var _fase_passo := 0.0
+var _sprite_posicao := Vector2.ZERO
+var _sprite_escala := Vector2.ONE
+
 func _ready() -> void:
 	_timer_piscada.wait_time = randf_range(5.0, 8.0)
+	_sprite_posicao = _sprite.position
+	_sprite_escala = _sprite.scale
 
-func _physics_process(_delta: float) -> void:
+func _physics_process(delta: float) -> void:
 	var direcao := Input.get_vector("mover_esquerda", "mover_direita", "mover_cima", "mover_baixo")
 	velocity = direcao * velocidade
 	move_and_slide()
@@ -124,6 +138,24 @@ func _physics_process(_delta: float) -> void:
 		inicializa_sujeira(global_position)
 
 	_atualiza_direcao(direcao)
+	_anima_andar(direcao, delta)
+
+# Inclina o corpo enquanto anda; ao parar, volta suavemente à posição normal.
+func _anima_andar(direcao: Vector2, delta: float) -> void:
+	var andando := direcao.length() > 0.1
+	var angulo := 0.0
+	var pulo := 0.0
+	var amassada := 0.0
+	if andando:
+		_fase_passo += delta * BALANCO_VELOCIDADE
+		angulo = sin(_fase_passo) * BALANCO_ANGULO
+		var passo := absf(sin(_fase_passo))
+		pulo = -passo * PULINHO
+		amassada = (0.5 - passo) * AMASSADA
+	var peso := 1.0 - exp(-SUAVIZACAO * delta)
+	_sprite.rotation = lerp_angle(_sprite.rotation, angulo, peso)
+	_sprite.position = _sprite.position.lerp(_sprite_posicao + Vector2(0, pulo), peso)
+	_sprite.scale = _sprite.scale.lerp(_sprite_escala * Vector2(1.0 - amassada, 1.0 + amassada), peso)
 
 # Cria uma sujeira no chão na posição dada.
 func inicializa_sujeira(pos : Vector2) -> void :
